@@ -1,0 +1,12 @@
+prefix=@prefix@
+exec_prefix=@exec_prefix@
+libdir=@libdir@
+renlibdir=@libdir@/reindeer
+includedir=@includedir@
+
+Name: Reindeer
+Description: Render abstraction library
+Version: @VERSION@
+Requires: 
+Libs: -L${libdir} -lreindeer
+Cflags: -I${includedir}
