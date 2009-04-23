@@ -6,6 +6,7 @@
 *.tar.*
 .deps
 .libs
+ChangeLog
 Makefile
 Makefile.in
 aclocal.m4
@@ -18,6 +19,7 @@ config.log
 config.status
 config.sub
 configure
+libgnu
 libltdl
 libtool
 m4

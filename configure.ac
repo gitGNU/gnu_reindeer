@@ -11,28 +11,29 @@ LTDL_INIT([installable])
 
 # Checks for programs.
 AC_PROG_CC
-AC_PROG_CXX
+GNULIB_EARLY
 AC_PROG_CPP
 AC_PROG_INSTALL
-AC_PROG_LN_S
-AC_PROG_MAKE_SET
 
 # Checks for libraries.
 
 
 # Checks for header files.
 AC_HEADER_STDC
-AC_CHECK_HEADERS([stdlib.h])
+AC_CHECK_HEADERS([stdlib.h string.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
-#AC_C_INLINE
+AC_C_INLINE
 
 # Checks for library functions.
+#AC_FUNC_MALLOC
+#AC_CHECK_FUNCS([strdup])
 
-
+GNULIB_INIT
 AC_CONFIG_FILES([
     Makefile
+    libgnu/Makefile
     reindeer.pc
     ren/Makefile
     reindeer/Makefile
