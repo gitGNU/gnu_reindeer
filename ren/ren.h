@@ -36,14 +36,8 @@ ren_reindeer_load (RenBackend *backend);
 extern void
 ren_reindeer_unload (RenReindeer *r);
 
-extern void
-ren_clean_up (void);
-
 extern RenBackend*
 ren_backend_find (const char *name);
-
-extern ren_uint
-ren_backend_list (ren_size count, const char *names[], RenBackend *result[]);
 
 extern RenBackend*
 ren_backend (RenReindeer *r);
@@ -83,12 +77,9 @@ extern RenDataBlock*
 ren_data_block_new (const void *data, ren_size size, RenUsage usage);
 
 extern void
-ren_data_block_destroy (
-    RenDataBlock *datablock,
-    RenDataBlockCallback unload_func,
-    void *user_data);
+ren_data_block_destroy (RenDataBlock *datablock);
 /* Applications should not free the original data after this. They should wait
-for the unload callback, just like they would with the callback function.  */
+for the unload callback.  */
 
 extern void
 ren_data_block_callback (

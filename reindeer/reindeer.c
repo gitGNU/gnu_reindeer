@@ -27,7 +27,11 @@
 #include "reindeer.h"
 #include "backend.h"
 
+static _RenDList* reindeer_list = NULL;
 static ren_bool initialized = REN_FALSE;
+
+static void
+clean_up (void);
 
 static ren_bool
 initialize (void)
@@ -40,8 +44,30 @@ initialize (void)
             _ren_throw_error ("%s", lt_dlerror ());
             return REN_FALSE;
         }
+        if (atexit (clean_up) != 0)
+        {
+            _ren_throw_error ("Reindeer cannot clean up on exit.");
+        }
     }
     return REN_TRUE;
+}
+
+static void
+clean_up (void)
+{
+    if (initialized)
+    {
+        while (reindeer_list)
+            reindeer_unload (reindeer_list->data);
+
+        backend_free_all ();
+
+        lt_dlerror ();
+        if (lt_dlexit () != 0)
+        {
+            _ren_throw_error ("%s", lt_dlerror ());
+        }
+    }
 }
 
 RenReindeer*
@@ -76,7 +102,7 @@ ren_reindeer_load (RenBackend *backend)
         goto FAIL;
     }
 
-    //r->listitem = reindeer_list = _ren_dlist_prepend (reindeer_list, r);
+    r->listitem = reindeer_list = _ren_dlist_prepend (reindeer_list, r);
 
     return r;
 
@@ -92,34 +118,8 @@ ren_reindeer_unload (RenReindeer *r)
     if (!ren_fini (r))
         _ren_throw_error ("Reindeer finalization failed");
     backend_unref (r->backend);
-    //reindeer_list = _ren_dlist_delete_link (reindeer_list, r->listitem);
+    reindeer_list = _ren_dlist_delete_link (reindeer_list, r->listitem);
     free (r);
-}
-
-void
-ren_clean_up (void)
-{
-    /*
-    if (reindeer_list != NULL)
-    {
-        _ren_throw_error ("Calling reindeer_fini with reindeers still "
-        "loaded. Forcing unload...");
-        while (reindeer_list)
-            reindeer_unload (reindeer_list->data);
-        res = REN_FALSE;
-    }
-    */
-
-    backend_free_all ();
-
-    if (initialized)
-    {
-        lt_dlerror ();
-        if (lt_dlexit () != 0)
-        {
-            _ren_throw_error ("%s", lt_dlerror ());
-        }
-    }
 }
 
 RenBackend*
@@ -129,23 +129,6 @@ ren_backend_find (const char *name)
         return backend_get (name);
     else
         return NULL;
-}
-
-ren_uint
-ren_backend_list (ren_size count, const char *names[], RenBackend *result[])
-{
-    if (!initialize ())
-        return 0;
-    ren_bool res = 0;
-    int i;
-    for (i = 0; i < count; ++i)
-    {
-        RenBackend *backend = backend_get (names[i]);
-        result[i] = backend;
-        if (backend != NULL)
-            ++res;
-    }
-    return res;
 }
 
 RenBackend*

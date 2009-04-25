@@ -63,12 +63,8 @@ ren_data_block_new (const void *data, ren_size size, RenUsage usage)
 }
 
 void
-ren_data_block_destroy (
-    RenDataBlock *datablock,
-    RenDataBlockCallback unload_func, void *user_data)
+ren_data_block_destroy (RenDataBlock *datablock)
 {
-    datablock->unload_func = unload_func;
-    datablock->user_data = user_data;
     _ren_data_block_unref (datablock);
 }
 
