@@ -17,10 +17,10 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
+/* FIXME: Remove */
 #include <ren/tmpl.h>
 
 _REN_FUNC               (init)
-_REN_FUNC               (fini)
 _REN_FUNC               (flush)
 _REN_FUNC               (finish)
 _REN_FUNC               (clear)
@@ -30,12 +30,12 @@ _REN_FUNC               (depth_test)
 _REN_FUNC               (matrix_mode)
 _REN_FUNC_T             (matrix_set,sf)
 _REN_FUNC_T             (matrix_set,df)
-_REN_FUNC_T             (matrix_setT,sf)
-_REN_FUNC_T             (matrix_setT,df)
+_REN_FUNC_T             (matrix_set_transpose,sf)
+_REN_FUNC_T             (matrix_set_transpose,df)
 _REN_FUNC_T             (matrix_mul,sf)
 _REN_FUNC_T             (matrix_mul,df)
-_REN_FUNC_T             (matrix_mulT,sf)
-_REN_FUNC_T             (matrix_mulT,df)
+_REN_FUNC_T             (matrix_mul_transpose,sf)
+_REN_FUNC_T             (matrix_mul_transpose,df)
 _REN_FUNC               (matrix_identity)
 _REN_FUNC               (matrix_push)
 _REN_FUNC               (matrix_pop)
@@ -68,6 +68,7 @@ _REN_FUNC               (light_bind)
 _REN_FUNC               (light_enable)
 _REN_FUNC               (light_disable)
 
+/* FIXME: Includers should do this manually. */
 #undef _REN_FUNC
 #undef _REN_FUNC_T
 #undef _REN_FUNC_TN

@@ -20,65 +20,41 @@
 #ifndef REN_TYPES_H
 #define REN_TYPES_H
 
+#include <glib.h>
+
 /* Datatypes */
 
 typedef struct _RenReindeer     RenReindeer;
 typedef struct _RenBackend      RenBackend;
 
-typedef unsigned char           ren_bool;
-typedef signed char             ren_sbyte;
-typedef unsigned char           ren_ubyte;
-typedef signed short            ren_sshort;
-typedef unsigned short          ren_ushort;
-typedef signed int              ren_sint;
-typedef unsigned int            ren_uint;
-typedef signed long long        ren_slong; /* 64 bit or more. */
-typedef unsigned long long      ren_ulong; /* 64 bit or more. */
-typedef float                   ren_hfloat; /* 16 bit or more. */
-typedef float                   ren_sfloat; /* 32 bit or more. */
-typedef double                  ren_dfloat; /* 64 bit or more. */
-typedef signed short            ren_hfixed; /* 08.08 bit or more. */
-typedef signed int              ren_sfixed; /* 16.16 bit or more. */
-typedef signed long long        ren_dfixed; /* 32.32 bit or more. */
-
-typedef signed int              ren_size;
-typedef signed int              ren_offset;
+typedef gboolean    ren_bool;
+typedef gint8       ren_sint08;
+typedef guint8      ren_uint08;
+typedef gint16      ren_sint16;
+typedef guint16     ren_uint16;
+typedef gint32      ren_sint32;
+typedef guint32     ren_uint32;
+typedef gint64      ren_sint64;
+typedef guint64     ren_uint64;
+typedef gfloat      ren_sfloat;
+typedef gdouble     ren_dfloat;
+typedef gsize       ren_size;
 
 typedef enum
 {
     REN_TYPE_NONE,
     REN_TYPE_BOOL,
-    REN_TYPE_SBYTE,
-    REN_TYPE_UBYTE,
-    REN_TYPE_SSHORT,
-    REN_TYPE_USHORT,
-    REN_TYPE_SINT,
-    REN_TYPE_UINT,
-    REN_TYPE_SLONG,
-    REN_TYPE_ULONG,
-    REN_TYPE_HFLOAT,
+    REN_TYPE_SINT08,
+    REN_TYPE_UINT08,
+    REN_TYPE_SINT16,
+    REN_TYPE_UINT16,
+    REN_TYPE_SINT32,
+    REN_TYPE_UINT32,
+    REN_TYPE_SINT64,
+    REN_TYPE_UINT64,
     REN_TYPE_SFLOAT,
     REN_TYPE_DFLOAT,
-    REN_TYPE_HFIXED,
-    REN_TYPE_SFIXED,
-    REN_TYPE_DFIXED,
 } RenType;
-
-#if defined(REN_DFLOAT_AS_REAL)
-typedef ren_dfloat ren_real;
-#define REN_TYPE_REAL REN_TYPE_DFLOAT
-#elif defined(REN_SFLOAT_AS_REAL)
-typedef ren_sfloat ren_real;
-#define REN_TYPE_REAL REN_TYPE_SFLOAT
-#endif
-
-#define REN_FALSE   0x0
-#define REN_TRUE    0x1
-
-typedef enum
-{
-    REN_LIMIT_MAX_LIGHTS,
-} RenLimit;
 
 typedef enum
 {
@@ -175,5 +151,13 @@ typedef enum
     REN_LIGHT_TYPE_DIRECTIONAL,
     REN_LIGHT_TYPE_SPOT_LIGHT,
 } RenLightType;
+
+#define _REN_FUNC(F)\
+    typedef _REN_RET(F) _REN_FTP(F) _REN_PRM(F);
+#define _REN_FUNC_T(F, T)\
+    typedef _REN_RET_T(F, T) _REN_FTP_T(F, T) _REN_PRM_T(F, T);
+#define _REN_FUNC_TN(F, T, N)\
+    typedef _REN_RET_TN(F, T, N) _REN_FTP_TN(F, T, N) _REN_PRM_TN(F, T, N);
+#include <ren/funcs.h>
 
 #endif /* REN_TYPES_H */

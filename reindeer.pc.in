@@ -7,6 +7,6 @@ includedir=@includedir@
 Name: Reindeer
 Description: Render abstraction library
 Version: @VERSION@
-Requires: 
-Libs: -L${libdir} -lreindeer
+Requires: glib-2.0
+Libs: -L${libdir} -lreindeer -lltdl
 Cflags: -I${includedir}

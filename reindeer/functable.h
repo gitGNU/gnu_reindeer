@@ -20,7 +20,7 @@
 #ifndef _REN_FUNCTABLE_H
 #define _REN_FUNCTABLE_H
 
-#include <ren/funcdefs.h>
+#include <ren/types.h>
 
 struct _RenFuncTable
 {

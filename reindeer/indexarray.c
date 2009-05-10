@@ -19,45 +19,38 @@
 
 #include <ren/ren.h>
 #include <ren/impl.h>
-
-#include <stdlib.h>
+#include <glib.h>
 
 struct _RenIndexArray
 {
-    ren_uint ref;
+    ren_uint32 ref_count;
+
     RenType type;
     RenDataBlock *datablock;
-    ren_offset start;
+    ren_size start;
     ren_size count;
 };
 
 RenIndexArray*
 ren_index_array_new (RenType type, RenDataBlock *datablock,
-    ren_offset start, ren_size count)
+    ren_size start, ren_size count)
 {
-    RenIndexArray *ixarray;
+    RenIndexArray *ixarray = g_new0 (RenIndexArray, 1);
 
-    ixarray = (RenIndexArray *) calloc (1, sizeof (struct _RenIndexArray));
-    if (!ixarray)
-        goto FAIL;
+    ixarray->ref_count = 1;
 
-    ixarray->ref = 1;
     ixarray->type = type;
     ixarray->datablock = datablock;
     ixarray->start = start;
     ixarray->count = count;
 
     return ixarray;
-
-    FAIL:
-    if (ixarray) free (ixarray);
-    return NULL;
 }
 
 RenIndexArray*
-ren_index_array_new_from_range (ren_uint from, ren_uint to)
+ren_index_array_new_from_range (ren_uint32 from, ren_uint32 to)
 {
-    _ren_throw_error ("ren_index_array_new_from_range not implemented.");
+    g_warning ("ren_index_array_new_from_range not implemented.");
     return NULL;
 }
 
@@ -76,21 +69,21 @@ ren_index_array_set_size (RenIndexArray *ixarray, ren_size count)
 void
 _ren_index_array_ref (RenIndexArray *ixarray)
 {
-    ++(ixarray->ref);
+    ++(ixarray->ref_count);
 }
 
 void
 _ren_index_array_unref (RenIndexArray *ixarray)
 {
-    if (--(ixarray->ref) == 0)
-    {
-        free (ixarray);
-    }
+    if (--(ixarray->ref_count) > 0)
+        return;
+
+    g_free (ixarray);
 }
 
 void
 _ren_index_array_data (RenIndexArray *ixarray, RenType *typep,
-    RenDataBlock **datablockp, ren_offset *startp, ren_size *countp)
+    RenDataBlock **datablockp, ren_size *startp, ren_size *countp)
 {
     if (typep)
         (*typep) = ixarray->type;

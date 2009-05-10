@@ -47,31 +47,25 @@
     #define _REN_FUNC_TN    _REN_IMPL_TN
 #endif
 
-typedef ren_bool RenBackendInitFunc (RenBackend *backend);
-typedef ren_bool RenBackendFiniFunc (void);
+typedef ren_bool (* _RenBackendInitFunc) (RenBackend *backend);
+typedef ren_bool (* _RenBackendFiniFunc) (void);
+
+typedef struct _RenBackendData _RenBackendData;
+typedef void (* _RenBackendDataDestroyFunc) (_RenBackendData *backend_data);
 
 typedef struct _RenValue _RenValue;
 struct _RenValue
 {
     RenType type;
-    ren_ubyte num;
+    ren_uint08 num;
     const void *value;
 };
 
 extern void
 _ren_throw_error (const char *format, ...);
 
-extern void*
-_ren_get_backend_data (RenReindeer *r/*, RenBackend *backend*/);
-
-extern void
-_ren_set_backend_data (RenReindeer *r/*, RenBackend *backend*/, void *data);
-
-/*
-extern ren_bool
-reindeer_set_ren_function_ (RenReindeer *r, RenBackend *backend,
-    ren_function_t f, const char *symbol);
-*/
+extern _RenBackendData*
+_ren_backend_data (RenReindeer *r);
 
 extern void
 _ren_data_block_ref (RenDataBlock *datablock);
@@ -85,25 +79,11 @@ _ren_data_block_data (RenDataBlock *datablock, const void **datap,
 
 extern ren_bool
 _ren_data_block_changes (RenDataBlock *datablock, const RenReindeer *r,
-    ren_offset *fromp, ren_offset *top);
-/* NOTE: Backends should use this in a while loop until it returns REN_FALSE.
+    ren_size *fromp, ren_size *top);
+/* NOTE: Backends should use this in a while loop until it returns FALSE.
 By setting fromp = top = NULL, they can force the update list to exhaust. This
 is useful for times when backends don't need to receive these events, but they
 still need to clear the list to prevent it from filling up.  */
-
-extern void
-_ren_vertex_array_data (RenVertexArray *vxarray, RenDataBlock **datablockp,
-    ren_offset *startp, ren_size *countp, ren_size *stridep);
-
-#if 0
-extern void*
-_ren_vertex_array_get_backend_data (RenVertexArray *vxarray,
-    const RenReindeer *r);
-
-extern void
-_ren_vertex_array_set_backend_data (RenVertexArray *vxarray,
-    const RenReindeer *r, void *data);
-#endif
 
 extern void
 _ren_coord_array_ref (RenCoordArray *vxarray);
@@ -112,7 +92,12 @@ extern void
 _ren_coord_array_unref (RenCoordArray *vxarray);
 
 extern void
-_ren_coord_array_type (RenCoordArray *vxarray, RenType *typep, ren_uint *nump);
+_ren_coord_array_data (RenCoordArray *vxarray, RenDataBlock **datablockp,
+    ren_size *startp, ren_size *countp, ren_size *stridep);
+
+extern void
+_ren_coord_array_type (RenCoordArray *vxarray,
+    RenType *typep, ren_uint08 *nump);
 
 extern void
 _ren_color_array_ref (RenColorArray *vxarray);
@@ -121,7 +106,12 @@ extern void
 _ren_color_array_unref (RenColorArray *vxarray);
 
 extern void
-_ren_color_array_type (RenColorArray *vxarray, RenType *typep, ren_uint *nump);
+_ren_color_array_data (RenColorArray *vxarray, RenDataBlock **datablockp,
+    ren_size *startp, ren_size *countp, ren_size *stridep);
+
+extern void
+_ren_color_array_type (RenColorArray *vxarray,
+    RenType *typep, ren_uint08 *nump);
 
 extern void
 _ren_normal_array_ref (RenNormalArray *vxarray);
@@ -130,7 +120,12 @@ extern void
 _ren_normal_array_unref (RenNormalArray *vxarray);
 
 extern void
-_ren_normal_array_type (RenNormalArray *vxarray, RenType *typep, ren_uint *nump);
+_ren_normal_array_data (RenNormalArray *vxarray, RenDataBlock **datablockp,
+    ren_size *startp, ren_size *countp, ren_size *stridep);
+
+extern void
+_ren_normal_array_type (RenNormalArray *vxarray,
+    RenType *typep, ren_uint08 *nump);
 
 
 extern void
@@ -141,7 +136,7 @@ _ren_index_array_unref (RenIndexArray *ixarray);
 
 extern void
 _ren_index_array_data (RenIndexArray *ixarray, RenType *typep,
-    RenDataBlock **datablockp, ren_offset *startp, ren_size *countp);
+    RenDataBlock **datablockp, ren_size *startp, ren_size *countp);
 
 
 extern void

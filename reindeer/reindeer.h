@@ -21,20 +21,27 @@
 #define _REN_REINDEER_H
 
 #include <ren/types.h>
-#include <ren/util.h>
+#include <ren/impl.h>
+#include <ltdl.h>
+
 #include "functable.h"
 
 struct _RenReindeer
 {
     RenBackend *backend;
-    void *backend_data;
-    _RenDList *listitem;
-
-    ren_uint shareid_vxbuffer;
-    ren_uint shareid_object;
-    ren_uint shareid_texture;
-
+    _RenBackendData *backend_data;
     struct _RenFuncTable ft;
+};
+
+struct _RenBackend
+{
+    ren_uint32 ref_count;
+    char *name;
+    char *version;
+    lt_dlhandle libhandle;
+    ren_size backend_data_size;
+    _RenBackendDataDestroyFunc backend_data_destroy;
+    struct _RenFuncTable *ft;
 };
 
 #endif /* _REN_REINDEER_H */

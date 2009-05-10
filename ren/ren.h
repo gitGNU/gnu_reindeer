@@ -30,20 +30,23 @@
 #define _REN_FUNC_TN(F, T, N)\
     extern _REN_RET_TN(F, T, N) _REN_SYM_TN(F, T, N) _REN_PRM_TN(F, T, N);
 
-extern RenReindeer*
-ren_reindeer_load (RenBackend *backend);
+extern ren_bool
+ren_library_init (void);
 
 extern void
-ren_reindeer_unload (RenReindeer *r);
+ren_library_exit (void);
 
-extern RenBackend*
-ren_backend_find (const char *name);
+extern RenReindeer*
+ren_load (RenBackend *backend);
+
+extern void
+ren_unload (RenReindeer *r);
 
 extern RenBackend*
 ren_backend (RenReindeer *r);
 
-extern const char*
-ren_error (void);
+extern RenBackend*
+ren_lookup_backend (const char *name);
 
 static inline ren_size
 ren_type_sizeof (RenType type)
@@ -52,20 +55,16 @@ ren_type_sizeof (RenType type)
     {
         0,                      /*REN_TYPE_NONE*/
         sizeof (ren_bool),      /*REN_TYPE_BOOL*/
-        sizeof (ren_sbyte),     /*REN_TYPE_SBYTE*/
-        sizeof (ren_ubyte),     /*REN_TYPE_UBYTE*/
-        sizeof (ren_sshort),    /*REN_TYPE_SSHORT*/
-        sizeof (ren_ushort),    /*REN_TYPE_USHORT*/
-        sizeof (ren_sint),      /*REN_TYPE_SINT*/
-        sizeof (ren_uint),      /*REN_TYPE_UINT*/
-        sizeof (ren_slong),     /*REN_TYPE_SLONG*/
-        sizeof (ren_ulong),     /*REN_TYPE_ULONG*/
-        sizeof (ren_hfloat),    /*REN_TYPE_HFLOAT*/
+        sizeof (ren_sint08),    /*REN_TYPE_SINT08*/
+        sizeof (ren_uint08),    /*REN_TYPE_UINT08*/
+        sizeof (ren_sint16),    /*REN_TYPE_SINT16*/
+        sizeof (ren_uint16),    /*REN_TYPE_UINT16*/
+        sizeof (ren_sint16),    /*REN_TYPE_SINT32*/
+        sizeof (ren_uint16),    /*REN_TYPE_UINT32*/
+        sizeof (ren_sint32),    /*REN_TYPE_SINT64*/
+        sizeof (ren_uint32),    /*REN_TYPE_UINT64*/
         sizeof (ren_sfloat),    /*REN_TYPE_SFLOAT*/
         sizeof (ren_dfloat),    /*REN_TYPE_DFLOAT*/
-        sizeof (ren_hfixed),    /*REN_TYPE_HFIXED*/
-        sizeof (ren_sfixed),    /*REN_TYPE_SFIXED*/
-        sizeof (ren_dfixed),    /*REN_TYPE_DFIXED*/
     };
     if (type < (sizeof (type_sizes)/sizeof (type_sizes[0])))
         return type_sizes[type];
@@ -107,7 +106,7 @@ extern void
 ren_data_block_resized (RenDataBlock *datablock, ren_size size);
 
 extern void
-ren_data_block_changed (RenDataBlock *datablock, ren_offset from, ren_offset to);
+ren_data_block_changed (RenDataBlock *datablock, ren_size from, ren_size to);
 /* Signal the data changed in the range from 'from' to, but exclusive, 'to'.
 If 'from' is 0 and 'to' is -1, the whole is updated.
 
@@ -120,8 +119,8 @@ the order they come. So 1-4,6-10,20-count should be called in that order.
 #if 0
 extern RenVertexArray*
 ren_vertex_array_new (
-    RenVertexArrayType vxtype, RenType type, ren_ubyte num,
-    RenDataBlock *datablock, ren_offset start, ren_size count, ren_size stride);
+    RenVertexArrayType vxtype, RenType type, ren_uint08 num,
+    RenDataBlock *datablock, ren_size start, ren_size count, ren_size stride);
 /*  num = number of elements of type (e.g. float[3]),
     count = number of elements in vxarray.
     start = offset in basic machine units.  */
@@ -131,8 +130,8 @@ ren_vertex_array_destroy (RenVertexArray *vxarray);
 #endif
 
 extern RenCoordArray*
-ren_coord_array_new (RenType type, ren_ubyte num,
-    RenDataBlock *datablock, ren_offset start, ren_size count, ren_size stride);
+ren_coord_array_new (RenType type, ren_uint08 num,
+    RenDataBlock *datablock, ren_size start, ren_size count, ren_size stride);
 
 extern void
 ren_coord_array_destroy (RenCoordArray *vxarray);
@@ -141,8 +140,8 @@ extern void
 ren_coord_array_set_size (RenCoordArray *vxarray, ren_size count);
 
 extern RenColorArray*
-ren_color_array_new (RenType type, ren_ubyte num,
-    RenDataBlock *datablock, ren_offset start, ren_size count, ren_size stride);
+ren_color_array_new (RenType type, ren_uint08 num,
+    RenDataBlock *datablock, ren_size start, ren_size count, ren_size stride);
 
 extern void
 ren_color_array_destroy (RenColorArray *vxarray);
@@ -151,8 +150,8 @@ extern void
 ren_color_array_set_size (RenColorArray *vxarray, ren_size count);
 
 extern RenNormalArray*
-ren_normal_array_new (RenType type, ren_ubyte num,
-    RenDataBlock *datablock, ren_offset start, ren_size count, ren_size stride);
+ren_normal_array_new (RenType type, ren_uint08 num,
+    RenDataBlock *datablock, ren_size start, ren_size count, ren_size stride);
 
 extern void
 ren_normal_array_destroy (RenNormalArray *vxarray);
@@ -164,10 +163,10 @@ ren_normal_array_set_size (RenNormalArray *vxarray, ren_size count);
 
 extern RenIndexArray*
 ren_index_array_new (RenType type, RenDataBlock *datablock,
-    ren_offset start, ren_size count);
+    ren_size start, ren_size count);
 
 extern RenIndexArray*
-ren_index_array_new_from_range (ren_uint from, ren_uint to);
+ren_index_array_new_from_range (ren_uint32 from, ren_uint32 to);
 
 extern void
 ren_index_array_destroy (RenIndexArray *ixarray);
@@ -185,7 +184,7 @@ ren_light_destroy (RenLight *light);
 
 #define _REN_RET_light_color(T) void
 #define _REN_PRM_light_color(T)\
-    (RenLight *light, ren_ubyte components, const _REN_TYPE(T) *color)
+    (RenLight *light, ren_uint08 components, const _REN_TYPEN(T) *color)
 #define _REN_ARG_light_color    (light, components, color)
 
 #define _REN_RET_light_ambient _REN_RET_light_color
@@ -220,7 +219,7 @@ _REN_FUNC_DIR (light_direction)
 
 #define _REN_RET_light_attenuation(T)   void
 #define _REN_PRM_light_attenuation(T)\
-    (RenLight *light, ren_ubyte degree, const _REN_TYPE(T) *k)
+    (RenLight *light, ren_uint08 degree, const _REN_TYPEN(T) *k)
 #define _REN_ARG_light_attenuation      (light, degree, pos)
 _REN_FUNC_T (light_attenuation,sf)
 _REN_FUNC_T (light_attenuation,df)
@@ -231,22 +230,5 @@ ren_light_position_s4 (RenLight *light, ren_sfloat position[4]);
 */
 
 #include <ren/funcs.h>
-
-/* Aliases */
-
-#if defined(REN_DFLOAT_AS_REAL)
-/*TODO: Add similar macros like for single float below. */
-#elif defined(REN_SFLOAT_AS_REAL)
-#define ren_clear_color         ren_clear_color_sf
-#define ren_clear_depth         ren_clear_depth_sf
-#define ren_matrix_set          ren_matrix_set_sf
-#define ren_matrix_setT         ren_matrix_setT_sf
-#define ren_matrix_mul          ren_matrix_mul_sf
-#define ren_matrix_mulT         ren_matrix_mulT_sf
-#define ren_lighting_ambient    ren_lighting_ambient_sf
-#define ren_light_ambient       ren_light_ambient_sf
-#define ren_light_diffuse       ren_light_diffuse_sf
-#define ren_light_specular      ren_light_specular_sf
-#endif
 
 #endif /* REN_REN_H */

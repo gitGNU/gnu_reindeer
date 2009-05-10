@@ -1,9 +1,3 @@
 includedir = @includedir@/ren
-include_HEADERS =   \
-    funcdefs.h      \
-    funcs.h         \
-    impl.h          \
-    ren.h           \
-    tmpl.h          \
-    types.h         \
-    util.h
+include_HEADERS = \
+    ren.h types.h real.h impl.h tmpl.h funcs.h

@@ -17,46 +17,42 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "vertexarray.h"
-
 #include <ren/ren.h>
 #include <ren/impl.h>
-
-#include <stdlib.h>
+#include <glib.h>
 
 struct _RenCoordArray
 {
-    RenVertexArray parent;
+    ren_uint32 ref_count;
+
+    RenDataBlock *datablock;
+    ren_size start;
+    ren_size count;
+    ren_size stride;
 
     RenType type;
-    ren_ubyte num;
+    ren_uint08 num;
 };
 
 RenCoordArray*
-ren_coord_array_new (RenType type, ren_ubyte num,
-    RenDataBlock *datablock, ren_offset start, ren_size count, ren_size stride)
+ren_coord_array_new (RenType type, ren_uint08 num,
+    RenDataBlock *datablock, ren_size start, ren_size count, ren_size stride)
 {
-    RenCoordArray *vxarray;
-
-    vxarray = (RenCoordArray *) calloc (1, sizeof (struct _RenCoordArray));
-    if (!vxarray)
-        goto FAIL;
-
-    if (!_ren_vertex_array_init (&(vxarray->parent),
-        datablock, start, count, stride))
-    {
-        goto FAIL;
-    }
-
     /* FIXME: Check type and num input... */
+
+    RenCoordArray *vxarray = g_new0 (RenCoordArray, 1);
+
+    vxarray->ref_count = 1;
+
+    vxarray->datablock = datablock;
+    vxarray->start = start;
+    vxarray->count = count;
+    vxarray->stride = stride;
+
     vxarray->type = type;
     vxarray->num = num;
 
     return vxarray;
-
-    FAIL:
-    if (vxarray) free (vxarray);
-    return NULL;
 }
 
 void
@@ -68,26 +64,41 @@ ren_coord_array_destroy (RenCoordArray *vxarray)
 void
 ren_coord_array_set_size (RenCoordArray *vxarray, ren_size count)
 {
-    vxarray->parent.count = count;
+    vxarray->count = count;
 }
 
 void
 _ren_coord_array_ref (RenCoordArray *vxarray)
 {
-    ++(vxarray->parent.ref);
+    ++(vxarray->ref_count);
 }
 
 void
 _ren_coord_array_unref (RenCoordArray *vxarray)
 {
-    if (--(vxarray->parent.ref) == 0)
-    {
-        free (vxarray);
-    }
+    if (--(vxarray->ref_count) > 0)
+        return;
+
+    g_free (vxarray);
 }
 
 void
-_ren_coord_array_type (RenCoordArray *vxarray, RenType *typep, ren_uint *nump)
+_ren_coord_array_data (RenCoordArray *vxarray, RenDataBlock **datablockp,
+    ren_size *startp, ren_size *countp, ren_size *stridep)
+{
+    if (datablockp)
+        (*datablockp) = vxarray->datablock;
+    if (startp)
+        (*startp) = vxarray->start;
+    if (countp)
+        (*countp) = vxarray->count;
+    if (stridep)
+        (*stridep) = vxarray->stride;
+}
+
+void
+_ren_coord_array_type (RenCoordArray *vxarray,
+    RenType *typep, ren_uint08 *nump)
 {
     if (typep)
         (*typep) = vxarray->type;

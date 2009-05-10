@@ -17,46 +17,42 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include "vertexarray.h"
-
 #include <ren/ren.h>
 #include <ren/impl.h>
-
-#include <stdlib.h>
+#include <glib.h>
 
 struct _RenNormalArray
 {
-    RenVertexArray parent;
+    ren_uint32 ref_count;
+
+    RenDataBlock *datablock;
+    ren_size start;
+    ren_size count;
+    ren_size stride;
 
     RenType type;
-    ren_ubyte num;
+    ren_uint08 num;
 };
 
 RenNormalArray*
-ren_normal_array_new (RenType type, ren_ubyte num,
-    RenDataBlock *datablock, ren_offset start, ren_size count, ren_size stride)
+ren_normal_array_new (RenType type, ren_uint08 num,
+    RenDataBlock *datablock, ren_size start, ren_size count, ren_size stride)
 {
-    RenNormalArray *vxarray;
-
-    vxarray = (RenNormalArray *) calloc (1, sizeof (struct _RenNormalArray));
-    if (!vxarray)
-        goto FAIL;
-
-    if (!_ren_vertex_array_init (&(vxarray->parent),
-        datablock, start, count, stride))
-    {
-        goto FAIL;
-    }
-
     /* FIXME: Check type and num input... */
+
+    RenNormalArray *vxarray = g_new0 (RenNormalArray, 1);
+
+    vxarray->ref_count = 1;
+
+    vxarray->datablock = datablock;
+    vxarray->start = start;
+    vxarray->count = count;
+    vxarray->stride = stride;
+
     vxarray->type = type;
     vxarray->num = num;
 
     return vxarray;
-
-    FAIL:
-    if (vxarray) free (vxarray);
-    return NULL;
 }
 
 void
@@ -68,26 +64,41 @@ ren_normal_array_destroy (RenNormalArray *vxarray)
 void
 ren_normal_array_set_size (RenNormalArray *vxarray, ren_size count)
 {
-    vxarray->parent.count = count;
+    vxarray->count = count;
 }
 
 void
 _ren_normal_array_ref (RenNormalArray *vxarray)
 {
-    ++(vxarray->parent.ref);
+    ++(vxarray->ref_count);
 }
 
 void
 _ren_normal_array_unref (RenNormalArray *vxarray)
 {
-    if (--(vxarray->parent.ref) == 0)
-    {
-        free (vxarray);
-    }
+    if (--(vxarray->ref_count) > 0)
+        return;
+
+    g_free (vxarray);
 }
 
 void
-_ren_normal_array_type (RenNormalArray *vxarray, RenType *typep, ren_uint *nump)
+_ren_normal_array_data (RenNormalArray *vxarray, RenDataBlock **datablockp,
+    ren_size *startp, ren_size *countp, ren_size *stridep)
+{
+    if (datablockp)
+        (*datablockp) = vxarray->datablock;
+    if (startp)
+        (*startp) = vxarray->start;
+    if (countp)
+        (*countp) = vxarray->count;
+    if (stridep)
+        (*stridep) = vxarray->stride;
+}
+
+void
+_ren_normal_array_type (RenNormalArray *vxarray,
+    RenType *typep, ren_uint08 *nump)
 {
     if (typep)
         (*typep) = vxarray->type;

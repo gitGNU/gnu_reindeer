@@ -19,19 +19,12 @@
 
 #include <ren/ren.h>
 #include <ren/impl.h>
-
-#include <stdlib.h>
+#include <glib.h>
 
 struct _RenDataBlock
 {
-    ren_uint ref;
-#if 0
-    ren_array__t *shares; /* of ren_pointer */
-    ren_dlist__t *updates; /* of struct {ren_offset from, ren_offset to} */
+    ren_uint32 ref_count;
 
-    /*???*/ vxarrays; /* Arrays defined by this datablock. */
-    /* TODO: Possibly other things defined by this datablock. */
-#endif
     RenDataBlockCallback reload_func;
     RenDataBlockCallback unload_func;
     void *user_data;
@@ -44,22 +37,14 @@ struct _RenDataBlock
 RenDataBlock*
 ren_data_block_new (const void *data, ren_size size, RenUsage usage)
 {
-    RenDataBlock *datablock;
+    RenDataBlock *datablock = g_new0 (RenDataBlock, 1);
 
-    datablock = (RenDataBlock *) calloc (1, sizeof (struct _RenDataBlock));
-    if (!datablock)
-        goto FAIL;
-
-    datablock->ref = 1;
+    datablock->ref_count = 1;
     datablock->data = data;
     datablock->size = size;
     datablock->usage = usage;
 
     return datablock;
-
-    FAIL:
-    if (datablock) free (datablock);
-    return NULL;
 }
 
 void
@@ -106,18 +91,18 @@ ren_data_block_changed (RenDataBlock *datablock,
 void
 _ren_data_block_ref (RenDataBlock *datablock)
 {
-    ++(datablock->ref);
+    ++(datablock->ref_count);
 }
 
 void
 _ren_data_block_unref (RenDataBlock *datablock)
 {
-    if (--(datablock->ref) == 0)
-    {
-        if (datablock->unload_func != NULL)
-            datablock->unload_func (NULL, datablock->user_data);
-        free (datablock);
-    }
+    if (--(datablock->ref_count) > 0)
+        return;
+
+    if (datablock->unload_func != NULL)
+        datablock->unload_func (NULL, datablock->user_data);
+    g_free (datablock);
 }
 
 void

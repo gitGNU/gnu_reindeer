@@ -4,36 +4,35 @@ AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([config.h.in])
 AC_CONFIG_HEADER([config.h])
+AC_CONFIG_LIBOBJ_DIR([libgnu])
 LT_CONFIG_LTDL_DIR([libltdl])
-AM_INIT_AUTOMAKE
+AM_INIT_AUTOMAKE([subdir-objects])
 LT_INIT([dlopen])
-LTDL_INIT([installable])
+LTDL_INIT([recursive installable])
 
 # Checks for programs.
 AC_PROG_CC
 GNULIB_EARLY
-AC_PROG_CPP
-AC_PROG_INSTALL
 
 # Checks for libraries.
-
+PKG_CHECK_MODULES(GLIB, glib-2.0)
+AC_SUBST(GLIB_CFLAGS)
+AC_SUBST(GLIB_LIBS)
 
 # Checks for header files.
-AC_HEADER_STDC
-AC_CHECK_HEADERS([stdlib.h string.h])
 
 # Checks for typedefs, structures, and compiler characteristics.
 AC_C_CONST
 AC_C_INLINE
 
 # Checks for library functions.
-#AC_FUNC_MALLOC
-#AC_CHECK_FUNCS([strdup])
-
 GNULIB_INIT
+
+# Output
 AC_CONFIG_FILES([
     Makefile
     libgnu/Makefile
+    libltdl/Makefile
     reindeer.pc
     ren/Makefile
     reindeer/Makefile

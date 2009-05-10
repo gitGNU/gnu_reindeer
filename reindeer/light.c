@@ -19,73 +19,35 @@
 
 #include <ren/ren.h>
 #include <ren/impl.h>
-#include "impl-macros.h"
+#include <glib.h>
 
-#include <stdlib.h>
+#include "impl-macros.h"
 
 struct _RenLight
 {
-    ren_uint ref;
+    ren_uint32 ref_count;
+
     RenLightType type;
+
     _RenValue ambient;
     _RenValue diffuse;
     _RenValue specular;
-    union
-    {
-        void *data;
-        struct _RenLightPointLight
-        {
-            _RenValue attenuation;
-        } *point_light;
-        struct _RenLightDirectional
-        {
-        } *directional;
-        struct _RenLightSpotLight
-        {
-            _RenValue attenuation;
-            _RenValue cutoff;
-            _RenValue exponent;
-        } *spot_light;
-    };
+
+    _RenValue attenuation;
+    _RenValue cutoff;
+    _RenValue exponent;
 };
 
 RenLight*
 ren_light_new (RenLightType type)
 {
-    RenLight *light;
+    RenLight *light = g_new0 (RenLight, 1);
 
-    switch (type)
-    {
-        case REN_LIGHT_TYPE_POINT_LIGHT:
-            light = (RenLight *) calloc (1,
-                sizeof (struct _RenLight) +
-                sizeof (struct _RenLightPointLight));
-            break;
-        case REN_LIGHT_TYPE_DIRECTIONAL:
-            light = (RenLight *) calloc (1,
-                sizeof (struct _RenLight) +
-                sizeof (struct _RenLightDirectional));
-            break;
-        case REN_LIGHT_TYPE_SPOT_LIGHT:
-            light = (RenLight *) calloc (1,
-                sizeof (struct _RenLight) +
-                sizeof (struct _RenLightSpotLight));
-            break;
-        default:
-            goto FAIL;
-    }
-    if (!light)
-        goto FAIL;
+    light->ref_count = 1;
 
-    light->ref = 1;
     light->type = type;
-    light->data = light + sizeof (struct _RenLight);
 
     return light;
-
-    FAIL:
-    if (light) free (light);
-    return NULL;
 }
 
 void
@@ -97,16 +59,16 @@ ren_light_destroy (RenLight *light)
 void
 _ren_light_ref (RenLight *light)
 {
-    ++(light->ref);
+    ++(light->ref_count);
 }
 
 void
 _ren_light_unref (RenLight *light)
 {
-    if (--(light->ref) == 0)
-    {
-        free (light);
-    }
+    if (--(light->ref_count) > 0)
+        return;
+
+    g_free (light);
 }
 
 void
@@ -133,7 +95,7 @@ _ren_light_data_point_light (RenLight *light,
     if (light->type != REN_LIGHT_TYPE_POINT_LIGHT)
         return;
     if (attenuationp)
-        (*attenuationp) = &(light->point_light->attenuation);
+        (*attenuationp) = &(light->attenuation);
 }
 
 void
@@ -145,11 +107,11 @@ _ren_light_data_spot_light (RenLight *light,
     if (light->type != REN_LIGHT_TYPE_SPOT_LIGHT)
         return;
     if (attenuationp)
-        (*attenuationp) = &(light->spot_light->attenuation);
+        (*attenuationp) = &(light->attenuation);
     if (cutoffp)
-        (*cutoffp) = &(light->spot_light->cutoff);
+        (*cutoffp) = &(light->cutoff);
     if (exponentp)
-        (*exponentp) = &(light->spot_light->exponent);
+        (*exponentp) = &(light->exponent);
 }
 
 #define _REN_IMPL_CODE_T(F, T)\
@@ -174,19 +136,9 @@ _REN_FUNC_CLAMP (light_specular)
 #undef _REN_IMPL_CODE_T
 
 #define _REN_IMPL_CODE_T(F, T)\
-    switch(light->type)\
-    {\
-        case REN_LIGHT_TYPE_POINT_LIGHT:\
-            light->point_light->attenuation.type = _REN_TYPEV(T);\
-            light->point_light->attenuation.num = degree + 1;\
-            light->point_light->attenuation.value = k;\
-        break;\
-        case REN_LIGHT_TYPE_SPOT_LIGHT:\
-            light->spot_light->attenuation.type = _REN_TYPEV(T);\
-            light->spot_light->attenuation.num = degree + 1;\
-            light->spot_light->attenuation.value = k;\
-        break;\
-    }
+    light->attenuation.type = _REN_TYPEV(T);\
+    light->attenuation.num = degree + 1;\
+    light->attenuation.value = k;
 _REN_FUNC_T (light_attenuation,sf)
 _REN_FUNC_T (light_attenuation,df)
 #undef _REN_IMPL_CODE_T

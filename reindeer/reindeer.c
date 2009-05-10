@@ -18,72 +18,85 @@
 */
 
 #include <ren/ren.h>
-#include <ren/impl.h>
-
-#include <stdlib.h>
-#include <string.h>
-#include <ltdl.h>
+#include <glib.h>
 
 #include "reindeer.h"
-#include "backend.h"
 
-static _RenDList* reindeer_list = NULL;
-static ren_bool initialized = REN_FALSE;
+static GHashTable *backend_table = NULL;
+static ren_bool initialized = FALSE;
 
-static void
-clean_up (void);
-
+static RenBackend*
+backend_get (const char* name);
 static ren_bool
-initialize (void)
-{
-    if (!initialized)
-    {
-        lt_dlerror ();
-        if (lt_dlinit () != 0)
-        {
-            _ren_throw_error ("%s", lt_dlerror ());
-            return REN_FALSE;
-        }
-        if (atexit (clean_up) != 0)
-        {
-            _ren_throw_error ("Reindeer cannot clean up on exit.");
-        }
-    }
-    return REN_TRUE;
-}
-
+backend_ref (RenBackend *backend);
 static void
-clean_up (void)
+backend_unref (RenBackend *backend);
+static void
+backend_destroy (RenBackend *backend);
+
+ren_bool
+ren_library_init (void)
 {
     if (initialized)
+        return TRUE;
+
+    if (lt_dlinit () != 0)
     {
-        while (reindeer_list)
-            reindeer_unload (reindeer_list->data);
+        g_warning ("%s", lt_dlerror ());
+        return FALSE;
+    }
 
-        backend_free_all ();
+    const char *renlibdir_path = AC_libdir "/reindeer";
+    const char *reindeer_path = g_getenv ("REINDEER_PATH");
+    char *search_paths;
+    if (reindeer_path)
+    {
+        search_paths = g_strjoin ((gchar[]){LT_PATHSEP_CHAR, '\0'},
+            reindeer_path, renlibdir_path, NULL);
+    }
+    else
+    {
+        search_paths = g_strdup (renlibdir_path);
+    }
+    if (lt_dlsetsearchpath (search_paths) != 0)
+    {
+        g_free (search_paths);
+        g_warning ("LTDL error on setting search path: %s", lt_dlerror ());
+        return FALSE;
+    }
+    g_free (search_paths);
 
-        lt_dlerror ();
-        if (lt_dlexit () != 0)
-        {
-            _ren_throw_error ("%s", lt_dlerror ());
-        }
+    backend_table = g_hash_table_new_full (
+        g_str_hash, g_str_equal, NULL, (GDestroyNotify) backend_destroy);
+
+    initialized = TRUE;
+    return TRUE;
+}
+
+void
+ren_library_exit (void)
+{
+    if (!initialized)
+        return;
+
+    g_hash_table_destroy (backend_table);
+
+    if (lt_dlexit () != 0)
+    {
+        g_warning ("LTDL error on exit: %s", lt_dlerror ());
     }
 }
 
 RenReindeer*
-ren_reindeer_load (RenBackend *backend)
+ren_load (RenBackend *backend)
 {
-    if (!initialize ()) return NULL;
-
-    if (!backend_ref (backend))
+    if (!initialized || backend == NULL || !backend_ref (backend))
         return NULL;
 
-    RenReindeer *r = NULL;
+    RenReindeer *r = g_new (RenReindeer, 1);
 
-    r = (RenReindeer *) calloc (1, sizeof (struct _RenReindeer));
-    if (!r)
-        goto FAIL;
-
+    r->backend = backend;
+    r->backend_data = g_malloc0 (backend->backend_data_size);
     struct _RenFuncTable *backend_ft = backend->ft;
     #define SET_FUNCTION(f) r->ft.f = backend_ft->f;
     #define _REN_FUNC(F) SET_FUNCTION(_REN_FNM(F))
@@ -92,43 +105,22 @@ ren_reindeer_load (RenBackend *backend)
     #include <ren/funcs.h>
     #undef SET_FUNCTION
 
-    /* TODO: Implement the share mechanism.  */
-
-    r->backend = backend;
-
-    if (!ren_init (r))
-    {
-        _ren_throw_error ("Reindeer initialization failed");
-        goto FAIL;
-    }
-
-    r->listitem = reindeer_list = _ren_dlist_prepend (reindeer_list, r);
-
     return r;
-
-    FAIL:
-    backend_unref (backend);
-    if (r) free (r);
-    return NULL;
 }
 
 void
-ren_reindeer_unload (RenReindeer *r)
+ren_unload (RenReindeer *r)
 {
-    if (!ren_fini (r))
-        _ren_throw_error ("Reindeer finalization failed");
-    backend_unref (r->backend);
-    reindeer_list = _ren_dlist_delete_link (reindeer_list, r->listitem);
-    free (r);
-}
+    if (!initialized || r == NULL)
+        return;
 
-RenBackend*
-ren_backend_find (const char *name)
-{
-    if (initialize ())
-        return backend_get (name);
-    else
-        return NULL;
+    _RenBackendDataDestroyFunc backend_data_destroy =
+        r->backend->backend_data_destroy;
+    if (backend_data_destroy != NULL)
+        backend_data_destroy (r->backend_data);
+    g_free (r->backend_data);
+    backend_unref (r->backend);
+    g_free (r);
 }
 
 RenBackend*
@@ -137,16 +129,29 @@ ren_backend (RenReindeer *r)
     return r->backend;
 }
 
-void*
-_ren_get_backend_data (RenReindeer *r/*, RenBackend *backend*/)
+_RenBackendData*
+_ren_backend_data (RenReindeer *r)
 {
     return r->backend_data;
 }
 
-void
-_ren_set_backend_data (RenReindeer *r/*, RenBackend *backend*/, void *data)
+RenBackend*
+ren_lookup_backend (const char *name)
 {
-    r->backend_data = data;
+    if (!initialized)
+        return NULL;
+
+    const char *i = name;
+    while (*(++i) != '\0')
+    {
+        if (*i < 'a' || *i > 'z')
+        {
+            g_warning ("Not a valid backend name: %s", name);
+            return NULL;
+        }
+    }
+
+    return backend_get (name);
 }
 
 #define _REN_FUNC(F)\
@@ -162,3 +167,162 @@ _ren_set_backend_data (RenReindeer *r/*, RenBackend *backend*/, void *data)
         return r->ft._REN_FNM_TN(F, T, N) _REN_ARG(F);\
     }
 #include <ren/funcs.h>
+
+static lt_dlhandle
+backend_load (const char *name)
+{
+    char *libname = g_strjoin ("-", "libreindeer", name, NULL);
+
+    lt_dlerror ();
+    lt_dlhandle libhandle = lt_dlopenext (libname);
+    g_free (libname);
+    if (libhandle == NULL)
+    {
+        g_warning ("Could not load backend `%s': %s",
+            name, lt_dlerror ());
+        return NULL;
+    }
+    /* FIXME: Make sure it checks the libtool version of the library?  */
+
+    return libhandle;
+}
+
+static RenBackend*
+backend_get (const char* name)
+{
+    RenBackend *backend = g_hash_table_lookup (backend_table, name);
+    if (backend != NULL)
+        return backend;
+
+    lt_dlhandle libhandle = backend_load (name);
+    if (libhandle == NULL)
+        goto FAIL;
+
+    backend = g_new0 (RenBackend, 1);
+    backend->name = g_strdup (name);
+
+    g_hash_table_insert (backend_table, backend->name, backend);
+
+    if (lt_dlclose (libhandle) != 0)
+    {
+        g_warning ("LTDL error on closing: %s", lt_dlerror ());
+    }
+    return backend;
+
+    FAIL:
+    if (libhandle) lt_dlclose (libhandle);
+    if (backend)
+    {
+        if (backend->name) g_free (backend->name);
+        g_free (backend);
+    }
+    return NULL;
+}
+
+static inline void*
+backend_symbol (lt_dlhandle libhandle,
+    const char *backend_name, const char* func)
+{
+    char *symbolname = g_strjoin ("__", "ren", backend_name, func, NULL);
+    void *symbol = lt_dlsym (libhandle, symbolname);
+    g_free (symbolname);
+    return symbol;
+}
+
+static ren_bool
+backend_ref (RenBackend *backend)
+{
+    if (++(backend->ref_count) != 1)
+        return TRUE;
+
+    lt_dlhandle libhandle = NULL;
+    ren_size backend_data_size = 0;
+    struct _RenFuncTable *ft = NULL;
+
+    const char *name = backend->name;
+
+    libhandle = backend_load (name);
+    if (libhandle == NULL)
+        goto FAIL;
+
+    _RenBackendInitFunc backend_init =
+        backend_symbol (libhandle, name, "backend_init");
+    if (backend_init != NULL && !backend_init (backend))
+    {
+        g_warning ("Backend initialization failed");
+        goto FAIL;
+    }
+
+    ren_size *bdsp = backend_symbol (libhandle, name, "backend_data_size");
+    if (bdsp != NULL)
+        backend_data_size = *bdsp;
+
+    _RenBackendDataDestroyFunc backend_data_destroy =
+        backend_symbol (libhandle, name, "backend_data_destroy");
+
+    ft = g_new (struct _RenFuncTable, 1);
+    ren_bool loading_error = FALSE;
+    #define XSTR(s) STR(s)
+    #define STR(s) #s
+    #define LOAD_SYMBOL(func,type)\
+        if ((ft->func = (type *)\
+            backend_symbol (libhandle, name, XSTR(func))) == NULL)\
+        {\
+            g_warning ("Function `%s' could not be found.", XSTR(func));\
+            loading_error = TRUE;\
+        }
+    #define _REN_FUNC(F)\
+        LOAD_SYMBOL(_REN_FNM(F), _REN_FTP(F))
+    #define _REN_FUNC_T(F, T)\
+        LOAD_SYMBOL(_REN_FNM_T(F, T), _REN_FTP_T(F, T))
+    #define _REN_FUNC_TN(F, T, N)\
+        LOAD_SYMBOL(_REN_FNM_TN(F, T, N), _REN_FTP_TN(F, T, N))
+    #include <ren/funcs.h>
+    #undef LOAD_SYMBOL
+    #undef STR
+    #undef XSTR
+    if (loading_error)
+        goto FAIL;
+
+    backend->libhandle = libhandle;
+    backend->backend_data_size = backend_data_size;
+    backend->backend_data_destroy = backend_data_destroy;
+    backend->ft = ft;
+
+    return TRUE;
+
+    FAIL:
+    --(backend->ref_count);
+    if (libhandle) lt_dlclose (libhandle);
+    if (ft) g_free (ft);
+    return FALSE;
+}
+
+static void
+backend_unref (RenBackend *backend)
+{
+    if (--(backend->ref_count) > 0)
+        return;
+
+    _RenBackendFiniFunc backend_fini =
+        backend_symbol (backend->libhandle, backend->name, "backend_fini");
+    if (backend_fini != NULL && !backend_fini ())
+        g_warning ("Backend finalization failed");
+
+    if (lt_dlclose (backend->libhandle) != 0)
+        g_warning ("LTDL error on closing: %s", lt_dlerror ());
+
+    backend->libhandle = 0;
+    backend->backend_data_size = 0;
+    g_free (backend->ft);
+    backend->ft = NULL;
+}
+
+static void
+backend_destroy (RenBackend *backend)
+{
+    backend->ref_count = 1;
+    backend_unref (backend);
+    g_free (backend->name);
+    g_free (backend);
+}

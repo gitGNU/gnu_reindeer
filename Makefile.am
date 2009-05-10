@@ -6,9 +6,6 @@ EXTRA_DIST = m4/gnulib-cache.m4
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA = reindeer.pc
 
-m4datadir = $(datadir)/aclocal
-dist_m4data_DATA = reindeer.m4
-
 dist-hook: gen-ChangeLog
 
 .PHONY: gen-ChangeLog

@@ -20,29 +20,27 @@
 #ifndef _REN_TMPL_H
 #define _REN_TMPL_H
 
-#define _REN_TYPE(T)    _REN_TYPEN_##T
-#define _REN_TYPEN_sb   ren_sbyte
-#define _REN_TYPEN_ub   ren_ubyte
-#define _REN_TYPEN_ss   ren_sshort
-#define _REN_TYPEN_us   ren_ushort
-#define _REN_TYPEN_si   ren_sint
-#define _REN_TYPEN_ui   ren_uint
-#define _REN_TYPEN_sl   ren_slong
-#define _REN_TYPEN_ul   ren_ulong
-#define _REN_TYPEN_hf   ren_hfloat
+#define _REN_TYPEN(T)   _REN_TYPEN_##T
+#define _REN_TYPEN_s08  ren_sint08
+#define _REN_TYPEN_u08  ren_uint08
+#define _REN_TYPEN_s16  ren_sint16
+#define _REN_TYPEN_u16  ren_uint16
+#define _REN_TYPEN_s32  ren_sint32
+#define _REN_TYPEN_u32  ren_uint32
+#define _REN_TYPEN_s64  ren_sint64
+#define _REN_TYPEN_u64  ren_uint64
 #define _REN_TYPEN_sf   ren_sfloat
 #define _REN_TYPEN_df   ren_dfloat
 
 #define _REN_TYPEV(T)   _REN_TYPEV_##T
-#define _REN_TYPEV_sb   REN_TYPE_SBYTE
-#define _REN_TYPEV_ub   REN_TYPE_UBYTE
-#define _REN_TYPEV_ss   REN_TYPE_SSHORT
-#define _REN_TYPEV_us   REN_TYPE_USHORT
-#define _REN_TYPEV_si   REN_TYPE_SINT
-#define _REN_TYPEV_ui   REN_TYPE_UINT
-#define _REN_TYPEV_sl   REN_TYPE_SLONG
-#define _REN_TYPEV_ul   REN_TYPE_ULONG
-#define _REN_TYPEV_hf   REN_TYPE_HFLOAT
+#define _REN_TYPEV_s08  REN_TYPE_SINT08
+#define _REN_TYPEV_u08  REN_TYPE_UINT08
+#define _REN_TYPEV_s16  REN_TYPE_SINT16
+#define _REN_TYPEV_u16  REN_TYPE_UINT16
+#define _REN_TYPEV_s32  REN_TYPE_SINT32
+#define _REN_TYPEV_u32  REN_TYPE_UINT32
+#define _REN_TYPEV_s64  REN_TYPE_SINT64
+#define _REN_TYPEV_u64  REN_TYPE_UINT64
 #define _REN_TYPEV_sf   REN_TYPE_SFLOAT
 #define _REN_TYPEV_df   REN_TYPE_DFLOAT
 
@@ -67,42 +65,42 @@
 #define _REN_PRM_TN(F, T, N) _REN_PRM_##F(T, N)
 
 #define _REN_FUNC_POS(F)\
-    _REN_FUNC_TN (F,sb,3)\
-    _REN_FUNC_TN (F,sb,4)\
-    _REN_FUNC_TN (F,ss,3)\
-    _REN_FUNC_TN (F,ss,4)\
-    _REN_FUNC_TN (F,si,3)\
-    _REN_FUNC_TN (F,si,4)\
+    _REN_FUNC_TN (F,s08,3)\
+    _REN_FUNC_TN (F,s08,4)\
+    _REN_FUNC_TN (F,s16,3)\
+    _REN_FUNC_TN (F,s16,4)\
+    _REN_FUNC_TN (F,s32,3)\
+    _REN_FUNC_TN (F,s32,4)\
     _REN_FUNC_TN (F,sf,3)\
     _REN_FUNC_TN (F,sf,4)\
     _REN_FUNC_TN (F,df,3)\
     _REN_FUNC_TN (F,df,4)
 
 #define _REN_FUNC_DIR(F)\
-    _REN_FUNC_TN (F,sb,3)\
-    _REN_FUNC_TN (F,ss,3)\
-    _REN_FUNC_TN (F,si,3)\
+    _REN_FUNC_TN (F,s08,3)\
+    _REN_FUNC_TN (F,s16,3)\
+    _REN_FUNC_TN (F,s32,3)\
     _REN_FUNC_TN (F,sf,3)\
     _REN_FUNC_TN (F,df,3)
 
 #define _REN_FUNC_CLAMP(F)\
-    _REN_FUNC_T (F,ub)\
-    _REN_FUNC_T (F,us)\
-    _REN_FUNC_T (F,ui)\
+    _REN_FUNC_T (F,u08)\
+    _REN_FUNC_T (F,u16)\
+    _REN_FUNC_T (F,u32)\
     _REN_FUNC_T (F,sf)\
     _REN_FUNC_T (F,df)
 
 #define _REN_FUNC_NORM(F)\
-    _REN_FUNC_T (F,sb)\
-    _REN_FUNC_T (F,ss)\
-    _REN_FUNC_T (F,si)\
+    _REN_FUNC_T (F,s08)\
+    _REN_FUNC_T (F,s16)\
+    _REN_FUNC_T (F,s32)\
     _REN_FUNC_T (F,sf)\
     _REN_FUNC_T (F,df)
 
 #define _REN_FUNC_INDEX(F)\
-    _REN_FUNC_T (F,ub)\
-    _REN_FUNC_T (F,us)\
-    _REN_FUNC_T (F,ui)
+    _REN_FUNC_T (F,u08)\
+    _REN_FUNC_T (F,u16)\
+    _REN_FUNC_T (F,u32)
 
 /* BEGIN */
 
@@ -110,13 +108,9 @@
 #define _REN_PRM_init (RenReindeer *r)
 #define _REN_ARG_init (r)
 
-#define _REN_RET_fini ren_bool
-#define _REN_PRM_fini (RenReindeer *r)
-#define _REN_ARG_fini (r)
-
-#define _REN_RET_flush  void
-#define _REN_PRM_flush  (RenReindeer *r)
-#define _REN_ARG_flush  (r)
+#define _REN_RET_flush void
+#define _REN_PRM_flush (RenReindeer *r)
+#define _REN_ARG_flush (r)
 
 #define _REN_RET_finish void
 #define _REN_PRM_finish (RenReindeer *r)
@@ -128,11 +122,11 @@
 
 #define _REN_RET_clear_color(T) void
 #define _REN_PRM_clear_color(T)\
-    (RenReindeer *r, ren_ubyte components, const _REN_TYPE(T) *color)
+    (RenReindeer *r, ren_uint08 components, const _REN_TYPEN(T) *color)
 #define _REN_ARG_clear_color    (r, components, color)
 
 #define _REN_RET_clear_depth(T) void
-#define _REN_PRM_clear_depth(T) (RenReindeer *r, _REN_TYPE(T) depth)
+#define _REN_PRM_clear_depth(T) (RenReindeer *r, _REN_TYPEN(T) depth)
 #define _REN_ARG_clear_depth    (r, depth)
 
 #define _REN_RET_depth_test void
@@ -144,20 +138,22 @@
 #define _REN_ARG_matrix_mode (r, mode)
 
 #define _REN_RET_matrix_set(T)  void
-#define _REN_PRM_matrix_set(T)  (RenReindeer *r, const _REN_TYPE(T) m[16])
+#define _REN_PRM_matrix_set(T)  (RenReindeer *r, const _REN_TYPEN(T) m[16])
 #define _REN_ARG_matrix_set     (r, m)
 
-#define _REN_RET_matrix_setT(T) void
-#define _REN_PRM_matrix_setT(T) (RenReindeer *r, const _REN_TYPE(T) m[16])
-#define _REN_ARG_matrix_setT    (r, m)
+#define _REN_RET_matrix_set_transpose(T) void
+#define _REN_PRM_matrix_set_transpose(T)\
+    (RenReindeer *r, const _REN_TYPEN(T) m[16])
+#define _REN_ARG_matrix_set_transpose    (r, m)
 
 #define _REN_RET_matrix_mul(T)  void
-#define _REN_PRM_matrix_mul(T)  (RenReindeer *r, const _REN_TYPE(T) m[16])
+#define _REN_PRM_matrix_mul(T)  (RenReindeer *r, const _REN_TYPEN(T) m[16])
 #define _REN_ARG_matrix_mul     (r, m)
 
-#define _REN_RET_matrix_mulT(T) void
-#define _REN_PRM_matrix_mulT(T) (RenReindeer *r, const _REN_TYPE(T) m[16])
-#define _REN_ARG_matrix_mulT    (r, m)
+#define _REN_RET_matrix_mul_transpose(T) void
+#define _REN_PRM_matrix_mul_transpose(T)\
+    (RenReindeer *r, const _REN_TYPEN(T) m[16])
+#define _REN_ARG_matrix_mul_transpose    (r, m)
 
 #define _REN_RET_matrix_identity void
 #define _REN_PRM_matrix_identity (RenReindeer *r)
@@ -173,8 +169,8 @@
 
 #define _REN_RET_viewport void
 #define _REN_PRM_viewport (RenReindeer *r,\
-    ren_uint x,     ren_uint y,\
-    ren_uint width, ren_uint height)
+    ren_uint32 x,     ren_uint32 y,\
+    ren_uint32 width, ren_uint32 height)
 #define _REN_ARG_viewport (r, x, y, width, height)
 
 #define _REN_RET_coord_array_bind ren_bool
@@ -253,20 +249,20 @@ that needs it (but would that make any sense?)  */
 #define _REN_ARG_draw_end (r)
 
 #define _REN_RET_primitive(T)   void
-#define _REN_PRM_primitive(T)\
-    (RenReindeer *r, RenPrimitive prim, _REN_TYPE(T) offset, _REN_TYPE(T) count)
+#define _REN_PRM_primitive(T)   (RenReindeer *r,\
+    RenPrimitive prim, _REN_TYPEN(T) offset, _REN_TYPEN(T) count)
 #define _REN_ARG_primitive      (r, prim, offset, count)
 
 #define _REN_RET_primitive_multi(T) void
 #define _REN_PRM_primitive_multi(T)\
     (RenReindeer *r, ren_size count, RenPrimitive prim,\
-    _REN_TYPE(T) *offsets, _REN_TYPE(T) *counts)
+    _REN_TYPEN(T) *offsets, _REN_TYPEN(T) *counts)
 #define _REN_ARG_primitive_multi    (r, count, prim, offsets, counts)
 
 #define _REN_RET_primitive_list(T) void
 #define _REN_PRM_primitive_list(T)\
     (RenReindeer *r, ren_size count, RenPrimitive *prim,\
-    _REN_TYPE(T) *offsets, _REN_TYPE(T) *counts)
+    _REN_TYPEN(T) *offsets, _REN_TYPEN(T) *counts)
 #define _REN_ARG_primitive_list    (r, count, prim, offsets, counts)
 
 #define _REN_RET_lighting_enable void
@@ -279,20 +275,20 @@ that needs it (but would that make any sense?)  */
 
 #define _REN_RET_lighting_ambient(T)    void
 #define _REN_PRM_lighting_ambient(T)\
-    (RenReindeer *r, ren_ubyte components, const _REN_TYPE(T) *color)
+    (RenReindeer *r, ren_uint08 components, const _REN_TYPEN(T) *color)
 #define _REN_ARG_lighting_ambient       (r, components, color)
 
 #define _REN_RET_light_bind  void
 #define _REN_PRM_light_bind\
-    (RenReindeer *r, RenLight *light, ren_uint index)
+    (RenReindeer *r, RenLight *light, ren_uint32 index)
 #define _REN_ARG_light_bind     (r, light, index)
 
 #define _REN_RET_light_enable void
-#define _REN_PRM_light_enable (RenReindeer *r, ren_uint index)
+#define _REN_PRM_light_enable (RenReindeer *r, ren_uint32 index)
 #define _REN_ARG_light_enable (r, index)
 
 #define _REN_RET_light_disable void
-#define _REN_PRM_light_disable (RenReindeer *r, ren_uint index)
+#define _REN_PRM_light_disable (RenReindeer *r, ren_uint32 index)
 #define _REN_ARG_light_disable (r, index)
 
 #endif /* _REN_TMPL_H */
