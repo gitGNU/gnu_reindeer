@@ -20,6 +20,7 @@
 #ifndef REN_TYPES_H
 #define REN_TYPES_H
 
+#include <ren/tmpl.h>
 #include <glib.h>
 
 /* Datatypes */
@@ -84,6 +85,19 @@ typedef enum
     REN_MATRIX_MODE_COLOR         = 0x04,
     REN_MATRIX_MODE_TEXTURE       = 0x08,
 } RenMatrixMode;
+
+typedef struct _RenMatrix RenMatrix;
+
+typedef struct _RenVector RenVector;
+
+typedef struct _RenColor RenColor;
+
+typedef enum
+{
+    REN_COLOR_FORMAT_RGB,
+    REN_COLOR_FORMAT_RGBA,
+    REN_COLOR_FORMAT_DEPTH,
+} RenColorFormat;
 
 typedef struct _RenDataBlock RenDataBlock;
 
@@ -153,11 +167,8 @@ typedef enum
 } RenLightType;
 
 #define _REN_FUNC(F)\
-    typedef _REN_RET(F) _REN_FTP(F) _REN_PRM(F);
-#define _REN_FUNC_T(F, T)\
-    typedef _REN_RET_T(F, T) _REN_FTP_T(F, T) _REN_PRM_T(F, T);
-#define _REN_FUNC_TN(F, T, N)\
-    typedef _REN_RET_TN(F, T, N) _REN_FTP_TN(F, T, N) _REN_PRM_TN(F, T, N);
+    typedef _REN_RET(F) (* _REN_FTP(F)) _REN_PRM(F);
 #include <ren/funcs.h>
+#undef _REN_FUNC
 
 #endif /* REN_TYPES_H */

@@ -31,11 +31,11 @@ struct _RenColorArray
     ren_size stride;
 
     RenType type;
-    ren_uint08 num;
+    RenColorFormat format;
 };
 
 RenColorArray*
-ren_color_array_new (RenType type, ren_uint08 num,
+ren_color_array_new (RenType type, RenColorFormat format,
     RenDataBlock *datablock, ren_size start, ren_size count, ren_size stride)
 {
     /* FIXME: Check type and num input... */
@@ -50,7 +50,7 @@ ren_color_array_new (RenType type, ren_uint08 num,
     vxarray->stride = stride;
 
     vxarray->type = type;
-    vxarray->num = num;
+    vxarray->format = format;
 
     return vxarray;
 }
@@ -98,10 +98,10 @@ _ren_color_array_data (RenColorArray *vxarray, RenDataBlock **datablockp,
 
 void
 _ren_color_array_type (RenColorArray *vxarray,
-    RenType *typep, ren_uint08 *nump)
+    RenType *typep, RenColorFormat *formatp)
 {
     if (typep)
         (*typep) = vxarray->type;
-    if (nump)
-        (*nump) = vxarray->num;
+    if (formatp)
+        (*formatp) = vxarray->format;
 }

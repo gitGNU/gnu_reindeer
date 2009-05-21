@@ -1,8 +1,8 @@
 lib_LTLIBRARIES = libreindeer.la
 
 libreindeer_la_SOURCES = \
-    reindeer.c reindeer.h functable.h impl-macros.h \
-    datablock.c \
+    reindeer.c reindeer.h \
+    matrix.c vector.c color.c datablock.c \
     coordarray.c colorarray.c normalarray.c \
     indexarray.c \
     light.c

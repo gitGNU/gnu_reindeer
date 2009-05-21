@@ -23,13 +23,6 @@
 #include <ren/types.h>
 #include <ren/tmpl.h>
 
-#define _REN_FUNC(F)\
-    extern _REN_RET(F) _REN_SYM(F) _REN_PRM(F);
-#define _REN_FUNC_T(F, T)\
-    extern _REN_RET_T(F, T) _REN_SYM_T(F, T) _REN_PRM_T(F, T);
-#define _REN_FUNC_TN(F, T, N)\
-    extern _REN_RET_TN(F, T, N) _REN_SYM_TN(F, T, N) _REN_PRM_TN(F, T, N);
-
 extern ren_bool
 ren_library_init (void);
 
@@ -71,6 +64,34 @@ ren_type_sizeof (RenType type)
     else
         return 0;
 }
+
+extern RenMatrix*
+ren_matrix_new (const void *data, ren_size width, ren_size height,
+    RenType type, ren_bool transposed);
+
+extern void
+ren_matrix_destroy (RenMatrix *matrix);
+
+extern void
+ren_matrix_changed (RenMatrix *matrix);
+
+extern RenVector*
+ren_vector_new (const void *data, ren_size length, RenType type);
+
+extern void
+ren_vector_destroy (RenVector *vector);
+
+extern void
+ren_vector_changed (RenVector *vector);
+
+extern RenColor*
+ren_color_new (const void *data, RenColorFormat format, RenType type);
+
+extern void
+ren_color_destroy (RenColor *color);
+
+extern void
+ren_color_changed (RenColor *color);
 
 extern RenDataBlock*
 ren_data_block_new (const void *data, ren_size size, RenUsage usage);
@@ -140,7 +161,7 @@ extern void
 ren_coord_array_set_size (RenCoordArray *vxarray, ren_size count);
 
 extern RenColorArray*
-ren_color_array_new (RenType type, ren_uint08 num,
+ren_color_array_new (RenType type, RenColorFormat format,
     RenDataBlock *datablock, ren_size start, ren_size count, ren_size stride);
 
 extern void
@@ -182,53 +203,21 @@ ren_light_new (RenLightType type);
 extern void
 ren_light_destroy (RenLight *light);
 
-#define _REN_RET_light_color(T) void
-#define _REN_PRM_light_color(T)\
-    (RenLight *light, ren_uint08 components, const _REN_TYPEN(T) *color)
-#define _REN_ARG_light_color    (light, components, color)
-
-#define _REN_RET_light_ambient _REN_RET_light_color
-#define _REN_PRM_light_ambient _REN_PRM_light_color
-#define _REN_ARG_light_ambient _REN_ARG_light_color
-_REN_FUNC_CLAMP (light_ambient)
-
-#define _REN_RET_light_diffuse _REN_RET_light_color
-#define _REN_PRM_light_diffuse _REN_PRM_light_color
-#define _REN_ARG_light_diffuse _REN_ARG_light_color
-_REN_FUNC_CLAMP (light_diffuse)
-
-#define _REN_RET_light_specular _REN_RET_light_color
-#define _REN_PRM_light_specular _REN_PRM_light_color
-#define _REN_ARG_light_specular _REN_ARG_light_color
-_REN_FUNC_CLAMP (light_specular)
-
-#if 0
-/*XXX: Position and Direction are relative current model-view matrix anyway. */
-#define _REN_RET_light_position(T, N)   void
-#define _REN_PRM_light_position(T, N)\
-    (RenLight *light, const _REN_TYPE(T) pos[N])
-#define _REN_ARG_light_position         (light, pos)
-_REN_FUNC_POS (light_position)
-
-#define _REN_RET_light_direction(T, N)  void
-#define _REN_PRM_light_direction(T, N)\
-    (RenLight *light, const _REN_TYPE(T) dir[N])
-#define _REN_ARG_light_direction        (light, pos)
-_REN_FUNC_DIR (light_direction)
-#endif
-
-#define _REN_RET_light_attenuation(T)   void
-#define _REN_PRM_light_attenuation(T)\
-    (RenLight *light, ren_uint08 degree, const _REN_TYPEN(T) *k)
-#define _REN_ARG_light_attenuation      (light, degree, pos)
-_REN_FUNC_T (light_attenuation,sf)
-_REN_FUNC_T (light_attenuation,df)
-
-/*
 extern void
-ren_light_position_s4 (RenLight *light, ren_sfloat position[4]);
-*/
+ren_light_ambient (RenLight *light, RenColor *color);
 
+extern void
+ren_light_diffuse (RenLight *light, RenColor *color);
+
+extern void
+ren_light_specular (RenLight *light, RenColor *color);
+
+extern void
+ren_light_attenuation (RenLight *light, RenVector *k);
+
+#define _REN_FUNC(F)\
+    extern _REN_RET(F) _REN_SYM(F) _REN_PRM(F);
 #include <ren/funcs.h>
+#undef _REN_FUNC
 
 #endif /* REN_REN_H */

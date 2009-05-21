@@ -24,48 +24,92 @@
 #include <ren/tmpl.h>
 
 #ifdef _REN_IMPL_NAME
-    #define _REN_IMPL(F)\
-        _REN_RET(F)\
-        _REN_IMPL_MANGLE(_REN_FNM(F)) _REN_PRM(F)\
-        { _REN_IMPL_CODE(F) }
-    #define _REN_IMPL_T(F, T)\
-        _REN_RET_T(F, T)\
-        _REN_IMPL_MANGLE(_REN_FNM_T(F, T)) _REN_PRM_T(F, T)\
-        { _REN_IMPL_CODE_T(F, T) }
-    #define _REN_IMPL_TN(F, T, N)\
-        _REN_RET_TN(F, T, N)\
-        _REN_IMPL_MANGLE(_REN_FNM_TN(F, T, N)) _REN_PRM_TN(F, T, N)\
-        { _REN_IMPL_CODE_TN(F, T, N) }
-
     #define _REN_IMPL_MANGLE3(NAME, F) ren__##NAME##__##F
     #define _REN_IMPL_MANGLE2(NAME, F) _REN_IMPL_MANGLE3(NAME, F)
     #define _REN_IMPL_MANGLE(F) _REN_IMPL_MANGLE2(_REN_IMPL_NAME, F)
     /* I hate C preprocessor.  */
-
-    #define _REN_FUNC       _REN_IMPL
-    #define _REN_FUNC_T     _REN_IMPL_T
-    #define _REN_FUNC_TN    _REN_IMPL_TN
 #endif
 
 typedef ren_bool (* _RenBackendInitFunc) (RenBackend *backend);
 typedef ren_bool (* _RenBackendFiniFunc) (void);
 
-typedef struct _RenBackendData _RenBackendData;
-typedef void (* _RenBackendDataDestroyFunc) (_RenBackendData *backend_data);
+typedef struct _RenContextData _RenContextData;
+typedef void (* _RenContextDataInitFunc) (_RenContextData *context_data);
+typedef void (* _RenContextDataFiniFunc) (_RenContextData *context_data);
 
-typedef struct _RenValue _RenValue;
-struct _RenValue
-{
-    RenType type;
-    ren_uint08 num;
-    const void *value;
-};
+extern _RenContextData*
+_ren_context_data (RenReindeer *r);
 
 extern void
-_ren_throw_error (const char *format, ...);
+_ren_matrix_ref (RenMatrix *matrix);
 
-extern _RenBackendData*
-_ren_backend_data (RenReindeer *r);
+extern void
+_ren_matrix_unref (RenMatrix *matrix);
+
+extern void
+_ren_matrix_data (RenMatrix *matrix,
+    const void **datap, ren_size *widthp, ren_size *heightp,
+    RenType *typep, ren_bool *transposedp);
+
+typedef struct _RenMatrixContextData _RenMatrixContextData;
+typedef void (* _RenMatrixContextDataInitFunc) (RenMatrix *matrix,
+    _RenMatrixContextData *context_data);
+typedef void (* _RenMatrixContextDataFiniFunc) (RenMatrix *matrix,
+    _RenMatrixContextData *context_data);
+typedef void (* _RenMatrixContextDataUpdateFunc) (RenMatrix *matrix,
+    _RenMatrixContextData *context_data);
+
+extern _RenMatrixContextData*
+_ren_matrix_context_data (RenMatrix *matrix, RenReindeer *r);
+
+typedef struct _RenMatrixBackendData _RenMatrixBackendData;
+typedef void (* _RenMatrixBackendDataInitFunc) (RenMatrix *matrix,
+    _RenMatrixBackendData *backend_data);
+typedef void (* _RenMatrixBackendDataFiniFunc) (RenMatrix *matrix,
+    _RenMatrixBackendData *backend_data);
+typedef void (* _RenMatrixBackendDataUpdateFunc) (RenMatrix *matrix,
+    _RenMatrixBackendData *backend_data);
+
+extern _RenMatrixBackendData*
+_ren_matrix_backend_data (RenMatrix *matrix, RenReindeer *r);
+
+extern void
+_ren_vector_ref (RenVector *vector);
+
+extern void
+_ren_vector_unref (RenVector *vector);
+
+extern void
+_ren_color_ref (RenColor *color);
+
+extern void
+_ren_color_unref (RenColor *color);
+
+extern void
+_ren_color_data (RenColor *color,
+    const void **datap, RenColorFormat *formatp, RenType *typep);
+
+typedef struct _RenColorContextData _RenColorContextData;
+typedef void (* _RenColorContextDataInitFunc) (RenColor *color,
+    _RenColorContextData *context_data);
+typedef void (* _RenColorContextDataFiniFunc) (RenColor *color,
+    _RenColorContextData *context_data);
+typedef void (* _RenColorContextDataUpdateFunc) (RenColor *color,
+    _RenColorContextData *context_data);
+
+extern _RenColorContextData*
+_ren_color_context_data (RenColor *color, RenReindeer *r);
+
+typedef struct _RenColorBackendData _RenColorBackendData;
+typedef void (* _RenColorBackendDataInitFunc) (RenColor *color,
+    _RenColorBackendData *backend_data);
+typedef void (* _RenColorBackendDataFiniFunc) (RenColor *color,
+    _RenColorBackendData *backend_data);
+typedef void (* _RenColorBackendDataUpdateFunc) (RenColor *color,
+    _RenColorBackendData *backend_data);
+
+extern _RenColorBackendData*
+_ren_color_backend_data (RenColor *color, RenReindeer *r);
 
 extern void
 _ren_data_block_ref (RenDataBlock *datablock);
@@ -76,14 +120,6 @@ _ren_data_block_unref (RenDataBlock *datablock);
 extern void
 _ren_data_block_data (RenDataBlock *datablock, const void **datap,
     ren_size *sizep, RenUsage *usagep);
-
-extern ren_bool
-_ren_data_block_changes (RenDataBlock *datablock, const RenReindeer *r,
-    ren_size *fromp, ren_size *top);
-/* NOTE: Backends should use this in a while loop until it returns FALSE.
-By setting fromp = top = NULL, they can force the update list to exhaust. This
-is useful for times when backends don't need to receive these events, but they
-still need to clear the list to prevent it from filling up.  */
 
 extern void
 _ren_coord_array_ref (RenCoordArray *vxarray);
@@ -111,7 +147,7 @@ _ren_color_array_data (RenColorArray *vxarray, RenDataBlock **datablockp,
 
 extern void
 _ren_color_array_type (RenColorArray *vxarray,
-    RenType *typep, ren_uint08 *nump);
+    RenType *typep, RenColorFormat *formatp);
 
 extern void
 _ren_normal_array_ref (RenNormalArray *vxarray);
@@ -148,18 +184,18 @@ _ren_light_unref (RenLight *light);
 extern void
 _ren_light_data (RenLight *light,
     RenLightType *typep,
-    const _RenValue **ambientp,
-    const _RenValue **diffusep,
-    const _RenValue **specularp);
+    RenColor **ambientp,
+    RenColor **diffusep,
+    RenColor **specularp);
 
 extern void
 _ren_light_data_point_light (RenLight *light,
-    const _RenValue **attenuationp);
+    RenVector **attenuationp);
 
 extern void
 _ren_light_data_spot_light (RenLight *light,
-    const _RenValue **attenuationp,
-    const _RenValue **cutoffp,
-    const _RenValue **exponentp);
+    RenVector **attenuationp,
+    ren_dfloat *cutoffp,
+    ren_dfloat *exponentp);
 
 #endif /* REN_IMPL_H */
