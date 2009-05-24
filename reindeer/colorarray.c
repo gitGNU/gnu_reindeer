@@ -58,7 +58,7 @@ ren_color_array_new (RenType type, RenColorFormat format,
 void
 ren_color_array_destroy (RenColorArray *vxarray)
 {
-    _ren_color_array_unref (vxarray);
+    ren_color_array_unref (vxarray);
 }
 
 void
@@ -68,13 +68,13 @@ ren_color_array_set_size (RenColorArray *vxarray, ren_size count)
 }
 
 void
-_ren_color_array_ref (RenColorArray *vxarray)
+ren_color_array_ref (RenColorArray *vxarray)
 {
     ++(vxarray->ref_count);
 }
 
 void
-_ren_color_array_unref (RenColorArray *vxarray)
+ren_color_array_unref (RenColorArray *vxarray)
 {
     if (--(vxarray->ref_count) > 0)
         return;
@@ -83,7 +83,7 @@ _ren_color_array_unref (RenColorArray *vxarray)
 }
 
 void
-_ren_color_array_data (RenColorArray *vxarray, RenDataBlock **datablockp,
+ren_color_array_data (RenColorArray *vxarray, RenDataBlock **datablockp,
     ren_size *startp, ren_size *countp, ren_size *stridep)
 {
     if (datablockp)
@@ -97,7 +97,7 @@ _ren_color_array_data (RenColorArray *vxarray, RenDataBlock **datablockp,
 }
 
 void
-_ren_color_array_type (RenColorArray *vxarray,
+ren_color_array_type (RenColorArray *vxarray,
     RenType *typep, RenColorFormat *formatp)
 {
     if (typep)

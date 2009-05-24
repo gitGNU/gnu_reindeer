@@ -57,7 +57,7 @@ ren_index_array_new_from_range (ren_uint32 from, ren_uint32 to)
 void
 ren_index_array_destroy (RenIndexArray *ixarray)
 {
-    _ren_index_array_unref (ixarray);
+    ren_index_array_unref (ixarray);
 }
 
 void
@@ -67,13 +67,13 @@ ren_index_array_set_size (RenIndexArray *ixarray, ren_size count)
 }
 
 void
-_ren_index_array_ref (RenIndexArray *ixarray)
+ren_index_array_ref (RenIndexArray *ixarray)
 {
     ++(ixarray->ref_count);
 }
 
 void
-_ren_index_array_unref (RenIndexArray *ixarray)
+ren_index_array_unref (RenIndexArray *ixarray)
 {
     if (--(ixarray->ref_count) > 0)
         return;
@@ -82,7 +82,7 @@ _ren_index_array_unref (RenIndexArray *ixarray)
 }
 
 void
-_ren_index_array_data (RenIndexArray *ixarray, RenType *typep,
+ren_index_array_data (RenIndexArray *ixarray, RenType *typep,
     RenDataBlock **datablockp, ren_size *startp, ren_size *countp)
 {
     if (typep)

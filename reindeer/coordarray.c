@@ -58,7 +58,7 @@ ren_coord_array_new (RenType type, ren_uint08 num,
 void
 ren_coord_array_destroy (RenCoordArray *vxarray)
 {
-    _ren_coord_array_unref (vxarray);
+    ren_coord_array_unref (vxarray);
 }
 
 void
@@ -68,13 +68,13 @@ ren_coord_array_set_size (RenCoordArray *vxarray, ren_size count)
 }
 
 void
-_ren_coord_array_ref (RenCoordArray *vxarray)
+ren_coord_array_ref (RenCoordArray *vxarray)
 {
     ++(vxarray->ref_count);
 }
 
 void
-_ren_coord_array_unref (RenCoordArray *vxarray)
+ren_coord_array_unref (RenCoordArray *vxarray)
 {
     if (--(vxarray->ref_count) > 0)
         return;
@@ -83,7 +83,7 @@ _ren_coord_array_unref (RenCoordArray *vxarray)
 }
 
 void
-_ren_coord_array_data (RenCoordArray *vxarray, RenDataBlock **datablockp,
+ren_coord_array_data (RenCoordArray *vxarray, RenDataBlock **datablockp,
     ren_size *startp, ren_size *countp, ren_size *stridep)
 {
     if (datablockp)
@@ -97,7 +97,7 @@ _ren_coord_array_data (RenCoordArray *vxarray, RenDataBlock **datablockp,
 }
 
 void
-_ren_coord_array_type (RenCoordArray *vxarray,
+ren_coord_array_type (RenCoordArray *vxarray,
     RenType *typep, ren_uint08 *nump)
 {
     if (typep)

@@ -48,7 +48,7 @@ ren_vector_new (const void *data, ren_size length, RenType type)
 void
 ren_vector_destroy (RenVector *vector)
 {
-    _ren_vector_unref (vector);
+    ren_vector_unref (vector);
 }
 
 void
@@ -58,13 +58,13 @@ ren_vector_changed (RenVector *vector)
 }
 
 void
-_ren_vector_ref (RenVector *vector)
+ren_vector_ref (RenVector *vector)
 {
     ++(vector->ref_count);
 }
 
 void
-_ren_vector_unref (RenVector *vector)
+ren_vector_unref (RenVector *vector)
 {
     if (--(vector->ref_count) > 0)
         return;

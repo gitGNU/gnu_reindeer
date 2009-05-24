@@ -39,7 +39,7 @@ typedef struct _RenColorContextUpdater _RenColorContextUpdater;
 struct _RenColorContextUpdater
 {
     _RenContextUpdater base;
-    _RenColorContextData *context_data;
+    RenColorContextData *context_data;
     ren_bool changed;
 };
 
@@ -47,7 +47,7 @@ typedef struct _RenColorBackendUpdater _RenColorBackendUpdater;
 struct _RenColorBackendUpdater
 {
     _RenBackendUpdater base;
-    _RenColorBackendData *backend_data;
+    RenColorBackendData *backend_data;
     ren_bool changed;
 };
 
@@ -77,7 +77,7 @@ ren_color_new (const void *data, RenColorFormat format, RenType type)
 void
 ren_color_destroy (RenColor *color)
 {
-    _ren_color_unref (color);
+    ren_color_unref (color);
 }
 
 void
@@ -87,13 +87,13 @@ ren_color_changed (RenColor *color)
 }
 
 void
-_ren_color_ref (RenColor *color)
+ren_color_ref (RenColor *color)
 {
     ++(color->ref_count);
 }
 
 void
-_ren_color_unref (RenColor *color)
+ren_color_unref (RenColor *color)
 {
     if (--(color->ref_count) > 0)
         return;
@@ -104,7 +104,7 @@ _ren_color_unref (RenColor *color)
 }
 
 void
-_ren_color_data (RenColor *color,
+ren_color_data (RenColor *color,
     const void **datap, RenColorFormat *formatp, RenType *typep)
 {
     if (datap)
@@ -115,8 +115,8 @@ _ren_color_data (RenColor *color,
         (*typep) = color->type;
 }
 
-_RenColorContextData*
-_ren_color_context_data (RenColor *color, RenReindeer *r)
+RenColorContextData*
+ren_color_context_data (RenColor *color, RenReindeer *r)
 {
     RETURN_CONTEXT_DATA(Color,color,color,
         context_updater->changed = TRUE;
@@ -129,8 +129,8 @@ _ren_color_context_data (RenColor *color, RenReindeer *r)
     );
 }
 
-_RenColorBackendData*
-_ren_color_backend_data (RenColor *color, RenReindeer *r)
+RenColorBackendData*
+ren_color_backend_data (RenColor *color, RenReindeer *r)
 {
     RETURN_BACKEND_DATA(Color,color,color,
         backend_updater->changed = TRUE;

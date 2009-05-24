@@ -51,7 +51,7 @@ ren_light_new (RenLightType type)
 void
 ren_light_destroy (RenLight *light)
 {
-    _ren_light_unref (light);
+    ren_light_unref (light);
 }
 
 void
@@ -79,13 +79,13 @@ ren_light_attenuation (RenLight *light, RenVector *k)
 }
 
 void
-_ren_light_ref (RenLight *light)
+ren_light_ref (RenLight *light)
 {
     ++(light->ref_count);
 }
 
 void
-_ren_light_unref (RenLight *light)
+ren_light_unref (RenLight *light)
 {
     if (--(light->ref_count) > 0)
         return;
@@ -94,7 +94,7 @@ _ren_light_unref (RenLight *light)
 }
 
 void
-_ren_light_data (RenLight *light,
+ren_light_data (RenLight *light,
     RenLightType *typep,
     RenColor **ambientp,
     RenColor **diffusep,
@@ -111,7 +111,7 @@ _ren_light_data (RenLight *light,
 }
 
 void
-_ren_light_data_point_light (RenLight *light,
+ren_light_data_point_light (RenLight *light,
     RenVector **attenuationp)
 {
     if (light->type != REN_LIGHT_TYPE_POINT_LIGHT)
@@ -121,7 +121,7 @@ _ren_light_data_point_light (RenLight *light,
 }
 
 void
-_ren_light_data_spot_light (RenLight *light,
+ren_light_data_spot_light (RenLight *light,
     RenVector **attenuationp,
     ren_dfloat *cutoffp,
     ren_dfloat *exponentp)

@@ -41,7 +41,7 @@ typedef struct _RenMatrixContextUpdater _RenMatrixContextUpdater;
 struct _RenMatrixContextUpdater
 {
     _RenContextUpdater base;
-    _RenMatrixContextData *context_data;
+    RenMatrixContextData *context_data;
     ren_bool changed;
 };
 
@@ -49,7 +49,7 @@ typedef struct _RenMatrixBackendUpdater _RenMatrixBackendUpdater;
 struct _RenMatrixBackendUpdater
 {
     _RenBackendUpdater base;
-    _RenMatrixBackendData *backend_data;
+    RenMatrixBackendData *backend_data;
     ren_bool changed;
 };
 
@@ -84,7 +84,7 @@ ren_matrix_new (const void *data, ren_size width, ren_size height,
 void
 ren_matrix_destroy (RenMatrix *matrix)
 {
-    _ren_matrix_unref (matrix);
+    ren_matrix_unref (matrix);
 }
 
 void
@@ -94,13 +94,13 @@ ren_matrix_changed (RenMatrix *matrix)
 }
 
 void
-_ren_matrix_ref (RenMatrix *matrix)
+ren_matrix_ref (RenMatrix *matrix)
 {
     ++(matrix->ref_count);
 }
 
 void
-_ren_matrix_unref (RenMatrix *matrix)
+ren_matrix_unref (RenMatrix *matrix)
 {
     if (--(matrix->ref_count) > 0)
         return;
@@ -111,7 +111,7 @@ _ren_matrix_unref (RenMatrix *matrix)
 }
 
 void
-_ren_matrix_data (RenMatrix *matrix,
+ren_matrix_data (RenMatrix *matrix,
     const void **datap, ren_size *widthp, ren_size *heightp,
     RenType *typep, ren_bool *transposedp)
 {
@@ -127,8 +127,8 @@ _ren_matrix_data (RenMatrix *matrix,
         (*transposedp) = matrix->transposed;
 }
 
-_RenMatrixContextData*
-_ren_matrix_context_data (RenMatrix *matrix, RenReindeer *r)
+RenMatrixContextData*
+ren_matrix_context_data (RenMatrix *matrix, RenReindeer *r)
 {
     RETURN_CONTEXT_DATA(Matrix,matrix,matrix,
         context_updater->changed = TRUE;
@@ -141,8 +141,8 @@ _ren_matrix_context_data (RenMatrix *matrix, RenReindeer *r)
     );
 }
 
-_RenMatrixBackendData*
-_ren_matrix_backend_data (RenMatrix *matrix, RenReindeer *r)
+RenMatrixBackendData*
+ren_matrix_backend_data (RenMatrix *matrix, RenReindeer *r)
 {
     RETURN_BACKEND_DATA(Matrix,matrix,matrix,
         backend_updater->changed = TRUE;

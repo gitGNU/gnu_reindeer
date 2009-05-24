@@ -58,7 +58,7 @@ ren_normal_array_new (RenType type, ren_uint08 num,
 void
 ren_normal_array_destroy (RenNormalArray *vxarray)
 {
-    _ren_normal_array_unref (vxarray);
+    ren_normal_array_unref (vxarray);
 }
 
 void
@@ -68,13 +68,13 @@ ren_normal_array_set_size (RenNormalArray *vxarray, ren_size count)
 }
 
 void
-_ren_normal_array_ref (RenNormalArray *vxarray)
+ren_normal_array_ref (RenNormalArray *vxarray)
 {
     ++(vxarray->ref_count);
 }
 
 void
-_ren_normal_array_unref (RenNormalArray *vxarray)
+ren_normal_array_unref (RenNormalArray *vxarray)
 {
     if (--(vxarray->ref_count) > 0)
         return;
@@ -83,7 +83,7 @@ _ren_normal_array_unref (RenNormalArray *vxarray)
 }
 
 void
-_ren_normal_array_data (RenNormalArray *vxarray, RenDataBlock **datablockp,
+ren_normal_array_data (RenNormalArray *vxarray, RenDataBlock **datablockp,
     ren_size *startp, ren_size *countp, ren_size *stridep)
 {
     if (datablockp)
@@ -97,7 +97,7 @@ _ren_normal_array_data (RenNormalArray *vxarray, RenDataBlock **datablockp,
 }
 
 void
-_ren_normal_array_type (RenNormalArray *vxarray,
+ren_normal_array_type (RenNormalArray *vxarray,
     RenType *typep, ren_uint08 *nump)
 {
     if (typep)

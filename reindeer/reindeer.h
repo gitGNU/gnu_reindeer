@@ -38,19 +38,19 @@ struct _RenBackendData
     } ren;
 
     ren_size context_data_size;
-    _RenContextDataInitFunc context_data_init;
-    _RenContextDataFiniFunc context_data_fini;
+    RenContextDataInitFunc context_data_init;
+    RenContextDataFiniFunc context_data_fini;
 
     #define UPDATER_SYMS(Type,type)\
         struct {\
         ren_size type##_context_data_size;\
-        _Ren##Type##ContextDataInitFunc type##_context_data_init;\
-        _Ren##Type##ContextDataFiniFunc type##_context_data_fini;\
-        _Ren##Type##ContextDataUpdateFunc type##_context_data_update;\
+        Ren##Type##ContextDataInitFunc type##_context_data_init;\
+        Ren##Type##ContextDataFiniFunc type##_context_data_fini;\
+        Ren##Type##ContextDataUpdateFunc type##_context_data_update;\
         ren_size type##_backend_data_size;\
-        _Ren##Type##BackendDataInitFunc type##_backend_data_init;\
-        _Ren##Type##BackendDataFiniFunc type##_backend_data_fini;\
-        _Ren##Type##BackendDataUpdateFunc type##_backend_data_update;\
+        Ren##Type##BackendDataInitFunc type##_backend_data_init;\
+        Ren##Type##BackendDataFiniFunc type##_backend_data_fini;\
+        Ren##Type##BackendDataUpdateFunc type##_backend_data_update;\
         }
     UPDATER_SYMS(Matrix,matrix);
     UPDATER_SYMS(Color,color);
@@ -118,12 +118,12 @@ struct _RenBackendUpdater
     GHashTable *table = TABLE;\
     _Ren##Type##Abc##Updater *abc##_updater =\
         g_hash_table_lookup (table, (object));\
-    _Ren##Type##Abc##Data *abc##_data = NULL;\
+    Ren##Type##Abc##Data *abc##_data = NULL;\
     if (abc##_updater == NULL)\
     {\
         abc##_updater = g_new (_Ren##Type##Abc##Updater, 1);\
         abc##_data = g_malloc (r->backend_data.type##_##abc##_data_size);\
-        _Ren##Type##Abc##DataInitFunc abc##_data_init =\
+        Ren##Type##Abc##DataInitFunc abc##_data_init =\
             r->backend_data.type##_##abc##_data_init;\
         if (abc##_data_init != NULL)\
             abc##_data_init ((object), abc##_data);\
@@ -142,7 +142,7 @@ struct _RenBackendUpdater
     {\
         abc##_data = abc##_updater->abc##_data;\
     }\
-    _Ren##Type##Abc##DataUpdateFunc abc##_data_update =\
+    Ren##Type##Abc##DataUpdateFunc abc##_data_update =\
         r->backend_data.type##_##abc##_data_update;\
     if (abc##_data_update != NULL)\
     {\
@@ -160,8 +160,8 @@ struct _RenBackendUpdater
 #define REMOVE_C_OR_B_UPDATER(Type,type,object,CLEAN_UP_CODE,Abc,abc,FINI)\
     G_STMT_START {\
     _Ren##Type##Abc##Updater *abc##_updater = updater_item->data;\
-    _Ren##Type##Abc##Data *abc##_data = abc##_updater->abc##_data;\
-    _Ren##Type##Abc##DataFiniFunc abc##_data_fini = FINI;\
+    Ren##Type##Abc##Data *abc##_data = abc##_updater->abc##_data;\
+    Ren##Type##Abc##DataFiniFunc abc##_data_fini = FINI;\
     if (abc##_data_fini != NULL)\
         abc##_data_fini ((object), abc##_data);\
     { CLEAN_UP_CODE }\

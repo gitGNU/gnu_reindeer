@@ -23,7 +23,7 @@
 
 #include "reindeer.h"
 
-#define GET_CONTEXT_DATA(r) ((_RenContextData*)((r) + sizeof (RenReindeer)))
+#define GET_CONTEXT_DATA(r) ((RenContextData*)((r) + sizeof (RenReindeer)))
 
 static GHashTable *backend_table = NULL;
 static ren_bool initialized = FALSE;
@@ -103,7 +103,7 @@ ren_load (RenBackend *backend)
     r->backend = backend;
     r->updater_table = g_hash_table_new (g_direct_hash, g_direct_equal);
     memcpy (&(r->backend_data), backend_data, sizeof (_RenBackendData));
-    _RenContextDataInitFunc context_data_init =
+    RenContextDataInitFunc context_data_init =
         backend_data->context_data_init;
     if (context_data_init != NULL)
         context_data_init (GET_CONTEXT_DATA (r));
@@ -127,7 +127,7 @@ ren_unload (RenReindeer *r)
         g_hash_table_iter_remove (&iter);
     }
 
-    _RenContextDataFiniFunc context_data_fini =
+    RenContextDataFiniFunc context_data_fini =
         r->backend_data.context_data_fini;
     if (context_data_fini != NULL)
         context_data_fini (GET_CONTEXT_DATA (r));
@@ -143,8 +143,8 @@ ren_backend (RenReindeer *r)
     return r->backend;
 }
 
-_RenContextData*
-_ren_context_data (RenReindeer *r)
+RenContextData*
+ren_context_data (RenReindeer *r)
 {
     return GET_CONTEXT_DATA (r);
 }
@@ -251,7 +251,7 @@ backend_ref (RenBackend *backend)
     if (libhandle == NULL)
         goto FAIL;
 
-    _RenBackendInitFunc backend_init =
+    RenBackendInitFunc backend_init =
         backend_symbol (libhandle, name, "backend_init");
     if (backend_init != NULL && !backend_init (backend))
     {
@@ -341,7 +341,7 @@ backend_unref (RenBackend *backend)
         g_hash_table_iter_remove (&iter);
     }
 
-    _RenBackendFiniFunc backend_fini =
+    RenBackendFiniFunc backend_fini =
         backend_symbol (backend->libhandle, backend->name, "backend_fini");
     if (backend_fini != NULL && !backend_fini ())
         g_warning ("Backend finalization failed");

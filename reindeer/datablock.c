@@ -50,7 +50,7 @@ ren_data_block_new (const void *data, ren_size size, RenUsage usage)
 void
 ren_data_block_destroy (RenDataBlock *datablock)
 {
-    _ren_data_block_unref (datablock);
+    ren_data_block_unref (datablock);
 }
 
 void
@@ -89,13 +89,13 @@ ren_data_block_changed (RenDataBlock *datablock,
 }
 
 void
-_ren_data_block_ref (RenDataBlock *datablock)
+ren_data_block_ref (RenDataBlock *datablock)
 {
     ++(datablock->ref_count);
 }
 
 void
-_ren_data_block_unref (RenDataBlock *datablock)
+ren_data_block_unref (RenDataBlock *datablock)
 {
     if (--(datablock->ref_count) > 0)
         return;
@@ -106,7 +106,7 @@ _ren_data_block_unref (RenDataBlock *datablock)
 }
 
 void
-_ren_data_block_data (RenDataBlock *datablock, const void **datap,
+ren_data_block_data (RenDataBlock *datablock, const void **datap,
     ren_size *sizep, RenUsage *usagep)
 {
     if (datap)

@@ -23,177 +23,180 @@
 #include <ren/types.h>
 #include <ren/tmpl.h>
 
-#ifdef _REN_IMPL_NAME
+#ifdef REN_IMPL_NAME
     #define _REN_IMPL_MANGLE3(NAME, F) ren__##NAME##__##F
     #define _REN_IMPL_MANGLE2(NAME, F) _REN_IMPL_MANGLE3(NAME, F)
-    #define _REN_IMPL_MANGLE(F) _REN_IMPL_MANGLE2(_REN_IMPL_NAME, F)
+    #define REN_IMPL_MANGLE(F) _REN_IMPL_MANGLE2(REN_IMPL_NAME, F)
+    #define _REN_IMPL_PRIV_MANGLE3(NAME, F) _ren__##NAME##__##F
+    #define _REN_IMPL_PRIV_MANGLE2(NAME, F) _REN_IMPL_PRIV_MANGLE3(NAME, F)
+    #define REN_IMPL_PRIV_MANGLE(F) _REN_IMPL_PRIV_MANGLE2(REN_IMPL_NAME, F)
     /* I hate C preprocessor.  */
 #endif
 
-typedef ren_bool (* _RenBackendInitFunc) (RenBackend *backend);
-typedef ren_bool (* _RenBackendFiniFunc) (void);
+typedef ren_bool (* RenBackendInitFunc) (RenBackend *backend);
+typedef ren_bool (* RenBackendFiniFunc) (void);
 
-typedef struct _RenContextData _RenContextData;
-typedef void (* _RenContextDataInitFunc) (_RenContextData *context_data);
-typedef void (* _RenContextDataFiniFunc) (_RenContextData *context_data);
+typedef struct _RenContextData RenContextData;
+typedef void (* RenContextDataInitFunc) (RenContextData *context_data);
+typedef void (* RenContextDataFiniFunc) (RenContextData *context_data);
 
-extern _RenContextData*
-_ren_context_data (RenReindeer *r);
-
-extern void
-_ren_matrix_ref (RenMatrix *matrix);
+extern RenContextData*
+ren_context_data (RenReindeer *r);
 
 extern void
-_ren_matrix_unref (RenMatrix *matrix);
+ren_matrix_ref (RenMatrix *matrix);
 
 extern void
-_ren_matrix_data (RenMatrix *matrix,
+ren_matrix_unref (RenMatrix *matrix);
+
+extern void
+ren_matrix_data (RenMatrix *matrix,
     const void **datap, ren_size *widthp, ren_size *heightp,
     RenType *typep, ren_bool *transposedp);
 
-typedef struct _RenMatrixContextData _RenMatrixContextData;
-typedef void (* _RenMatrixContextDataInitFunc) (RenMatrix *matrix,
-    _RenMatrixContextData *context_data);
-typedef void (* _RenMatrixContextDataFiniFunc) (RenMatrix *matrix,
-    _RenMatrixContextData *context_data);
-typedef void (* _RenMatrixContextDataUpdateFunc) (RenMatrix *matrix,
-    _RenMatrixContextData *context_data);
+typedef struct _RenMatrixContextData RenMatrixContextData;
+typedef void (* RenMatrixContextDataInitFunc) (RenMatrix *matrix,
+    RenMatrixContextData *context_data);
+typedef void (* RenMatrixContextDataFiniFunc) (RenMatrix *matrix,
+    RenMatrixContextData *context_data);
+typedef void (* RenMatrixContextDataUpdateFunc) (RenMatrix *matrix,
+    RenMatrixContextData *context_data);
 
-extern _RenMatrixContextData*
-_ren_matrix_context_data (RenMatrix *matrix, RenReindeer *r);
+extern RenMatrixContextData*
+ren_matrix_context_data (RenMatrix *matrix, RenReindeer *r);
 
-typedef struct _RenMatrixBackendData _RenMatrixBackendData;
-typedef void (* _RenMatrixBackendDataInitFunc) (RenMatrix *matrix,
-    _RenMatrixBackendData *backend_data);
-typedef void (* _RenMatrixBackendDataFiniFunc) (RenMatrix *matrix,
-    _RenMatrixBackendData *backend_data);
-typedef void (* _RenMatrixBackendDataUpdateFunc) (RenMatrix *matrix,
-    _RenMatrixBackendData *backend_data);
+typedef struct _RenMatrixBackendData RenMatrixBackendData;
+typedef void (* RenMatrixBackendDataInitFunc) (RenMatrix *matrix,
+    RenMatrixBackendData *backend_data);
+typedef void (* RenMatrixBackendDataFiniFunc) (RenMatrix *matrix,
+    RenMatrixBackendData *backend_data);
+typedef void (* RenMatrixBackendDataUpdateFunc) (RenMatrix *matrix,
+    RenMatrixBackendData *backend_data);
 
-extern _RenMatrixBackendData*
-_ren_matrix_backend_data (RenMatrix *matrix, RenReindeer *r);
-
-extern void
-_ren_vector_ref (RenVector *vector);
+extern RenMatrixBackendData*
+ren_matrix_backend_data (RenMatrix *matrix, RenReindeer *r);
 
 extern void
-_ren_vector_unref (RenVector *vector);
+ren_vector_ref (RenVector *vector);
 
 extern void
-_ren_color_ref (RenColor *color);
+ren_vector_unref (RenVector *vector);
 
 extern void
-_ren_color_unref (RenColor *color);
+ren_color_ref (RenColor *color);
 
 extern void
-_ren_color_data (RenColor *color,
+ren_color_unref (RenColor *color);
+
+extern void
+ren_color_data (RenColor *color,
     const void **datap, RenColorFormat *formatp, RenType *typep);
 
-typedef struct _RenColorContextData _RenColorContextData;
-typedef void (* _RenColorContextDataInitFunc) (RenColor *color,
-    _RenColorContextData *context_data);
-typedef void (* _RenColorContextDataFiniFunc) (RenColor *color,
-    _RenColorContextData *context_data);
-typedef void (* _RenColorContextDataUpdateFunc) (RenColor *color,
-    _RenColorContextData *context_data);
+typedef struct _RenColorContextData RenColorContextData;
+typedef void (* RenColorContextDataInitFunc) (RenColor *color,
+    RenColorContextData *context_data);
+typedef void (* RenColorContextDataFiniFunc) (RenColor *color,
+    RenColorContextData *context_data);
+typedef void (* RenColorContextDataUpdateFunc) (RenColor *color,
+    RenColorContextData *context_data);
 
-extern _RenColorContextData*
-_ren_color_context_data (RenColor *color, RenReindeer *r);
+extern RenColorContextData*
+ren_color_context_data (RenColor *color, RenReindeer *r);
 
-typedef struct _RenColorBackendData _RenColorBackendData;
-typedef void (* _RenColorBackendDataInitFunc) (RenColor *color,
-    _RenColorBackendData *backend_data);
-typedef void (* _RenColorBackendDataFiniFunc) (RenColor *color,
-    _RenColorBackendData *backend_data);
-typedef void (* _RenColorBackendDataUpdateFunc) (RenColor *color,
-    _RenColorBackendData *backend_data);
+typedef struct _RenColorBackendData RenColorBackendData;
+typedef void (* RenColorBackendDataInitFunc) (RenColor *color,
+    RenColorBackendData *backend_data);
+typedef void (* RenColorBackendDataFiniFunc) (RenColor *color,
+    RenColorBackendData *backend_data);
+typedef void (* RenColorBackendDataUpdateFunc) (RenColor *color,
+    RenColorBackendData *backend_data);
 
-extern _RenColorBackendData*
-_ren_color_backend_data (RenColor *color, RenReindeer *r);
-
-extern void
-_ren_data_block_ref (RenDataBlock *datablock);
+extern RenColorBackendData*
+ren_color_backend_data (RenColor *color, RenReindeer *r);
 
 extern void
-_ren_data_block_unref (RenDataBlock *datablock);
+ren_data_block_ref (RenDataBlock *datablock);
 
 extern void
-_ren_data_block_data (RenDataBlock *datablock, const void **datap,
+ren_data_block_unref (RenDataBlock *datablock);
+
+extern void
+ren_data_block_data (RenDataBlock *datablock, const void **datap,
     ren_size *sizep, RenUsage *usagep);
 
 extern void
-_ren_coord_array_ref (RenCoordArray *vxarray);
+ren_coord_array_ref (RenCoordArray *vxarray);
 
 extern void
-_ren_coord_array_unref (RenCoordArray *vxarray);
+ren_coord_array_unref (RenCoordArray *vxarray);
 
 extern void
-_ren_coord_array_data (RenCoordArray *vxarray, RenDataBlock **datablockp,
+ren_coord_array_data (RenCoordArray *vxarray, RenDataBlock **datablockp,
     ren_size *startp, ren_size *countp, ren_size *stridep);
 
 extern void
-_ren_coord_array_type (RenCoordArray *vxarray,
+ren_coord_array_type (RenCoordArray *vxarray,
     RenType *typep, ren_uint08 *nump);
 
 extern void
-_ren_color_array_ref (RenColorArray *vxarray);
+ren_color_array_ref (RenColorArray *vxarray);
 
 extern void
-_ren_color_array_unref (RenColorArray *vxarray);
+ren_color_array_unref (RenColorArray *vxarray);
 
 extern void
-_ren_color_array_data (RenColorArray *vxarray, RenDataBlock **datablockp,
+ren_color_array_data (RenColorArray *vxarray, RenDataBlock **datablockp,
     ren_size *startp, ren_size *countp, ren_size *stridep);
 
 extern void
-_ren_color_array_type (RenColorArray *vxarray,
+ren_color_array_type (RenColorArray *vxarray,
     RenType *typep, RenColorFormat *formatp);
 
 extern void
-_ren_normal_array_ref (RenNormalArray *vxarray);
+ren_normal_array_ref (RenNormalArray *vxarray);
 
 extern void
-_ren_normal_array_unref (RenNormalArray *vxarray);
+ren_normal_array_unref (RenNormalArray *vxarray);
 
 extern void
-_ren_normal_array_data (RenNormalArray *vxarray, RenDataBlock **datablockp,
+ren_normal_array_data (RenNormalArray *vxarray, RenDataBlock **datablockp,
     ren_size *startp, ren_size *countp, ren_size *stridep);
 
 extern void
-_ren_normal_array_type (RenNormalArray *vxarray,
+ren_normal_array_type (RenNormalArray *vxarray,
     RenType *typep, ren_uint08 *nump);
 
 
 extern void
-_ren_index_array_ref (RenIndexArray *ixarray);
+ren_index_array_ref (RenIndexArray *ixarray);
 
 extern void
-_ren_index_array_unref (RenIndexArray *ixarray);
+ren_index_array_unref (RenIndexArray *ixarray);
 
 extern void
-_ren_index_array_data (RenIndexArray *ixarray, RenType *typep,
+ren_index_array_data (RenIndexArray *ixarray, RenType *typep,
     RenDataBlock **datablockp, ren_size *startp, ren_size *countp);
 
 
 extern void
-_ren_light_ref (RenLight *light);
+ren_light_ref (RenLight *light);
 
 extern void
-_ren_light_unref (RenLight *light);
+ren_light_unref (RenLight *light);
 
 extern void
-_ren_light_data (RenLight *light,
+ren_light_data (RenLight *light,
     RenLightType *typep,
     RenColor **ambientp,
     RenColor **diffusep,
     RenColor **specularp);
 
 extern void
-_ren_light_data_point_light (RenLight *light,
+ren_light_data_point_light (RenLight *light,
     RenVector **attenuationp);
 
 extern void
-_ren_light_data_spot_light (RenLight *light,
+ren_light_data_spot_light (RenLight *light,
     RenVector **attenuationp,
     ren_dfloat *cutoffp,
     ren_dfloat *exponentp);
