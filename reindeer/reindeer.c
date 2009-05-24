@@ -358,8 +358,11 @@ backend_unref (RenBackend *backend)
 static void
 backend_destroy (RenBackend *backend)
 {
-    backend->ref_count = 1;
-    backend_unref (backend);
+    if (backend->ref_count > 0)
+    {
+        backend->ref_count = 1;
+        backend_unref (backend);
+    }
     g_free (backend->name);
     g_free (backend);
 }
