@@ -151,20 +151,6 @@
 #define _REN_PRM_index_array_bind (RenReindeer *r, RenIndexArray *ixarray)
 #define _REN_ARG_index_array_bind (r, ixarray)
 
-#define _REN_FTP_draw_begin RenDrawBeginFunc
-#define _REN_RET_draw_begin void
-#define _REN_PRM_draw_begin (RenReindeer *r)
-#define _REN_ARG_draw_begin (r)
-/* NOTE: These functions should be used before using ren_primitive_* functions
-so that they are drawn to the screen (rather than defining an object).
-It should only be necessary to call begin once, if we are never going to define
-objects. So draw_end might not actually be needed, unless there is some backend
-that needs it (but would that make any sense?)  */
-#define _REN_FTP_draw_end RenDrawEndFunc
-#define _REN_RET_draw_end void
-#define _REN_PRM_draw_end (RenReindeer *r)
-#define _REN_ARG_draw_end (r)
-
 #define _REN_FTP_primitive RenPrimitiveFunc
 #define _REN_RET_primitive void
 #define _REN_PRM_primitive (RenReindeer *r,\

@@ -80,10 +80,10 @@ typedef enum
 
 typedef enum
 {
-    REN_MATRIX_MODE_MODELVIEW     = 0x01,
-    REN_MATRIX_MODE_PROJECTION    = 0x02,
-    REN_MATRIX_MODE_COLOR         = 0x04,
-    REN_MATRIX_MODE_TEXTURE       = 0x08,
+    REN_MATRIX_MODE_MODELVIEW,
+    REN_MATRIX_MODE_PROJECTION,
+    REN_MATRIX_MODE_COLOR,
+    REN_MATRIX_MODE_TEXTURE,
 } RenMatrixMode;
 
 typedef struct _RenMatrix RenMatrix;
@@ -105,33 +105,12 @@ typedef void (*RenDataBlockCallback) (RenDataBlock *datablock, void *user_data);
 
 typedef enum
 {
-    REN_USAGE_DONT_CARE     = 0x0000,
-    REN_USAGE_STREAM        = 0x0001,
-    REN_USAGE_STATIC        = 0x0002,
-    REN_USAGE_DYNAMIC       = 0x0003,
-    /*
-    REN_USAGE_CLIENT        = 0x0000,
-    REN_USAGE_SERVER        = 0x0000,
-    */
+    REN_USAGE_DONT_CARE,
+    REN_USAGE_ONCE,
+    REN_USAGE_STREAM,
+    REN_USAGE_STATIC,
+    REN_USAGE_DYNAMIC,
 } RenUsage;
-
-
-typedef struct _RenVertexArray RenVertexArray;
-
-#if 0
-typedef enum
-{
-    REN_VERTEX_ARRAY_TYPE_COORD     = 0x0001,
-    REN_VERTEX_ARRAY_TYPE_COLOR     = 0x0002,
-    REN_VERTEX_ARRAY_TYPE_INDEX     = 0x0004,
-    REN_VERTEX_ARRAY_TYPE_NORMAL    = 0x0008,
-    REN_VERTEX_ARRAY_TYPE_FOGCOORD  = 0x0010,
-    REN_VERTEX_ARRAY_TYPE_TEXCOORD  = 0x0020,
-    REN_VERTEX_ARRAY_TYPE_EDGEFLAG  = 0x0040,
-    REN_VERTEX_ARRAY_TYPE_ATTRIB    = 0x8000,
-    REN_VERTEX_ARRAY_TYPE_ALL       = 0xFFFF,
-} RenVertexArrayType;
-#endif
 
 typedef struct _RenCoordArray RenCoordArray;
 typedef struct _RenColorArray RenColorArray;

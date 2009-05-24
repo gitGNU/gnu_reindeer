@@ -98,8 +98,6 @@ ren_data_block_new (const void *data, ren_size size, RenUsage usage);
 
 extern void
 ren_data_block_destroy (RenDataBlock *datablock);
-/* Applications should not free the original data after this. They should wait
-for the unload callback.  */
 
 extern void
 ren_data_block_callback (
@@ -107,48 +105,15 @@ ren_data_block_callback (
     RenDataBlockCallback reload_func,
     RenDataBlockCallback unload_func,
     void *user_data);
-/* NOTE: A mechanism to free the initial data when it's not actually used
-by backends after the first bind. This call should only be done after having
-used the datablock for all known reindeers, because otherwise it might keep
-unloading and reloading for each first use.
-
-The unload callback is expected to free the data, and in any case the library
-will set its pointer to NULL.
-On reload the callback is expected to call ren_datablock_relocated. If this is
-not done, the behaviour is undefined.
-*/
 
 extern void
 ren_data_block_relocated (RenDataBlock *datablock, const void *data);
-/* This function should still assume that the data has not changed, but only
-been moved. */
 
 extern void
 ren_data_block_resized (RenDataBlock *datablock, ren_size size);
 
 extern void
 ren_data_block_changed (RenDataBlock *datablock, ren_size from, ren_size to);
-/* Signal the data changed in the range from 'from' to, but exclusive, 'to'.
-If 'from' is 0 and 'to' is -1, the whole is updated.
-
-It's a good idea to try to collect updates before calling this function. Neither
-the main library nor backends are required to optimize the handling of updated
-ranges. Also it is recommended to call this function for different ranges in
-the order they come. So 1-4,6-10,20-count should be called in that order.
-*/
-
-#if 0
-extern RenVertexArray*
-ren_vertex_array_new (
-    RenVertexArrayType vxtype, RenType type, ren_uint08 num,
-    RenDataBlock *datablock, ren_size start, ren_size count, ren_size stride);
-/*  num = number of elements of type (e.g. float[3]),
-    count = number of elements in vxarray.
-    start = offset in basic machine units.  */
-
-extern void
-ren_vertex_array_destroy (RenVertexArray *vxarray);
-#endif
 
 extern RenCoordArray*
 ren_coord_array_new (RenType type, ren_uint08 num,
