@@ -6,8 +6,13 @@ libreindeer_la_SOURCES = \
     coordarray.c colorarray.c normalarray.c \
     indexarray.c \
     light.c
+
 libreindeer_la_CPPFLAGS = \
-    -I$(top_builddir) -I$(top_srcdir) -D AC_libdir=\"$(libdir)\"
+    -I$(top_builddir) -I$(top_srcdir) $(LTDLINCL) \
+    -D AC_libdir=\"$(libdir)\"
+
 libreindeer_la_CFLAGS = $(GLIB_CFLAGS)
-libreindeer_la_LIBADD = $(LTLIBOBJS) $(GLIB_LIBS) -lltdl
+
+libreindeer_la_LIBADD = $(LTLIBOBJS) $(LIBLTDL) $(GLIB_LIBS)
+
 libreindeer_la_LDFLAGS = -export-dynamic -version-info 0:0:0
