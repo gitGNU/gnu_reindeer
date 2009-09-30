@@ -157,6 +157,11 @@
     RenPrimitive prim, ren_size offset, ren_size count)
 #define _REN_ARG_primitive (r, prim, offset, count)
 
+#define _REN_FTP_object_render RenObjectRenderFunc
+#define _REN_RET_object_render void
+#define _REN_PRM_object_render (RenReindeer *r, RenObject *object)
+#define _REN_ARG_object_render (r, object)
+
 #define _REN_FTP_lighting_enable RenLightingEnableFunc
 #define _REN_RET_lighting_enable void
 #define _REN_PRM_lighting_enable (RenReindeer *r)

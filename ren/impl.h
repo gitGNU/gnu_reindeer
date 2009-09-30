@@ -166,7 +166,6 @@ extern void
 ren_normal_array_type (RenNormalArray *vxarray,
     RenType *typep, ren_uint08 *nump);
 
-
 extern void
 ren_index_array_ref (RenIndexArray *ixarray);
 
@@ -177,6 +176,56 @@ extern void
 ren_index_array_data (RenIndexArray *ixarray, RenType *typep,
     RenDataBlock **datablockp, ren_size *startp, ren_size *countp);
 
+typedef struct _RenTemplatePrimitive RenTemplatePrimitive;
+struct _RenTemplatePrimitive
+{
+    ren_uint32 mode;
+    RenPrimitive prim;
+    ren_size offset;
+    ren_size count;
+};
+
+extern void
+ren_template_ref (RenTemplate *template);
+
+extern void
+ren_template_unref (RenTemplate *template);
+
+extern void
+ren_template_data_primitives (RenTemplate *template,
+    RenIndexArray **ix_array_p,
+    ren_size *num_primitives_p, const RenTemplatePrimitive **primitives_p);
+
+extern void
+ren_object_ref (RenObject *object);
+
+extern void
+ren_object_unref (RenObject *object);
+
+extern void
+ren_object_data (RenObject *object, RenTemplate **template_p,
+    RenCoordArray **coord_array_p, RenColorArray **color_array_p,
+    RenNormalArray **normal_array_p/*, RenEdgeArray **edge_array_p*/);
+
+extern void
+ren_object_change_mode (RenReindeer *r, RenObject *object,
+    ren_uint32 prev_mode, ren_uint32 next_mode, void *user_data);
+
+extern void
+ren_object_begin_mode (RenReindeer *r,
+    RenTemplate *prev_template, ren_uint32 prev_mode,
+    RenObject *object, ren_uint32 mode, void *user_data);
+
+extern void
+ren_material_ref (RenMaterial *material);
+
+extern void
+ren_material_unref (RenMaterial *material);
+
+extern void
+ren_material_data_light (RenMaterial *material,
+    RenColor **ambient_p, RenColor **diffuse_p, RenColor **specular_p,
+    RenColor **emission_p, ren_dfloat *shininess_p);
 
 extern void
 ren_light_ref (RenLight *light);

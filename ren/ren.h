@@ -160,7 +160,69 @@ ren_index_array_destroy (RenIndexArray *ixarray);
 extern void
 ren_index_array_set_size (RenIndexArray *ixarray, ren_size count);
 
+extern ren_size
+ren_primitive_vertex_count (RenPrimitive prim, ren_size count);
+
+extern RenTemplate*
+ren_template_new (RenIndexArray *ix_array);
+
+extern void
+ren_template_destroy (RenTemplate *template);
+
+extern void
+ren_template_build (RenTemplate *template);
+
+extern void
+ren_template_debug (RenTemplate *template);
+
+extern void
+ren_template_primitive (RenTemplate *template,
+    RenPrimitive prim, ren_size offset, ren_size count);
+
+extern ren_uint32
+ren_template_new_mode (RenTemplate *template);
+
+extern void
+ren_template_material (RenTemplate *template,
+    RenFace face, ren_uint08 material);
+
+RenObject*
+ren_object_new (RenTemplate *template, RenCoordArray *coord_array);
+
+void
+ren_object_destroy (RenObject *object);
+
+void
+ren_object_coord_array (RenObject *object, RenCoordArray *coord_array);
+
+void
+ren_object_color_array (RenObject *object, RenColorArray *color_array);
+
+void
+ren_object_normal_array (RenObject *object, RenNormalArray *normal_array);
+
 /* Lighting */
+
+extern RenMaterial*
+ren_material_new ();
+
+extern void
+ren_material_destroy (RenMaterial *material);
+
+extern void
+ren_material_ambient (RenMaterial *material, RenColor *color);
+
+extern void
+ren_material_diffuse (RenMaterial *material, RenColor *color);
+
+extern void
+ren_material_specular (RenMaterial *material, RenColor *color);
+
+extern void
+ren_material_emission (RenMaterial *material, RenColor *color);
+
+extern void
+ren_material_shininess (RenMaterial *material, ren_dfloat shininess);
 
 extern RenLight*
 ren_light_new (RenLightType type);

@@ -23,7 +23,7 @@
 
 #include "reindeer.h"
 
-#define GET_CONTEXT_DATA(r) ((RenContextData*)((r) + sizeof (RenReindeer)))
+#define GET_CONTEXT_DATA(r) (((gpointer)(r)) + sizeof (RenReindeer))
 
 static GHashTable *backend_table = NULL;
 static ren_bool initialized = FALSE;
@@ -282,6 +282,11 @@ backend_ref (RenBackend *backend)
     #undef XSTR
     if (loading_error)
         goto FAIL;
+
+    #define LOAD_FUNC(sym)\
+        data->object.sym = backend_symbol (libhandle, name, "object_" #sym)
+    LOAD_FUNC(change_material);
+    #undef LOAD_FUNC
 
     ren_size *sizep = NULL;
     #define LOAD_SIZE(sym)\

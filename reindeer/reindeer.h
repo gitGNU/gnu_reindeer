@@ -37,6 +37,12 @@ struct _RenBackendData
         #undef _REN_FUNC
     } ren;
 
+    struct
+    {
+        void (* change_material) (RenReindeer *r,
+            RenMaterial *front, RenMaterial *back, void *user_data);
+    } object;
+
     ren_size context_data_size;
     RenContextDataInitFunc context_data_init;
     RenContextDataFiniFunc context_data_fini;

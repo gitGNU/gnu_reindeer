@@ -136,6 +136,18 @@ typedef enum
     REN_PRIMITIVE_CYLINDERS,
 } RenPrimitive;
 
+typedef struct _RenTemplate RenTemplate;
+typedef struct _RenObject RenObject;
+
+typedef struct _RenMaterial RenMaterial;
+
+typedef enum
+{
+    REN_FACE_FRONT  = (1 << 0),
+    REN_FACE_BACK   = (1 << 1),
+    REN_FACE_BOTH   = REN_FACE_FRONT | REN_FACE_BACK,
+} RenFace;
+
 typedef struct _RenLight RenLight;
 
 typedef enum

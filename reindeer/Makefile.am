@@ -5,7 +5,8 @@ libreindeer_la_SOURCES = \
     matrix.c vector.c color.c datablock.c \
     coordarray.c colorarray.c normalarray.c \
     indexarray.c \
-    light.c
+    template.c object.c \
+    light.c material.c
 
 libreindeer_la_CPPFLAGS = \
     -I$(top_builddir) -I$(top_srcdir) $(LTDLINCL) \
