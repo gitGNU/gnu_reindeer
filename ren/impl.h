@@ -36,12 +36,12 @@
 typedef ren_bool (* RenBackendInitFunc) (RenBackend *backend);
 typedef ren_bool (* RenBackendFiniFunc) (void);
 
-typedef struct _RenContextData RenContextData;
-typedef void (* RenContextDataInitFunc) (RenContextData *context_data);
-typedef void (* RenContextDataFiniFunc) (RenContextData *context_data);
+typedef struct _RenReindeerBackData RenReindeerBackData;
+typedef void (* RenReindeerInitFunc) (RenReindeer *r, RenReindeerBackData *back_data);
+typedef void (* RenReindeerFiniFunc) (RenReindeer *r, RenReindeerBackData *back_data);
 
-extern RenContextData*
-ren_context_data (RenReindeer *r);
+extern RenReindeerBackData*
+ren_reindeer_back_data (RenReindeer *r);
 
 extern void
 ren_matrix_ref (RenMatrix *matrix);
@@ -54,27 +54,27 @@ ren_matrix_data (RenMatrix *matrix,
     const void **datap, ren_size *widthp, ren_size *heightp,
     RenType *typep, ren_bool *transposedp);
 
-typedef struct _RenMatrixContextData RenMatrixContextData;
-typedef void (* RenMatrixContextDataInitFunc) (RenMatrix *matrix,
-    RenMatrixContextData *context_data);
-typedef void (* RenMatrixContextDataFiniFunc) (RenMatrix *matrix,
-    RenMatrixContextData *context_data);
-typedef void (* RenMatrixContextDataUpdateFunc) (RenMatrix *matrix,
-    RenMatrixContextData *context_data);
+typedef struct _RenMatrixBackData RenMatrixBackData;
+typedef struct _RenMatrixBackDataKey RenMatrixBackDataKey;
+typedef void (* RenMatrixBackDataInitFunc) (RenMatrix *matrix,
+    RenMatrixBackData *back_data);
+typedef void (* RenMatrixBackDataFiniFunc) (RenMatrix *matrix,
+    RenMatrixBackData *back_data);
+typedef void (* RenMatrixBackDataUpdateFunc) (RenMatrix *matrix,
+    RenMatrixBackData *back_data);
 
-extern RenMatrixContextData*
-ren_matrix_context_data (RenMatrix *matrix, RenReindeer *r);
+extern RenMatrixBackDataKey*
+ren_matrix_back_data_key_new (ren_size size, RenMatrixBackDataInitFunc init,
+    RenMatrixBackDataFiniFunc fini, RenMatrixBackDataUpdateFunc update);
 
-typedef struct _RenMatrixBackendData RenMatrixBackendData;
-typedef void (* RenMatrixBackendDataInitFunc) (RenMatrix *matrix,
-    RenMatrixBackendData *backend_data);
-typedef void (* RenMatrixBackendDataFiniFunc) (RenMatrix *matrix,
-    RenMatrixBackendData *backend_data);
-typedef void (* RenMatrixBackendDataUpdateFunc) (RenMatrix *matrix,
-    RenMatrixBackendData *backend_data);
+extern void
+ren_matrix_back_data_key_ref (RenMatrixBackDataKey *key);
 
-extern RenMatrixBackendData*
-ren_matrix_backend_data (RenMatrix *matrix, RenReindeer *r);
+extern void
+ren_matrix_back_data_key_unref (RenMatrixBackDataKey *key);
+
+extern RenMatrixBackData*
+ren_matrix_back_data (RenMatrix *matrix, RenMatrixBackDataKey *key);
 
 extern void
 ren_vector_ref (RenVector *vector);
@@ -92,27 +92,27 @@ extern void
 ren_color_data (RenColor *color,
     const void **datap, RenColorFormat *formatp, RenType *typep);
 
-typedef struct _RenColorContextData RenColorContextData;
-typedef void (* RenColorContextDataInitFunc) (RenColor *color,
-    RenColorContextData *context_data);
-typedef void (* RenColorContextDataFiniFunc) (RenColor *color,
-    RenColorContextData *context_data);
-typedef void (* RenColorContextDataUpdateFunc) (RenColor *color,
-    RenColorContextData *context_data);
+typedef struct _RenColorBackData RenColorBackData;
+typedef struct _RenColorBackDataKey RenColorBackDataKey;
+typedef void (* RenColorBackDataInitFunc) (RenColor *color,
+    RenColorBackData *back_data);
+typedef void (* RenColorBackDataFiniFunc) (RenColor *color,
+    RenColorBackData *back_data);
+typedef void (* RenColorBackDataUpdateFunc) (RenColor *color,
+    RenColorBackData *back_data);
 
-extern RenColorContextData*
-ren_color_context_data (RenColor *color, RenReindeer *r);
+extern RenColorBackDataKey*
+ren_color_back_data_key_new (ren_size size, RenColorBackDataInitFunc init,
+    RenColorBackDataFiniFunc fini, RenColorBackDataUpdateFunc update);
 
-typedef struct _RenColorBackendData RenColorBackendData;
-typedef void (* RenColorBackendDataInitFunc) (RenColor *color,
-    RenColorBackendData *backend_data);
-typedef void (* RenColorBackendDataFiniFunc) (RenColor *color,
-    RenColorBackendData *backend_data);
-typedef void (* RenColorBackendDataUpdateFunc) (RenColor *color,
-    RenColorBackendData *backend_data);
+extern void
+ren_color_back_data_key_ref (RenColorBackDataKey *key);
 
-extern RenColorBackendData*
-ren_color_backend_data (RenColor *color, RenReindeer *r);
+extern void
+ren_color_back_data_key_unref (RenColorBackDataKey *key);
+
+extern RenColorBackData*
+ren_color_back_data (RenColor *color, RenColorBackDataKey *key);
 
 extern void
 ren_data_block_ref (RenDataBlock *datablock);

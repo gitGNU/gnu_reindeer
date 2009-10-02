@@ -186,20 +186,23 @@ extern void
 ren_template_material (RenTemplate *template,
     RenFace face, ren_uint08 material);
 
-RenObject*
+extern RenObject*
 ren_object_new (RenTemplate *template, RenCoordArray *coord_array);
 
-void
+extern void
 ren_object_destroy (RenObject *object);
 
-void
+extern void
 ren_object_coord_array (RenObject *object, RenCoordArray *coord_array);
 
-void
+extern void
 ren_object_color_array (RenObject *object, RenColorArray *color_array);
 
-void
+extern void
 ren_object_normal_array (RenObject *object, RenNormalArray *normal_array);
+
+extern void
+ren_object_material (RenObject *object, ren_uint08 id, RenMaterial *material);
 
 /* Lighting */
 

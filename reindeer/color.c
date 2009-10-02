@@ -22,6 +22,9 @@
 #include <glib.h>
 
 #include "reindeer.h"
+#include "backdata.h"
+
+typedef struct _RenColorBackDataItem _RenColorBackDataItem;
 
 struct _RenColor
 {
@@ -31,30 +34,26 @@ struct _RenColor
     RenColorFormat format;
     RenType type;
 
-    GList *context_updater_list;
-    GList *backend_updater_list;
+    _RenColorBackDataItem *bd_list;
 };
 
-typedef struct _RenColorContextUpdater _RenColorContextUpdater;
-struct _RenColorContextUpdater
+struct _RenColorBackDataKey
 {
-    _RenContextUpdater base;
-    RenColorContextData *context_data;
+    ren_uint32 ref_count;
+
+    ren_size size;
+    RenColorBackDataInitFunc init;
+    RenColorBackDataFiniFunc fini;
+    RenColorBackDataUpdateFunc update;
+
+    _RenColorBackDataItem *bd_list;
+};
+
+struct _RenColorBackDataItem
+{
+    _RenBackDataItem base;
     ren_bool changed;
 };
-
-typedef struct _RenColorBackendUpdater _RenColorBackendUpdater;
-struct _RenColorBackendUpdater
-{
-    _RenBackendUpdater base;
-    RenColorBackendData *backend_data;
-    ren_bool changed;
-};
-
-static void
-remove_context_updater (RenColor *color, GList *updater_item);
-static void
-remove_backend_updater (RenColor *color, GList *updater_item);
 
 RenColor*
 ren_color_new (const void *data, RenColorFormat format, RenType type)
@@ -68,8 +67,7 @@ ren_color_new (const void *data, RenColorFormat format, RenType type)
     color->type = type;
     /* TODO: Check if format and type are valid. */
 
-    color->context_updater_list = NULL;
-    color->backend_updater_list = NULL;
+    color->bd_list = NULL;
 
     return color;
 }
@@ -83,7 +81,10 @@ ren_color_destroy (RenColor *color)
 void
 ren_color_changed (RenColor *color)
 {
-
+    _REN_RES_BACK_DATA_LIST_UPDATE (Color,color,color,
+        if (key->update != NULL)
+            item->changed = TRUE;
+    );
 }
 
 void
@@ -98,7 +99,11 @@ ren_color_unref (RenColor *color)
     if (--(color->ref_count) > 0)
         return;
 
-    CLEAR_UPDATER_LISTS (Color,color,color);
+    _REN_RES_BACK_DATA_LIST_CLEAR (Color,color,color,
+        if (key->fini != NULL)
+            key->fini (color, data);
+        g_free (data);
+    );
 
     g_free (color);
 }
@@ -115,42 +120,58 @@ ren_color_data (RenColor *color,
         (*typep) = color->type;
 }
 
-RenColorContextData*
-ren_color_context_data (RenColor *color, RenReindeer *r)
+RenColorBackDataKey*
+ren_color_back_data_key_new (ren_size size, RenColorBackDataInitFunc init,
+    RenColorBackDataFiniFunc fini, RenColorBackDataUpdateFunc update)
 {
-    RETURN_CONTEXT_DATA(Color,color,color,
-        context_updater->changed = TRUE;
-        ,
-        if (context_updater->changed)
-        {
-            context_data_update (color, context_data);
-            context_updater->changed = FALSE;
-        }
+    RenColorBackDataKey *key = g_new (RenColorBackDataKey, 1);
+
+    key->ref_count = 1;
+
+    key->size = size;
+    key->init = init;
+    key->fini = fini;
+    key->update = update;
+
+    key->bd_list = NULL;
+
+    return key;
+}
+
+void
+ren_color_back_data_key_ref (RenColorBackDataKey *key)
+{
+    ++(key->ref_count);
+}
+
+void
+ren_color_back_data_key_unref (RenColorBackDataKey *key)
+{
+    if (--(key->ref_count) > 0)
+        return;
+
+    _REN_KEY_BACK_DATA_LIST_CLEAR (Color,color,key,color,
+        if (key->fini != NULL)
+            key->fini (color, data);
+        g_free (data);
     );
+
+    g_free (key);
 }
 
-RenColorBackendData*
-ren_color_backend_data (RenColor *color, RenReindeer *r)
+RenColorBackData*
+ren_color_back_data (RenColor *color, RenColorBackDataKey *key)
 {
-    RETURN_BACKEND_DATA(Color,color,color,
-        backend_updater->changed = TRUE;
-        ,
-        if (backend_updater->changed)
-        {
-            backend_data_update (color, backend_data);
-            backend_updater->changed = FALSE;
-        }
+    _REN_BACK_DATA_GET_OR_NEW (Color,color,color,key,
+        if (key->init != NULL)
+            key->init (color, data);
+        if (key->update != NULL)
+            item->changed = TRUE;
     );
-}
-
-static void
-remove_context_updater (RenColor *color, GList *updater_item)
-{
-    REMOVE_CONTEXT_UPDATER(Color,color,color,{});
-}
-
-static void
-remove_backend_updater (RenColor *color, GList *updater_item)
-{
-    REMOVE_BACKEND_UPDATER(Color,color,color,{});
+    if (key->update != NULL && item->changed)
+    {
+        key->update (color, data);
+        item->changed = FALSE;
+    }
+    return data;
 }

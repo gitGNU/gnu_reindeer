@@ -22,6 +22,9 @@
 #include <glib.h>
 
 #include "reindeer.h"
+#include "backdata.h"
+
+typedef struct _RenMatrixBackDataItem _RenMatrixBackDataItem;
 
 struct _RenMatrix
 {
@@ -33,30 +36,26 @@ struct _RenMatrix
     RenType type;
     ren_bool transposed;
 
-    GList *context_updater_list;
-    GList *backend_updater_list;
+    _RenMatrixBackDataItem *bd_list;
 };
 
-typedef struct _RenMatrixContextUpdater _RenMatrixContextUpdater;
-struct _RenMatrixContextUpdater
+struct _RenMatrixBackDataKey
 {
-    _RenContextUpdater base;
-    RenMatrixContextData *context_data;
+    ren_uint32 ref_count;
+
+    ren_size size;
+    RenMatrixBackDataInitFunc init;
+    RenMatrixBackDataFiniFunc fini;
+    RenMatrixBackDataUpdateFunc update;
+
+    _RenMatrixBackDataItem *bd_list;
+};
+
+struct _RenMatrixBackDataItem
+{
+    _RenBackDataItem base;
     ren_bool changed;
 };
-
-typedef struct _RenMatrixBackendUpdater _RenMatrixBackendUpdater;
-struct _RenMatrixBackendUpdater
-{
-    _RenBackendUpdater base;
-    RenMatrixBackendData *backend_data;
-    ren_bool changed;
-};
-
-static void
-remove_context_updater (RenMatrix *matrix, GList *updater_item);
-static void
-remove_backend_updater (RenMatrix *matrix, GList *updater_item);
 
 RenMatrix*
 ren_matrix_new (const void *data, ren_size width, ren_size height,
@@ -75,8 +74,7 @@ ren_matrix_new (const void *data, ren_size width, ren_size height,
     matrix->type = type;
     matrix->transposed = transposed;
 
-    matrix->context_updater_list = NULL;
-    matrix->backend_updater_list = NULL;
+    matrix->bd_list = NULL;
 
     return matrix;
 }
@@ -90,7 +88,10 @@ ren_matrix_destroy (RenMatrix *matrix)
 void
 ren_matrix_changed (RenMatrix *matrix)
 {
-
+    _REN_RES_BACK_DATA_LIST_UPDATE (Matrix,matrix,matrix,
+        if (key->update != NULL)
+            item->changed = TRUE;
+    );
 }
 
 void
@@ -105,7 +106,11 @@ ren_matrix_unref (RenMatrix *matrix)
     if (--(matrix->ref_count) > 0)
         return;
 
-    CLEAR_UPDATER_LISTS (Matrix,matrix,matrix);
+    _REN_RES_BACK_DATA_LIST_CLEAR (Matrix,matrix,matrix,
+        if (key->fini != NULL)
+            key->fini (matrix, data);
+        g_free (data);
+    );
 
     g_free (matrix);
 }
@@ -127,42 +132,58 @@ ren_matrix_data (RenMatrix *matrix,
         (*transposedp) = matrix->transposed;
 }
 
-RenMatrixContextData*
-ren_matrix_context_data (RenMatrix *matrix, RenReindeer *r)
+RenMatrixBackDataKey*
+ren_matrix_back_data_key_new (ren_size size, RenMatrixBackDataInitFunc init,
+    RenMatrixBackDataFiniFunc fini, RenMatrixBackDataUpdateFunc update)
 {
-    RETURN_CONTEXT_DATA(Matrix,matrix,matrix,
-        context_updater->changed = TRUE;
-        ,
-        if (context_updater->changed)
-        {
-            context_data_update (matrix, context_data);
-            context_updater->changed = FALSE;
-        }
+    RenMatrixBackDataKey *key = g_new (RenMatrixBackDataKey, 1);
+
+    key->ref_count = 1;
+
+    key->size = size;
+    key->init = init;
+    key->fini = fini;
+    key->update = update;
+
+    key->bd_list = NULL;
+
+    return key;
+}
+
+void
+ren_matrix_back_data_key_ref (RenMatrixBackDataKey *key)
+{
+    ++(key->ref_count);
+}
+
+void
+ren_matrix_back_data_key_unref (RenMatrixBackDataKey *key)
+{
+    if (--(key->ref_count) > 0)
+        return;
+
+    _REN_KEY_BACK_DATA_LIST_CLEAR (Matrix,matrix,key,matrix,
+        if (key->fini != NULL)
+            key->fini (matrix, data);
+        g_free (data);
     );
+
+    g_free (key);
 }
 
-RenMatrixBackendData*
-ren_matrix_backend_data (RenMatrix *matrix, RenReindeer *r)
+RenMatrixBackData*
+ren_matrix_back_data (RenMatrix *matrix, RenMatrixBackDataKey *key)
 {
-    RETURN_BACKEND_DATA(Matrix,matrix,matrix,
-        backend_updater->changed = TRUE;
-        ,
-        if (backend_updater->changed)
-        {
-            backend_data_update (matrix, backend_data);
-            backend_updater->changed = FALSE;
-        }
+    _REN_BACK_DATA_GET_OR_NEW (Matrix,matrix,matrix,key,
+        if (key->init != NULL)
+            key->init (matrix, data);
+        if (key->update != NULL)
+            item->changed = TRUE;
     );
-}
-
-static void
-remove_context_updater (RenMatrix *matrix, GList *updater_item)
-{
-    REMOVE_CONTEXT_UPDATER(Matrix,matrix,matrix,{});
-}
-
-static void
-remove_backend_updater (RenMatrix *matrix, GList *updater_item)
-{
-    REMOVE_BACKEND_UPDATER(Matrix,matrix,matrix,{});
+    if (key->update != NULL && item->changed)
+    {
+        key->update (matrix, data);
+        item->changed = FALSE;
+    }
+    return data;
 }

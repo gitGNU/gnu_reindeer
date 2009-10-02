@@ -1,11 +1,11 @@
 lib_LTLIBRARIES = libreindeer.la
 
 libreindeer_la_SOURCES = \
-    reindeer.c reindeer.h \
+    reindeer.c reindeer.h backdata.c backdata.h \
     matrix.c vector.c color.c datablock.c \
     coordarray.c colorarray.c normalarray.c \
     indexarray.c \
-    template.c object.c \
+    template.c template.h object.c object.h \
     light.c material.c
 
 libreindeer_la_CPPFLAGS = \

@@ -23,8 +23,6 @@
 
 #include "reindeer.h"
 
-#define GET_CONTEXT_DATA(r) (((gpointer)(r)) + sizeof (RenReindeer))
-
 static GHashTable *backend_table = NULL;
 static ren_bool initialized = FALSE;
 
@@ -72,6 +70,8 @@ ren_library_init (void)
     backend_table = g_hash_table_new_full (
         g_str_hash, g_str_equal, NULL, (GDestroyNotify) backend_destroy);
 
+    _ren_back_data_table_init ();
+
     initialized = TRUE;
     return TRUE;
 }
@@ -83,6 +83,8 @@ ren_library_exit (void)
         return;
 
     g_hash_table_destroy (backend_table);
+
+    _ren_back_data_table_exit ();
 
     if (lt_dlexit () != 0)
     {
@@ -97,16 +99,15 @@ ren_load (RenBackend *backend)
         return NULL;
 
     _RenBackendData *backend_data = backend->data;
-    RenReindeer *r = g_malloc (
-        sizeof (RenReindeer) + backend_data->context_data_size);
-
+    RenReindeer *r = g_new (RenReindeer, 1);
     r->backend = backend;
-    r->updater_table = g_hash_table_new (g_direct_hash, g_direct_equal);
     memcpy (&(r->backend_data), backend_data, sizeof (_RenBackendData));
-    RenContextDataInitFunc context_data_init =
-        backend_data->context_data_init;
-    if (context_data_init != NULL)
-        context_data_init (GET_CONTEXT_DATA (r));
+    r->back_data = g_malloc0 (backend_data->reindeer_back_data_size);
+
+    RenReindeerInitFunc reindeer_init =
+        backend_data->reindeer_init;
+    if (reindeer_init != NULL)
+        reindeer_init (r, r->back_data);
 
     return r;
 }
@@ -117,22 +118,12 @@ ren_unload (RenReindeer *r)
     if (!initialized || r == NULL)
         return;
 
-    GHashTableIter iter;
-    gpointer key;
-    _RenContextUpdater *value;
-    g_hash_table_iter_init (&iter, r->updater_table);
-    while (g_hash_table_iter_next (&iter, &key, (gpointer *) &value)) 
-    {
-        value->remove_updater (key, value->updater_item);
-        g_hash_table_iter_remove (&iter);
-    }
+    RenReindeerFiniFunc reindeer_fini =
+        r->backend_data.reindeer_fini;
+    if (reindeer_fini != NULL)
+        reindeer_fini (r, r->back_data);
+    g_free (r->back_data);
 
-    RenContextDataFiniFunc context_data_fini =
-        r->backend_data.context_data_fini;
-    if (context_data_fini != NULL)
-        context_data_fini (GET_CONTEXT_DATA (r));
-
-    g_hash_table_destroy (r->updater_table);
     backend_unref (r->backend);
     g_free (r);
 }
@@ -143,10 +134,10 @@ ren_backend (RenReindeer *r)
     return r->backend;
 }
 
-RenContextData*
-ren_context_data (RenReindeer *r)
+RenReindeerBackData*
+ren_reindeer_back_data (RenReindeer *r)
 {
-    return GET_CONTEXT_DATA (r);
+    return r->back_data;
 }
 
 RenBackend*
@@ -261,8 +252,6 @@ backend_ref (RenBackend *backend)
 
     data = g_new (_RenBackendData, 1);
 
-    data->updater_table = g_hash_table_new (g_direct_hash, g_direct_equal);
-
     ren_bool loading_error = FALSE;
     #define XSTR(s) STR(s)
     #define STR(s) #s
@@ -280,43 +269,38 @@ backend_ref (RenBackend *backend)
     #undef LOAD_SYMBOL
     #undef STR
     #undef XSTR
-    if (loading_error)
-        goto FAIL;
 
-    #define LOAD_FUNC(sym)\
-        data->object.sym = backend_symbol (libhandle, name, "object_" #sym)
-    LOAD_FUNC(change_material);
-    #undef LOAD_FUNC
+    #define LOAD_SYMBOL(sym)\
+        data->object.sym = backend_symbol (libhandle, name, "object_" #sym);
+    LOAD_SYMBOL(change_material)
+    #undef LOAD_SYMBOL
 
-    ren_size *sizep = NULL;
+    #define LOAD_SYMBOL(sym)\
+        data->sym = backend_symbol (libhandle, name, #sym);\
+        if (data->sym == NULL)\
+        {\
+            g_warning ("Symbol `%s' could not be found.", #sym);\
+            loading_error = TRUE;\
+        }
     #define LOAD_SIZE(sym)\
-        G_STMT_START {\
+        {\
+        ren_size *sizep = NULL;\
         if ((sizep = backend_symbol (libhandle, name, #sym)) != NULL)\
             data->sym = *sizep;\
         else\
-            data->sym = 0;\
-        } G_STMT_END
-    #define LOAD_FUNC(sym)\
-        data->sym = backend_symbol (libhandle, name, #sym)
-    LOAD_SIZE(context_data_size);
-    LOAD_FUNC(context_data_init);
-    LOAD_FUNC(context_data_fini);
-    #define LOAD_UPDATER_SYMS(type)\
-        G_STMT_START {\
-        LOAD_SIZE(type##_context_data_size);\
-        LOAD_FUNC(type##_context_data_init);\
-        LOAD_FUNC(type##_context_data_fini);\
-        LOAD_FUNC(type##_context_data_update);\
-        LOAD_SIZE(type##_backend_data_size);\
-        LOAD_FUNC(type##_backend_data_init);\
-        LOAD_FUNC(type##_backend_data_fini);\
-        LOAD_FUNC(type##_backend_data_update);\
-        } G_STMT_END
-    LOAD_UPDATER_SYMS(matrix);
-    LOAD_UPDATER_SYMS(color);
-    #undef LOAD_UPDATER_SYMS
-    #undef LOAD_FUNC
+        {\
+            g_warning ("Symbol `%s' could not be found.", #sym);\
+            loading_error = TRUE;\
+        }\
+        }
+    LOAD_SYMBOL(reindeer_init)
+    LOAD_SYMBOL(reindeer_fini)
+    LOAD_SIZE(reindeer_back_data_size)
     #undef LOAD_SIZE
+    #undef LOAD_SYMBOL
+
+    if (loading_error)
+        goto FAIL;
 
     backend->libhandle = libhandle;
     backend->data = data;
@@ -336,16 +320,6 @@ backend_unref (RenBackend *backend)
     if (--(backend->ref_count) > 0)
         return;
 
-    GHashTableIter iter;
-    gpointer key;
-    _RenBackendUpdater *value;
-    g_hash_table_iter_init (&iter, backend->data->updater_table);
-    while (g_hash_table_iter_next (&iter, &key, (gpointer *) &value)) 
-    {
-        value->remove_updater (key, value->updater_item);
-        g_hash_table_iter_remove (&iter);
-    }
-
     RenBackendFiniFunc backend_fini =
         backend_symbol (backend->libhandle, backend->name, "backend_fini");
     if (backend_fini != NULL && !backend_fini ())
@@ -355,7 +329,6 @@ backend_unref (RenBackend *backend)
         g_warning ("LTDL error on closing: %s", lt_dlerror ());
 
     backend->libhandle = 0;
-    g_hash_table_destroy (backend->data->updater_table);
     g_free (backend->data);
     backend->data = NULL;
 }
