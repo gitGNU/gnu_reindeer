@@ -30,16 +30,16 @@ extern void
 ren_library_exit (void);
 
 extern RenReindeer*
-ren_load (RenBackend *backend);
+ren_reindeer_new (RenBackend *backend);
 
 extern void
-ren_unload (RenReindeer *r);
+ren_reindeer_destroy (RenReindeer *r);
 
 extern RenBackend*
-ren_backend (RenReindeer *r);
+ren_reindeer_backend (RenReindeer *r);
 
 extern RenBackend*
-ren_lookup_backend (const char *name);
+ren_backend_lookup (const char *name);
 
 static inline ren_size
 ren_type_sizeof (RenType type)

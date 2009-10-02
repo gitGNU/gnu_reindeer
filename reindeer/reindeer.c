@@ -93,7 +93,7 @@ ren_library_exit (void)
 }
 
 RenReindeer*
-ren_load (RenBackend *backend)
+ren_reindeer_new (RenBackend *backend)
 {
     if (!initialized || backend == NULL || !backend_ref (backend))
         return NULL;
@@ -113,7 +113,7 @@ ren_load (RenBackend *backend)
 }
 
 void
-ren_unload (RenReindeer *r)
+ren_reindeer_destroy (RenReindeer *r)
 {
     if (!initialized || r == NULL)
         return;
@@ -129,7 +129,7 @@ ren_unload (RenReindeer *r)
 }
 
 RenBackend*
-ren_backend (RenReindeer *r)
+ren_reindeer_backend (RenReindeer *r)
 {
     return r->backend;
 }
@@ -141,7 +141,7 @@ ren_reindeer_back_data (RenReindeer *r)
 }
 
 RenBackend*
-ren_lookup_backend (const char *name)
+ren_backend_lookup (const char *name)
 {
     if (!initialized)
         return NULL;

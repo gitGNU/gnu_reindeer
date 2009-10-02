@@ -64,35 +64,35 @@
 #define _REN_PRM_depth_test (RenReindeer *r, RenTest test)
 #define _REN_ARG_depth_test (r, test)
 
-#define _REN_FTP_matrix_mode RenMatrixModeFunc
-#define _REN_RET_matrix_mode void
-#define _REN_PRM_matrix_mode (RenReindeer *r, RenMatrixMode mode)
-#define _REN_ARG_matrix_mode (r, mode)
+#define _REN_FTP_transform_mode RenTransformModeFunc
+#define _REN_RET_transform_mode void
+#define _REN_PRM_transform_mode (RenReindeer *r, RenTransformMode mode)
+#define _REN_ARG_transform_mode (r, mode)
 
-#define _REN_FTP_matrix_set RenMatrixSetFunc
-#define _REN_RET_matrix_set void
-#define _REN_PRM_matrix_set (RenReindeer *r, RenMatrix *matrix)
-#define _REN_ARG_matrix_set (r, matrix)
+#define _REN_FTP_transform_set RenTransformSetFunc
+#define _REN_RET_transform_set void
+#define _REN_PRM_transform_set (RenReindeer *r, RenMatrix *matrix)
+#define _REN_ARG_transform_set (r, matrix)
 
-#define _REN_FTP_matrix_mul RenMatrixMulFunc
-#define _REN_RET_matrix_mul void
-#define _REN_PRM_matrix_mul (RenReindeer *r, RenMatrix *matrix)
-#define _REN_ARG_matrix_mul (r, matrix)
+#define _REN_FTP_transform_mul RenTransformMulFunc
+#define _REN_RET_transform_mul void
+#define _REN_PRM_transform_mul (RenReindeer *r, RenMatrix *matrix)
+#define _REN_ARG_transform_mul (r, matrix)
 
-#define _REN_FTP_matrix_identity RenMatrixIdentityFunc
-#define _REN_RET_matrix_identity void
-#define _REN_PRM_matrix_identity (RenReindeer *r)
-#define _REN_ARG_matrix_identity (r)
+#define _REN_FTP_transform_identity RenTransformIdentityFunc
+#define _REN_RET_transform_identity void
+#define _REN_PRM_transform_identity (RenReindeer *r)
+#define _REN_ARG_transform_identity (r)
 
-#define _REN_FTP_matrix_push RenMatrixPushFunc
-#define _REN_RET_matrix_push void
-#define _REN_PRM_matrix_push (RenReindeer *r)
-#define _REN_ARG_matrix_push (r)
+#define _REN_FTP_transform_push RenTransformPushFunc
+#define _REN_RET_transform_push void
+#define _REN_PRM_transform_push (RenReindeer *r)
+#define _REN_ARG_transform_push (r)
 
-#define _REN_FTP_matrix_pop RenMatrixPopFunc
-#define _REN_RET_matrix_pop void
-#define _REN_PRM_matrix_pop (RenReindeer *r)
-#define _REN_ARG_matrix_pop (r)
+#define _REN_FTP_transform_pop RenTransformPopFunc
+#define _REN_RET_transform_pop void
+#define _REN_PRM_transform_pop (RenReindeer *r)
+#define _REN_ARG_transform_pop (r)
 
 #define _REN_FTP_viewport RenViewportFunc
 #define _REN_RET_viewport void
