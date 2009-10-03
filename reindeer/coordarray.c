@@ -25,7 +25,7 @@ struct _RenCoordArray
 {
     ren_uint32 ref_count;
 
-    RenDataBlock *datablock;
+    RenDataBlock *data_block;
     ren_size start;
     ren_size count;
     ren_size stride;
@@ -36,72 +36,79 @@ struct _RenCoordArray
 
 RenCoordArray*
 ren_coord_array_new (RenType type, ren_uint08 num,
-    RenDataBlock *datablock, ren_size start, ren_size count, ren_size stride)
+    RenDataBlock *data_block, ren_size start, ren_size count, ren_size stride)
 {
-    /* FIXME: Check type and num input... */
+    if (type == REN_TYPE_BOOL)
+        return NULL;
+    if (num < 2 || num > 4)
+        return NULL;
+    if (data_block == NULL)
+        return NULL;
 
-    RenCoordArray *vxarray = g_new0 (RenCoordArray, 1);
+    RenCoordArray *vx_array = g_new0 (RenCoordArray, 1);
 
-    vxarray->ref_count = 1;
+    vx_array->ref_count = 1;
 
-    vxarray->datablock = datablock;
-    vxarray->start = start;
-    vxarray->count = count;
-    vxarray->stride = stride;
+    vx_array->data_block = ren_data_block_ref (data_block);
+    vx_array->start = start;
+    vx_array->count = count;
+    vx_array->stride = stride;
 
-    vxarray->type = type;
-    vxarray->num = num;
+    vx_array->type = type;
+    vx_array->num = num;
 
-    return vxarray;
+    return vx_array;
 }
 
 void
-ren_coord_array_destroy (RenCoordArray *vxarray)
+ren_coord_array_destroy (RenCoordArray *vx_array)
 {
-    ren_coord_array_unref (vxarray);
+    ren_coord_array_unref (vx_array);
 }
 
 void
-ren_coord_array_set_size (RenCoordArray *vxarray, ren_size count)
+ren_coord_array_set_size (RenCoordArray *vx_array, ren_size count)
 {
-    vxarray->count = count;
+    vx_array->count = count;
+}
+
+RenCoordArray*
+ren_coord_array_ref (RenCoordArray *vx_array)
+{
+    ++(vx_array->ref_count);
+    return vx_array;
 }
 
 void
-ren_coord_array_ref (RenCoordArray *vxarray)
+ren_coord_array_unref (RenCoordArray *vx_array)
 {
-    ++(vxarray->ref_count);
-}
-
-void
-ren_coord_array_unref (RenCoordArray *vxarray)
-{
-    if (--(vxarray->ref_count) > 0)
+    if (--(vx_array->ref_count) > 0)
         return;
 
-    g_free (vxarray);
+    ren_data_block_unref (vx_array->data_block);
+    g_free (vx_array);
 }
 
 void
-ren_coord_array_data (RenCoordArray *vxarray, RenDataBlock **datablockp,
-    ren_size *startp, ren_size *countp, ren_size *stridep)
+ren_coord_array_data (RenCoordArray *vx_array, RenDataBlock **data_block_p,
+    ren_size *start_p, ren_size *count_p, ren_size *stride_p)
 {
-    if (datablockp)
-        (*datablockp) = vxarray->datablock;
-    if (startp)
-        (*startp) = vxarray->start;
-    if (countp)
-        (*countp) = vxarray->count;
-    if (stridep)
-        (*stridep) = vxarray->stride;
+    if (data_block_p)
+        (*data_block_p) = vx_array->data_block;
+    if (start_p)
+        (*start_p) = vx_array->start;
+    if (count_p)
+        (*count_p) = vx_array->count;
+    if (stride_p)
+        (*stride_p) = vx_array->stride;
 }
 
 void
-ren_coord_array_type (RenCoordArray *vxarray,
-    RenType *typep, ren_uint08 *nump)
+ren_coord_array_type (RenCoordArray *vx_array,
+    RenType *type_p, ren_uint08 *num_p)
 {
-    if (typep)
-        (*typep) = vxarray->type;
-    if (nump)
-        (*nump) = vxarray->num;
+    if (type_p)
+        (*type_p) = vx_array->type;
+    if (num_p)
+        (*num_p) = vx_array->num;
 }

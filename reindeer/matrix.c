@@ -94,10 +94,11 @@ ren_matrix_changed (RenMatrix *matrix)
     );
 }
 
-void
+RenMatrix*
 ren_matrix_ref (RenMatrix *matrix)
 {
     ++(matrix->ref_count);
+    return matrix;
 }
 
 void
@@ -117,19 +118,19 @@ ren_matrix_unref (RenMatrix *matrix)
 
 void
 ren_matrix_data (RenMatrix *matrix,
-    const void **datap, ren_size *widthp, ren_size *heightp,
-    RenType *typep, ren_bool *transposedp)
+    const void **data_p, ren_size *width_p, ren_size *height_p,
+    RenType *type_p, ren_bool *transposed_p)
 {
-    if (datap)
-        (*datap) = matrix->data;
-    if (widthp)
-        (*widthp) = matrix->width;
-    if (heightp)
-        (*heightp) = matrix->height;
-    if (typep)
-        (*typep) = matrix->type;
-    if (transposedp)
-        (*transposedp) = matrix->transposed;
+    if (data_p)
+        (*data_p) = matrix->data;
+    if (width_p)
+        (*width_p) = matrix->width;
+    if (height_p)
+        (*height_p) = matrix->height;
+    if (type_p)
+        (*type_p) = matrix->type;
+    if (transposed_p)
+        (*transposed_p) = matrix->transposed;
 }
 
 RenMatrixBackDataKey*
@@ -150,10 +151,11 @@ ren_matrix_back_data_key_new (ren_size size, RenMatrixBackDataInitFunc init,
     return key;
 }
 
-void
+RenMatrixBackDataKey*
 ren_matrix_back_data_key_ref (RenMatrixBackDataKey *key)
 {
     ++(key->ref_count);
+    return key;
 }
 
 void

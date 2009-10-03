@@ -33,6 +33,9 @@ struct _RenVector
 RenVector*
 ren_vector_new (const void *data, ren_size length, RenType type)
 {
+    if (type != REN_TYPE_SFLOAT && type != REN_TYPE_DFLOAT)
+        return NULL;
+
     RenVector *vector = g_new (RenVector, 1);
 
     vector->ref_count = 1;
@@ -40,7 +43,6 @@ ren_vector_new (const void *data, ren_size length, RenType type)
     vector->data = data;
     vector->length = length;
     vector->type = type;
-    /* TODO: Check if format and type are valid. */
 
     return vector;
 }
@@ -57,10 +59,11 @@ ren_vector_changed (RenVector *vector)
 
 }
 
-void
+RenVector*
 ren_vector_ref (RenVector *vector)
 {
     ++(vector->ref_count);
+    return vector;
 }
 
 void
@@ -70,4 +73,16 @@ ren_vector_unref (RenVector *vector)
         return;
 
     g_free (vector);
+}
+
+void
+ren_vector_data (RenVector *vector,
+    const void **data_p, ren_size *length_p, RenType *type_p)
+{
+    if (data_p)
+        (*data_p) = vector->data;
+    if (length_p)
+        (*length_p) = vector->length;
+    if (type_p)
+        (*type_p) = vector->type;
 }

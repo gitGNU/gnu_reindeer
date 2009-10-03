@@ -58,6 +58,9 @@ struct _RenColorBackDataItem
 RenColor*
 ren_color_new (const void *data, RenColorFormat format, RenType type)
 {
+    if (type == REN_TYPE_BOOL)
+        return NULL;
+
     RenColor *color = g_new (RenColor, 1);
 
     color->ref_count = 1;
@@ -65,7 +68,6 @@ ren_color_new (const void *data, RenColorFormat format, RenType type)
     color->data = data;
     color->format = format;
     color->type = type;
-    /* TODO: Check if format and type are valid. */
 
     color->bd_list = NULL;
 
@@ -87,10 +89,11 @@ ren_color_changed (RenColor *color)
     );
 }
 
-void
+RenColor*
 ren_color_ref (RenColor *color)
 {
     ++(color->ref_count);
+    return color;
 }
 
 void
@@ -110,14 +113,14 @@ ren_color_unref (RenColor *color)
 
 void
 ren_color_data (RenColor *color,
-    const void **datap, RenColorFormat *formatp, RenType *typep)
+    const void **data_p, RenColorFormat *format_p, RenType *type_p)
 {
-    if (datap)
-        (*datap) = color->data;
-    if (formatp)
-        (*formatp) = color->format;
-    if (typep)
-        (*typep) = color->type;
+    if (data_p)
+        (*data_p) = color->data;
+    if (format_p)
+        (*format_p) = color->format;
+    if (type_p)
+        (*type_p) = color->type;
 }
 
 RenColorBackDataKey*
@@ -138,10 +141,11 @@ ren_color_back_data_key_new (ren_size size, RenColorBackDataInitFunc init,
     return key;
 }
 
-void
+RenColorBackDataKey*
 ren_color_back_data_key_ref (RenColorBackDataKey *key)
 {
     ++(key->ref_count);
+    return key;
 }
 
 void

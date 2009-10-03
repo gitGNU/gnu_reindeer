@@ -151,9 +151,6 @@ extern RenIndexArray*
 ren_index_array_new (RenType type, RenDataBlock *datablock,
     ren_size start, ren_size count);
 
-extern RenIndexArray*
-ren_index_array_new_from_range (ren_uint32 from, ren_uint32 to);
-
 extern void
 ren_index_array_destroy (RenIndexArray *ixarray);
 

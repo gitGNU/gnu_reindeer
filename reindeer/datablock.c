@@ -88,10 +88,11 @@ ren_data_block_changed (RenDataBlock *datablock,
 
 }
 
-void
+RenDataBlock*
 ren_data_block_ref (RenDataBlock *datablock)
 {
     ++(datablock->ref_count);
+    return datablock;
 }
 
 void

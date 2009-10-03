@@ -57,31 +57,40 @@ ren_light_destroy (RenLight *light)
 void
 ren_light_ambient (RenLight *light, RenColor *color)
 {
-    light->ambient = color;
+    if (light->ambient != NULL)
+        ren_color_unref (light->ambient);
+    light->ambient = (color != NULL) ? ren_color_ref (color) : NULL;
 }
 
 void
 ren_light_diffuse (RenLight *light, RenColor *color)
 {
-    light->diffuse = color;
+    if (light->diffuse != NULL)
+        ren_color_unref (light->diffuse);
+    light->diffuse = (color != NULL) ? ren_color_ref (color) : NULL;
 }
 
 void
 ren_light_specular (RenLight *light, RenColor *color)
 {
-    light->specular = color;
+    if (light->specular != NULL)
+        ren_color_unref (light->specular);
+    light->specular = (color != NULL) ? ren_color_ref (color) : NULL;
 }
 
 void
 ren_light_attenuation (RenLight *light, RenVector *k)
 {
-    light->attenuation = k;
+    if (light->attenuation != NULL)
+        ren_vector_unref (light->attenuation);
+    light->attenuation = (k != NULL) ? ren_vector_ref (k) : NULL;
 }
 
-void
+RenLight*
 ren_light_ref (RenLight *light)
 {
     ++(light->ref_count);
+    return light;
 }
 
 void
@@ -90,48 +99,56 @@ ren_light_unref (RenLight *light)
     if (--(light->ref_count) > 0)
         return;
 
+    if (light->ambient != NULL)
+        ren_color_unref (light->ambient);
+    if (light->diffuse != NULL)
+        ren_color_unref (light->diffuse);
+    if (light->specular != NULL)
+        ren_color_unref (light->specular);
+    if (light->attenuation != NULL)
+        ren_vector_unref (light->attenuation);
     g_free (light);
 }
 
 void
 ren_light_data (RenLight *light,
-    RenLightType *typep,
-    RenColor **ambientp,
-    RenColor **diffusep,
-    RenColor **specularp)
+    RenLightType *type_p,
+    RenColor **ambient_p,
+    RenColor **diffuse_p,
+    RenColor **specular_p)
 {
-    if (typep)
-        (*typep) = light->type;
-    if (ambientp)
-        (*ambientp) = light->ambient;
-    if (diffusep)
-        (*diffusep) = light->diffuse;
-    if (specularp)
-        (*specularp) = light->specular;
+    if (type_p)
+        (*type_p) = light->type;
+    if (ambient_p)
+        (*ambient_p) = light->ambient;
+    if (diffuse_p)
+        (*diffuse_p) = light->diffuse;
+    if (specular_p)
+        (*specular_p) = light->specular;
 }
 
 void
 ren_light_data_point_light (RenLight *light,
-    RenVector **attenuationp)
+    RenVector **attenuation_p)
 {
     if (light->type != REN_LIGHT_TYPE_POINT_LIGHT)
         return;
-    if (attenuationp)
-        (*attenuationp) = light->attenuation;
+    if (attenuation_p)
+        (*attenuation_p) = light->attenuation;
 }
 
 void
 ren_light_data_spot_light (RenLight *light,
-    RenVector **attenuationp,
-    ren_dfloat *cutoffp,
-    ren_dfloat *exponentp)
+    RenVector **attenuation_p,
+    ren_dfloat *cutoff_p,
+    ren_dfloat *exponent_p)
 {
     if (light->type != REN_LIGHT_TYPE_SPOT_LIGHT)
         return;
-    if (attenuationp)
-        (*attenuationp) = light->attenuation;
-    if (cutoffp)
-        (*cutoffp) = light->cutoff;
-    if (exponentp)
-        (*exponentp) = light->exponent;
+    if (attenuation_p)
+        (*attenuation_p) = light->attenuation;
+    if (cutoff_p)
+        (*cutoff_p) = light->cutoff;
+    if (exponent_p)
+        (*exponent_p) = light->exponent;
 }

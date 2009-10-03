@@ -51,25 +51,33 @@ ren_material_destroy (RenMaterial *material)
 void
 ren_material_ambient (RenMaterial *material, RenColor *color)
 {
-    material->ambient = color;
+    if (material->ambient != NULL)
+        ren_color_unref (material->ambient);
+    material->ambient = (color != NULL) ? ren_color_ref (color) : NULL;
 }
 
 void
 ren_material_diffuse (RenMaterial *material, RenColor *color)
 {
-    material->diffuse = color;
+    if (material->diffuse != NULL)
+        ren_color_unref (material->diffuse);
+    material->diffuse = (color != NULL) ? ren_color_ref (color) : NULL;
 }
 
 void
 ren_material_specular (RenMaterial *material, RenColor *color)
 {
-    material->specular = color;
+    if (material->specular != NULL)
+        ren_color_unref (material->specular);
+    material->specular = (color != NULL) ? ren_color_ref (color) : NULL;
 }
 
 void
 ren_material_emission (RenMaterial *material, RenColor *color)
 {
-    material->emission = color;
+    if (material->emission != NULL)
+        ren_color_unref (material->emission);
+    material->emission = (color != NULL) ? ren_color_ref (color) : NULL;
 }
 
 void
@@ -78,10 +86,11 @@ ren_material_shininess (RenMaterial *material, ren_dfloat shininess)
     material->shininess = shininess;
 }
 
-void
+RenMaterial*
 ren_material_ref (RenMaterial *material)
 {
     ++(material->ref_count);
+    return material;
 }
 
 void
@@ -90,6 +99,14 @@ ren_material_unref (RenMaterial *material)
     if (--(material->ref_count) > 0)
         return;
 
+    if (material->ambient != NULL)
+        ren_color_unref (material->ambient);
+    if (material->diffuse != NULL)
+        ren_color_unref (material->diffuse);
+    if (material->specular != NULL)
+        ren_color_unref (material->specular);
+    if (material->emission != NULL)
+        ren_color_unref (material->emission);
     g_free (material);
 }
 

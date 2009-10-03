@@ -26,71 +26,74 @@ struct _RenIndexArray
     ren_uint32 ref_count;
 
     RenType type;
-    RenDataBlock *datablock;
+    RenDataBlock *data_block;
     ren_size start;
     ren_size count;
 };
 
 RenIndexArray*
-ren_index_array_new (RenType type, RenDataBlock *datablock,
+ren_index_array_new (RenType type, RenDataBlock *data_block,
     ren_size start, ren_size count)
 {
-    RenIndexArray *ixarray = g_new0 (RenIndexArray, 1);
+    if (type != REN_TYPE_UINT08 && type != REN_TYPE_UINT16 &&
+        type != REN_TYPE_UINT32 && type != REN_TYPE_UINT64)
+    {
+        return NULL;
+    }
+    if (data_block == NULL)
+        return NULL;
 
-    ixarray->ref_count = 1;
+    RenIndexArray *ix_array = g_new0 (RenIndexArray, 1);
 
-    ixarray->type = type;
-    ixarray->datablock = datablock;
-    ixarray->start = start;
-    ixarray->count = count;
+    ix_array->ref_count = 1;
 
-    return ixarray;
+    ix_array->type = type;
+    ix_array->data_block = ren_data_block_ref (data_block);
+    ix_array->start = start;
+    ix_array->count = count;
+
+    return ix_array;
+}
+
+void
+ren_index_array_destroy (RenIndexArray *ix_array)
+{
+    ren_index_array_unref (ix_array);
+}
+
+void
+ren_index_array_set_size (RenIndexArray *ix_array, ren_size count)
+{
+    ix_array->count = count;
 }
 
 RenIndexArray*
-ren_index_array_new_from_range (ren_uint32 from, ren_uint32 to)
+ren_index_array_ref (RenIndexArray *ix_array)
 {
-    g_warning ("ren_index_array_new_from_range not implemented.");
-    return NULL;
+    ++(ix_array->ref_count);
+    return ix_array;
 }
 
 void
-ren_index_array_destroy (RenIndexArray *ixarray)
+ren_index_array_unref (RenIndexArray *ix_array)
 {
-    ren_index_array_unref (ixarray);
-}
-
-void
-ren_index_array_set_size (RenIndexArray *ixarray, ren_size count)
-{
-    ixarray->count = count;
-}
-
-void
-ren_index_array_ref (RenIndexArray *ixarray)
-{
-    ++(ixarray->ref_count);
-}
-
-void
-ren_index_array_unref (RenIndexArray *ixarray)
-{
-    if (--(ixarray->ref_count) > 0)
+    if (--(ix_array->ref_count) > 0)
         return;
 
-    g_free (ixarray);
+    ren_data_block_unref (ix_array->data_block);
+    g_free (ix_array);
 }
 
 void
-ren_index_array_data (RenIndexArray *ixarray, RenType *typep,
-    RenDataBlock **datablockp, ren_size *startp, ren_size *countp)
+ren_index_array_data (RenIndexArray *ix_array, RenType *type_p,
+    RenDataBlock **data_block_p, ren_size *start_p, ren_size *count_p)
 {
-    if (typep)
-        (*typep) = ixarray->type;
-    if (datablockp)
-        (*datablockp) = ixarray->datablock;
-    if (startp)
-        (*startp) = ixarray->start;
-    if (countp)
-        (*countp) = ixarray->count;
+    if (type_p)
+        (*type_p) = ix_array->type;
+    if (data_block_p)
+        (*data_block_p) = ix_array->data_block;
+    if (start_p)
+        (*start_p) = ix_array->start;
+    if (count_p)
+        (*count_p) = ix_array->count;
 }

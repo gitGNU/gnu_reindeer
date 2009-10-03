@@ -42,9 +42,9 @@ ren_object_new (RenTemplate *template, RenCoordArray *coord_array)
 
     object->ref_count = 1;
 
-    object->template = template;
+    object->template = ren_template_ref (template);
 
-    object->coord_array = coord_array;
+    object->coord_array = ren_coord_array_ref (coord_array);
     object->color_array = NULL;
     object->normal_array = NULL;
 
@@ -59,10 +59,11 @@ ren_object_destroy (RenObject *object)
     ren_object_unref (object);
 }
 
-void
+RenObject*
 ren_object_ref (RenObject *object)
 {
     ++(object->ref_count);
+    return object;
 }
 
 void
@@ -71,6 +72,12 @@ ren_object_unref (RenObject *object)
     if (--(object->ref_count) > 0)
         return;
 
+    ren_template_unref (object->template);
+    ren_coord_array_unref (object->coord_array);
+    if (object->color_array != NULL)
+        ren_color_array_unref (object->color_array);
+    if (object->normal_array != NULL)
+        ren_normal_array_unref (object->normal_array);
     g_free (object);
 }
 

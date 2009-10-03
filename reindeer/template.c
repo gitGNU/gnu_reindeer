@@ -35,9 +35,7 @@ ren_template_new (RenIndexArray *ix_array)
     template->ref_count = 1;
     
     template->built = FALSE;
-    if (ix_array != NULL)
-        ren_index_array_ref (ix_array);
-    template->ix_array = ix_array;
+    template->ix_array = (ix_array != NULL) ? ren_index_array_ref (ix_array) : NULL;
     template->num_materials = 0;
     
     template->b.modes = g_array_new (FALSE, FALSE, sizeof (guint));
@@ -54,10 +52,11 @@ ren_template_destroy (RenTemplate *template)
     ren_template_unref (template);
 }
 
-void
+RenTemplate*
 ren_template_ref (RenTemplate *template)
 {
     ++(template->ref_count);
+    return template;
 }
 
 void
