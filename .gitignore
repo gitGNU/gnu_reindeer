@@ -23,5 +23,5 @@ libgnu
 libltdl
 libtool
 m4
-reindeer.pc
+reindeer/reindeer.pc
 stamp-h1

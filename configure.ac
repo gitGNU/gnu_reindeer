@@ -8,7 +8,7 @@ AC_CONFIG_LIBOBJ_DIR([libgnu])
 LT_CONFIG_LTDL_DIR([libltdl])
 AM_INIT_AUTOMAKE([subdir-objects])
 LT_INIT([dlopen])
-LTDL_INIT([recursive installable])
+LTDL_INIT([nonrecursive installable])
 
 # Checks for programs.
 AC_PROG_CC
@@ -32,9 +32,6 @@ GNULIB_INIT
 AC_CONFIG_FILES([
     Makefile
     libgnu/Makefile
-    libltdl/Makefile
-    reindeer.pc
-    ren/Makefile
-    reindeer/Makefile
+    reindeer/reindeer.pc
 ])
 AC_OUTPUT

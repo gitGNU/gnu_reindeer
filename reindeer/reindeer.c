@@ -47,17 +47,19 @@ ren_library_init (void)
         return FALSE;
     }
 
+    const char *orig_path = lt_dlgetsearchpath ();
     const char *renlibdir_path = AC_libdir "/reindeer";
     const char *reindeer_path = g_getenv ("REINDEER_PATH");
     char *search_paths;
     if (reindeer_path)
     {
         search_paths = g_strjoin ((gchar[]){LT_PATHSEP_CHAR, '\0'},
-            reindeer_path, renlibdir_path, NULL);
+            reindeer_path, renlibdir_path, orig_path, NULL);
     }
     else
     {
-        search_paths = g_strdup (renlibdir_path);
+        search_paths = g_strjoin ((gchar[]){LT_PATHSEP_CHAR, '\0'},
+            renlibdir_path, orig_path, NULL);
     }
     if (lt_dlsetsearchpath (search_paths) != 0)
     {
