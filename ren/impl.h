@@ -86,6 +86,28 @@ extern void
 ren_vector_data (RenVector *vector,
     const void **data_p, ren_size *length_p, RenType *type_p);
 
+typedef struct _RenVectorBackData RenVectorBackData;
+typedef struct _RenVectorBackDataKey RenVectorBackDataKey;
+typedef void (* RenVectorBackDataInitFunc) (RenVector *vector,
+    RenVectorBackData *back_data);
+typedef void (* RenVectorBackDataFiniFunc) (RenVector *vector,
+    RenVectorBackData *back_data);
+typedef void (* RenVectorBackDataUpdateFunc) (RenVector *vector,
+    RenVectorBackData *back_data);
+
+extern RenVectorBackDataKey*
+ren_vector_back_data_key_new (ren_size size, RenVectorBackDataInitFunc init,
+    RenVectorBackDataFiniFunc fini, RenVectorBackDataUpdateFunc update);
+
+extern RenVectorBackDataKey*
+ren_vector_back_data_key_ref (RenVectorBackDataKey *key);
+
+extern void
+ren_vector_back_data_key_unref (RenVectorBackDataKey *key);
+
+extern RenVectorBackData*
+ren_vector_back_data (RenVector *vector, RenVectorBackDataKey *key);
+
 extern RenColor*
 ren_color_ref (RenColor *color);
 
