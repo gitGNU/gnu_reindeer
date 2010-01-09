@@ -64,8 +64,10 @@ typedef void (* RenMatrixBackDataUpdateFunc) (RenMatrix *matrix,
     RenMatrixBackData *back_data);
 
 extern RenMatrixBackDataKey*
-ren_matrix_back_data_key_new (ren_size size, RenMatrixBackDataInitFunc init,
-    RenMatrixBackDataFiniFunc fini, RenMatrixBackDataUpdateFunc update);
+ren_matrix_back_data_key_new (ren_size data_size,
+    RenMatrixBackDataInitFunc init,
+    RenMatrixBackDataFiniFunc fini,
+    RenMatrixBackDataUpdateFunc update);
 
 extern RenMatrixBackDataKey*
 ren_matrix_back_data_key_ref (RenMatrixBackDataKey *key);
@@ -96,8 +98,10 @@ typedef void (* RenVectorBackDataUpdateFunc) (RenVector *vector,
     RenVectorBackData *back_data);
 
 extern RenVectorBackDataKey*
-ren_vector_back_data_key_new (ren_size size, RenVectorBackDataInitFunc init,
-    RenVectorBackDataFiniFunc fini, RenVectorBackDataUpdateFunc update);
+ren_vector_back_data_key_new (ren_size data_size,
+    RenVectorBackDataInitFunc init,
+    RenVectorBackDataFiniFunc fini,
+    RenVectorBackDataUpdateFunc update);
 
 extern RenVectorBackDataKey*
 ren_vector_back_data_key_ref (RenVectorBackDataKey *key);
@@ -128,8 +132,10 @@ typedef void (* RenColorBackDataUpdateFunc) (RenColor *color,
     RenColorBackData *back_data);
 
 extern RenColorBackDataKey*
-ren_color_back_data_key_new (ren_size size, RenColorBackDataInitFunc init,
-    RenColorBackDataFiniFunc fini, RenColorBackDataUpdateFunc update);
+ren_color_back_data_key_new (ren_size data_size,
+    RenColorBackDataInitFunc init,
+    RenColorBackDataFiniFunc fini,
+    RenColorBackDataUpdateFunc update);
 
 extern RenColorBackDataKey*
 ren_color_back_data_key_ref (RenColorBackDataKey *key);

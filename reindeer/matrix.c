@@ -30,25 +30,25 @@ struct _RenMatrix
 {
     ren_uint32 ref_count;
 
+    _RenMatrixBackDataItem *bd_list;
+
     const void *data;
     ren_size width;
     ren_size height;
     RenType type;
     ren_bool transposed;
-
-    _RenMatrixBackDataItem *bd_list;
 };
 
 struct _RenMatrixBackDataKey
 {
     ren_uint32 ref_count;
 
-    ren_size size;
+    _RenMatrixBackDataItem *bd_list;
+
+    ren_size data_size;
     RenMatrixBackDataInitFunc init;
     RenMatrixBackDataFiniFunc fini;
     RenMatrixBackDataUpdateFunc update;
-
-    _RenMatrixBackDataItem *bd_list;
 };
 
 struct _RenMatrixBackDataItem
@@ -68,13 +68,13 @@ ren_matrix_new (const void *data, ren_size width, ren_size height,
 
     matrix->ref_count = 1;
 
+    matrix->bd_list = NULL;
+
     matrix->data = data;
     matrix->width = width;
     matrix->height = height;
     matrix->type = type;
     matrix->transposed = transposed;
-
-    matrix->bd_list = NULL;
 
     return matrix;
 }
@@ -88,10 +88,8 @@ ren_matrix_destroy (RenMatrix *matrix)
 void
 ren_matrix_changed (RenMatrix *matrix)
 {
-    _REN_RES_BACK_DATA_LIST_UPDATE (Matrix,matrix,matrix,
-        if (key->update != NULL)
-            item->changed = TRUE;
-    );
+    _REN_RES_BACK_DATA_LIST_ITERATE (Matrix, matrix,
+        matrix, _REN_BACK_DATA_SIMPLE_CHANGED_FUNC);
 }
 
 RenMatrix*
@@ -107,11 +105,8 @@ ren_matrix_unref (RenMatrix *matrix)
     if (--(matrix->ref_count) > 0)
         return;
 
-    _REN_RES_BACK_DATA_LIST_CLEAR (Matrix,matrix,matrix,
-        if (key->fini != NULL)
-            key->fini (matrix, data);
-        g_free (data);
-    );
+    _REN_RES_BACK_DATA_LIST_CLEAR (Matrix, matrix,
+        matrix, _REN_BACK_DATA_SIMPLE_FINI_FUNC);
 
     g_free (matrix);
 }
@@ -134,19 +129,21 @@ ren_matrix_data (RenMatrix *matrix,
 }
 
 RenMatrixBackDataKey*
-ren_matrix_back_data_key_new (ren_size size, RenMatrixBackDataInitFunc init,
-    RenMatrixBackDataFiniFunc fini, RenMatrixBackDataUpdateFunc update)
+ren_matrix_back_data_key_new (ren_size data_size,
+    RenMatrixBackDataInitFunc init,
+    RenMatrixBackDataFiniFunc fini,
+    RenMatrixBackDataUpdateFunc update)
 {
     RenMatrixBackDataKey *key = g_new (RenMatrixBackDataKey, 1);
 
     key->ref_count = 1;
 
-    key->size = size;
+    key->bd_list = NULL;
+
+    key->data_size = data_size;
     key->init = init;
     key->fini = fini;
     key->update = update;
-
-    key->bd_list = NULL;
 
     return key;
 }
@@ -164,11 +161,8 @@ ren_matrix_back_data_key_unref (RenMatrixBackDataKey *key)
     if (--(key->ref_count) > 0)
         return;
 
-    _REN_KEY_BACK_DATA_LIST_CLEAR (Matrix,matrix,key,matrix,
-        if (key->fini != NULL)
-            key->fini (matrix, data);
-        g_free (data);
-    );
+    _REN_KEY_BACK_DATA_LIST_CLEAR (Matrix, matrix,
+        key, _REN_BACK_DATA_SIMPLE_FINI_FUNC);
 
     g_free (key);
 }
@@ -176,16 +170,8 @@ ren_matrix_back_data_key_unref (RenMatrixBackDataKey *key)
 RenMatrixBackData*
 ren_matrix_back_data (RenMatrix *matrix, RenMatrixBackDataKey *key)
 {
-    _REN_BACK_DATA_GET_OR_NEW (Matrix,matrix,matrix,key,
-        if (key->init != NULL)
-            key->init (matrix, data);
-        if (key->update != NULL)
-            item->changed = TRUE;
-    );
-    if (key->update != NULL && item->changed)
-    {
-        key->update (matrix, data);
-        item->changed = FALSE;
-    }
-    return data;
+    _REN_BACK_DATA_RETURN (Matrix, matrix,
+        matrix, key,
+        _REN_BACK_DATA_SIMPLE_INIT_FUNC,
+        _REN_BACK_DATA_SIMPLE_UPDATE_FUNC);
 }

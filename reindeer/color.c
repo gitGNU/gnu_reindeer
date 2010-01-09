@@ -30,23 +30,23 @@ struct _RenColor
 {
     ren_uint32 ref_count;
 
+    _RenColorBackDataItem *bd_list;
+
     const void *data;
     RenColorFormat format;
     RenType type;
-
-    _RenColorBackDataItem *bd_list;
 };
 
 struct _RenColorBackDataKey
 {
     ren_uint32 ref_count;
 
-    ren_size size;
+    _RenColorBackDataItem *bd_list;
+
+    ren_size data_size;
     RenColorBackDataInitFunc init;
     RenColorBackDataFiniFunc fini;
     RenColorBackDataUpdateFunc update;
-
-    _RenColorBackDataItem *bd_list;
 };
 
 struct _RenColorBackDataItem
@@ -65,11 +65,11 @@ ren_color_new (const void *data, RenColorFormat format, RenType type)
 
     color->ref_count = 1;
 
+    color->bd_list = NULL;
+
     color->data = data;
     color->format = format;
     color->type = type;
-
-    color->bd_list = NULL;
 
     return color;
 }
@@ -83,10 +83,8 @@ ren_color_destroy (RenColor *color)
 void
 ren_color_changed (RenColor *color)
 {
-    _REN_RES_BACK_DATA_LIST_UPDATE (Color,color,color,
-        if (key->update != NULL)
-            item->changed = TRUE;
-    );
+    _REN_RES_BACK_DATA_LIST_ITERATE (Color, color,
+        color, _REN_BACK_DATA_SIMPLE_CHANGED_FUNC);
 }
 
 RenColor*
@@ -102,11 +100,8 @@ ren_color_unref (RenColor *color)
     if (--(color->ref_count) > 0)
         return;
 
-    _REN_RES_BACK_DATA_LIST_CLEAR (Color,color,color,
-        if (key->fini != NULL)
-            key->fini (color, data);
-        g_free (data);
-    );
+    _REN_RES_BACK_DATA_LIST_CLEAR (Color, color,
+        color, _REN_BACK_DATA_SIMPLE_FINI_FUNC);
 
     g_free (color);
 }
@@ -124,19 +119,21 @@ ren_color_data (RenColor *color,
 }
 
 RenColorBackDataKey*
-ren_color_back_data_key_new (ren_size size, RenColorBackDataInitFunc init,
-    RenColorBackDataFiniFunc fini, RenColorBackDataUpdateFunc update)
+ren_color_back_data_key_new (ren_size data_size,
+    RenColorBackDataInitFunc init,
+    RenColorBackDataFiniFunc fini,
+    RenColorBackDataUpdateFunc update)
 {
     RenColorBackDataKey *key = g_new (RenColorBackDataKey, 1);
 
     key->ref_count = 1;
 
-    key->size = size;
+    key->bd_list = NULL;
+
+    key->data_size = data_size;
     key->init = init;
     key->fini = fini;
     key->update = update;
-
-    key->bd_list = NULL;
 
     return key;
 }
@@ -154,11 +151,8 @@ ren_color_back_data_key_unref (RenColorBackDataKey *key)
     if (--(key->ref_count) > 0)
         return;
 
-    _REN_KEY_BACK_DATA_LIST_CLEAR (Color,color,key,color,
-        if (key->fini != NULL)
-            key->fini (color, data);
-        g_free (data);
-    );
+    _REN_KEY_BACK_DATA_LIST_CLEAR (Color, color,
+        key, _REN_BACK_DATA_SIMPLE_FINI_FUNC);
 
     g_free (key);
 }
@@ -166,16 +160,8 @@ ren_color_back_data_key_unref (RenColorBackDataKey *key)
 RenColorBackData*
 ren_color_back_data (RenColor *color, RenColorBackDataKey *key)
 {
-    _REN_BACK_DATA_GET_OR_NEW (Color,color,color,key,
-        if (key->init != NULL)
-            key->init (color, data);
-        if (key->update != NULL)
-            item->changed = TRUE;
-    );
-    if (key->update != NULL && item->changed)
-    {
-        key->update (color, data);
-        item->changed = FALSE;
-    }
-    return data;
+    _REN_BACK_DATA_RETURN (Color, color,
+        color, key,
+        _REN_BACK_DATA_SIMPLE_INIT_FUNC,
+        _REN_BACK_DATA_SIMPLE_UPDATE_FUNC);
 }
