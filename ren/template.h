@@ -28,26 +28,26 @@ extern RenTemplate*
 ren_template_new (RenIndexArray *ix_array);
 
 extern RenTemplate*
-ren_template_ref (RenTemplate *template);
+ren_template_ref (RenTemplate *tmplt);
 
 extern void
-ren_template_unref (RenTemplate *template);
+ren_template_unref (RenTemplate *tmplt);
 
 extern void
-ren_template_build (RenTemplate *template);
+ren_template_build (RenTemplate *tmplt);
 
 extern void
-ren_template_debug (RenTemplate *template);
+ren_template_debug (RenTemplate *tmplt);
 
 extern void
-ren_template_primitive (RenTemplate *template,
+ren_template_primitive (RenTemplate *tmplt,
     RenPrimitive prim, ren_size offset, ren_size count);
 
 extern ren_uint32
-ren_template_new_mode (RenTemplate *template);
+ren_template_new_mode (RenTemplate *tmplt);
 
 extern void
-ren_template_material (RenTemplate *template,
+ren_template_material (RenTemplate *tmplt,
     RenFace face, ren_uint08 material);
 
 /* Backend */
@@ -62,7 +62,7 @@ struct _RenTemplatePrimitive
 };
 
 extern void
-ren_template_data_primitives (RenTemplate *template,
+ren_template_data_primitives (RenTemplate *tmplt,
     RenIndexArray **ix_array_p,
     ren_size *num_primitives_p, const RenTemplatePrimitive **primitives_p);
 

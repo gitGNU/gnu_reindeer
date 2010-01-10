@@ -24,16 +24,16 @@
 #include "object.h"
 
 RenObject*
-ren_object_new (RenTemplate *template, RenCoordArray *coord_array)
+ren_object_new (RenTemplate *tmplt, RenCoordArray *coord_array)
 {
-    if (template == NULL || !template->built)
+    if (tmplt == NULL || !tmplt->built)
         return NULL;
     if (coord_array == NULL)
         return NULL;
 
     ren_size material_array_offset = sizeof (RenObject);
     ren_size material_array_size =
-        template->num_materials * sizeof (RenMaterial*);
+        tmplt->num_materials * sizeof (RenMaterial*);
 
     RenObject *object = g_malloc0 (
         sizeof (RenObject) +
@@ -41,7 +41,7 @@ ren_object_new (RenTemplate *template, RenCoordArray *coord_array)
 
     object->ref_count = 1;
 
-    object->template = ren_template_ref (template);
+    object->tmplt = ren_template_ref (tmplt);
 
     object->coord_array = ren_coord_array_ref (coord_array);
     object->color_array = NULL;
@@ -65,7 +65,7 @@ ren_object_unref (RenObject *object)
     if (--(object->ref_count) > 0)
         return;
 
-    ren_template_unref (object->template);
+    ren_template_unref (object->tmplt);
     ren_coord_array_unref (object->coord_array);
     if (object->color_array != NULL)
         ren_color_array_unref (object->color_array);
@@ -97,7 +97,7 @@ ren_object_normal_array (RenObject *object, RenNormalArray *normal_array)
 void
 ren_object_material (RenObject *object, ren_uint08 id, RenMaterial *material)
 {
-    if (id == 0 || id > object->template->num_materials)
+    if (id == 0 || id > object->tmplt->num_materials)
         return;
     RenMaterial *prev_material = object->materials[id - 1];
     if (prev_material != NULL)
@@ -108,12 +108,12 @@ ren_object_material (RenObject *object, ren_uint08 id, RenMaterial *material)
 }
 
 void
-ren_object_data (RenObject *object, RenTemplate **template_p,
+ren_object_data (RenObject *object, RenTemplate **tmplt_p,
     RenCoordArray **coord_array_p, RenColorArray **color_array_p,
     RenNormalArray **normal_array_p/*, RenEdgeArray **edge_array_p*/)
 {
-    if (template_p)
-        (*template_p) = object->template;
+    if (tmplt_p)
+        (*tmplt_p) = object->tmplt;
     if (coord_array_p)
         (*coord_array_p) = object->coord_array;
     if (color_array_p)
@@ -178,19 +178,19 @@ void
 ren_object_change_mode (RenReindeer *r, RenObject *object,
     ren_uint32 prev_mode, ren_uint32 next_mode, void *user_data)
 {
-    RenTemplate *template = object->template;
-    ren_uint08 *prev = template->modes[prev_mode];
-    ren_uint08 *next = template->modes[next_mode];
+    RenTemplate *tmplt = object->tmplt;
+    ren_uint08 *prev = tmplt->modes[prev_mode];
+    ren_uint08 *next = tmplt->modes[next_mode];
     ren_object_change_mode_common (r, object, prev, next, user_data);
 }
 
 void
 ren_object_begin_mode (RenReindeer *r,
-    RenTemplate *prev_template, ren_uint32 prev_mode,
+    RenTemplate *prev_tmplt, ren_uint32 prev_mode,
     RenObject *object, ren_uint32 mode, void *user_data)
 {
-    ren_uint08 *prev = prev_template ? prev_template->modes[prev_mode] : NULL;
-    ren_uint08 *next = object->template->modes[mode];
+    ren_uint08 *prev = prev_tmplt ? prev_tmplt->modes[prev_mode] : NULL;
+    ren_uint08 *next = object->tmplt->modes[mode];
     ren_object_change_mode_common (r, object, prev, next, user_data);
 }
 

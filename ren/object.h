@@ -25,7 +25,7 @@
 /* Public */
 
 extern RenObject*
-ren_object_new (RenTemplate *template, RenCoordArray *coord_array);
+ren_object_new (RenTemplate *tmplt, RenCoordArray *coord_array);
 
 extern RenObject*
 ren_object_ref (RenObject *object);
@@ -48,7 +48,7 @@ ren_object_material (RenObject *object, ren_uint08 id, RenMaterial *material);
 /* Backend */
 
 extern void
-ren_object_data (RenObject *object, RenTemplate **template_p,
+ren_object_data (RenObject *object, RenTemplate **tmplt_p,
     RenCoordArray **coord_array_p, RenColorArray **color_array_p,
     RenNormalArray **normal_array_p/*, RenEdgeArray **edge_array_p*/);
 

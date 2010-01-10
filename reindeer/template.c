@@ -25,113 +25,113 @@
 #include "template.h"
 
 static void
-ren_template_end_mode (RenTemplate *template);
+ren_template_end_mode (RenTemplate *tmplt);
 
 RenTemplate*
 ren_template_new (RenIndexArray *ix_array)
 {
-    RenTemplate *template = g_new (RenTemplate, 1);
+    RenTemplate *tmplt = g_new (RenTemplate, 1);
     
-    template->ref_count = 1;
+    tmplt->ref_count = 1;
     
-    template->built = FALSE;
-    template->ix_array = (ix_array != NULL) ? ren_index_array_ref (ix_array) : NULL;
-    template->num_materials = 0;
+    tmplt->built = FALSE;
+    tmplt->ix_array = (ix_array != NULL) ? ren_index_array_ref (ix_array) : NULL;
+    tmplt->num_materials = 0;
     
-    template->b.modes = g_array_new (FALSE, FALSE, sizeof (guint));
-    template->b.mode_data = g_array_new (FALSE, FALSE, sizeof (ren_uint08));
-    template->b.primitives = g_array_new (FALSE, FALSE,
+    tmplt->b.modes = g_array_new (FALSE, FALSE, sizeof (guint));
+    tmplt->b.mode_data = g_array_new (FALSE, FALSE, sizeof (ren_uint08));
+    tmplt->b.primitives = g_array_new (FALSE, FALSE,
         sizeof (struct _RenTemplatePrimitive));
     
-    return template;
+    return tmplt;
 }
 
 RenTemplate*
-ren_template_ref (RenTemplate *template)
+ren_template_ref (RenTemplate *tmplt)
 {
-    ++(template->ref_count);
-    return template;
+    ++(tmplt->ref_count);
+    return tmplt;
 }
 
 void
-ren_template_unref (RenTemplate *template)
+ren_template_unref (RenTemplate *tmplt)
 {
-    if (--(template->ref_count) > 0)
+    if (--(tmplt->ref_count) > 0)
         return;
 
-    if (template->ix_array != NULL)
-        ren_index_array_unref (template->ix_array);
+    if (tmplt->ix_array != NULL)
+        ren_index_array_unref (tmplt->ix_array);
 
-    if (template->built)
-        g_free (template->data);
+    if (tmplt->built)
+        g_free (tmplt->data);
     else
     {
-        g_array_free (template->b.primitives, TRUE);
-        g_array_free (template->b.modes, TRUE);
-        g_array_free (template->b.mode_data, TRUE);
+        g_array_free (tmplt->b.primitives, TRUE);
+        g_array_free (tmplt->b.modes, TRUE);
+        g_array_free (tmplt->b.mode_data, TRUE);
     }
 
-    g_free (template);
+    g_free (tmplt);
 }
 
 void
-ren_template_build (RenTemplate *template)
+ren_template_build (RenTemplate *tmplt)
 {
-    if (template->built) return;
+    if (tmplt->built) return;
 
-    if (template->b.modes->len == 0)
-        ren_template_new_mode (template);
-    ren_template_end_mode (template);
+    if (tmplt->b.modes->len == 0)
+        ren_template_new_mode (tmplt);
+    ren_template_end_mode (tmplt);
 
-    ren_size num_primitives = template->b.primitives->len;
+    ren_size num_primitives = tmplt->b.primitives->len;
     ren_size prim_array_size =
         num_primitives * sizeof (struct _RenTemplatePrimitive);
-    ren_size num_modes = template->b.modes->len;
+    ren_size num_modes = tmplt->b.modes->len;
     ren_size modes_array_size = num_modes * sizeof (ren_uint08*);
     gpointer data = g_malloc (
-        prim_array_size + modes_array_size + template->b.mode_data->len);
+        prim_array_size + modes_array_size + tmplt->b.mode_data->len);
     ren_uint08 **modes = data + prim_array_size;
     ren_uint08 *mode_data = (gpointer) modes + modes_array_size;
 
-    memcpy (data, template->b.primitives->data, prim_array_size);
+    memcpy (data, tmplt->b.primitives->data, prim_array_size);
     gint i;
     for (i = 0; i < num_modes; ++i)
-        modes[i] = &mode_data[g_array_index (template->b.modes, guint, i)];
-    memcpy (mode_data, template->b.mode_data->data, template->b.mode_data->len);
+        modes[i] = &mode_data[g_array_index (tmplt->b.modes, guint, i)];
+    memcpy (mode_data, tmplt->b.mode_data->data, tmplt->b.mode_data->len);
 
-    g_array_free (template->b.primitives, TRUE);
-    g_array_free (template->b.modes, TRUE);
-    g_array_free (template->b.mode_data, TRUE);
+    g_array_free (tmplt->b.primitives, TRUE);
+    g_array_free (tmplt->b.modes, TRUE);
+    g_array_free (tmplt->b.mode_data, TRUE);
     
-    template->num_primitives = num_primitives;
-    template->primitives = data; /* Also sets template->data.  */
-    template->num_modes = num_modes;
-    template->modes = modes;
+    tmplt->num_primitives = num_primitives;
+    tmplt->primitives = data; /* Also sets tmplt->data.  */
+    tmplt->num_modes = num_modes;
+    tmplt->modes = modes;
 
-    template->built = TRUE;
+    tmplt->built = TRUE;
 }
 
 #include <stdio.h>
 void
-ren_template_debug (RenTemplate *template)
+ren_template_debug (RenTemplate *tmplt)
 {
-    if (!template->built) return;
+    if (!tmplt->built) return;
 
     gint i;
-    printf ("Number of materials: %d\n", (int)template->num_materials);
+    printf ("Number of materials: %d\n", (int)tmplt->num_materials);
     printf ("Primitives:\n");
-    for (i = 0; i < template->num_primitives; ++i)
+    for (i = 0; i < tmplt->num_primitives; ++i)
     {
-        struct _RenTemplatePrimitive *primitive = &template->primitives[i];
+        struct _RenTemplatePrimitive *primitive = &tmplt->primitives[i];
         printf ("\t%d: M:%d P:%d O:%d C:%d\n",
             i, primitive->mode, primitive->prim,
             primitive->offset, primitive->count);
     }
     printf ("Modes:\n");
-    for (i = 0; i < template->num_modes; ++i)
+    for (i = 0; i < tmplt->num_modes; ++i)
     {
         printf ("\tMode %d:\n", i);
-        ren_uint08 *pos = template->modes[i];
+        ren_uint08 *pos = tmplt->modes[i];
         while (TRUE)
         {
             _RenModeCmd cmd = pos[1];
@@ -156,17 +156,17 @@ ren_template_debug (RenTemplate *template)
 }
 
 void
-ren_template_primitive (RenTemplate *template,
+ren_template_primitive (RenTemplate *tmplt,
     RenPrimitive prim, ren_size offset, ren_size count)
 {
-    if (template->built) return;
-    if (template->b.modes->len == 0) return;
-    ren_uint32 mode = template->b.modes->len - 1;
+    if (tmplt->built) return;
+    if (tmplt->b.modes->len == 0) return;
+    ren_uint32 mode = tmplt->b.modes->len - 1;
 
-    guint last = template->b.primitives->len;
-    g_array_set_size (template->b.primitives, last + 1);
+    guint last = tmplt->b.primitives->len;
+    g_array_set_size (tmplt->b.primitives, last + 1);
     struct _RenTemplatePrimitive *primitive = &g_array_index (
-        template->b.primitives, struct _RenTemplatePrimitive, last);
+        tmplt->b.primitives, struct _RenTemplatePrimitive, last);
     primitive->mode = mode;
     primitive->prim = prim;
     primitive->offset = offset;
@@ -174,34 +174,34 @@ ren_template_primitive (RenTemplate *template,
 }
 
 ren_uint32
-ren_template_new_mode (RenTemplate *template)
+ren_template_new_mode (RenTemplate *tmplt)
 {
-    if (template->built) return 0;
-    ren_uint32 mode = template->b.modes->len;
+    if (tmplt->built) return 0;
+    ren_uint32 mode = tmplt->b.modes->len;
     if (mode > 0) /* If this is not the first mode.  */
-        ren_template_end_mode (template);
-    g_array_append_vals (template->b.modes, &(template->b.mode_data->len), 1);
+        ren_template_end_mode (tmplt);
+    g_array_append_vals (tmplt->b.modes, &(tmplt->b.mode_data->len), 1);
     return mode;
 }
 
 static void
-ren_template_end_mode (RenTemplate *template)
+ren_template_end_mode (RenTemplate *tmplt)
 {
     guint8 data[2] = {sizeof (data), REN_MODE_CMD_END};
-    g_array_append_vals (template->b.mode_data, data, sizeof (data));
+    g_array_append_vals (tmplt->b.mode_data, data, sizeof (data));
 }
 
 void
-ren_template_data_primitives (RenTemplate *template,
+ren_template_data_primitives (RenTemplate *tmplt,
     RenIndexArray **ix_array_p,
     ren_size *num_primitives_p, const RenTemplatePrimitive **primitives_p)
 {
     if (ix_array_p)
-        (*ix_array_p) = template->ix_array;
+        (*ix_array_p) = tmplt->ix_array;
     if (num_primitives_p)
-        (*num_primitives_p) = template->num_primitives;
+        (*num_primitives_p) = tmplt->num_primitives;
     if (primitives_p)
-        (*primitives_p) = template->primitives;
+        (*primitives_p) = tmplt->primitives;
 }
 
 ren_size
@@ -235,30 +235,30 @@ ren_primitive_vertex_count (RenPrimitive prim, ren_size count)
 };
 
 #define GET_LAST_MODE_AND_OFFSET\
-    if (template->built) return;\
-    if (template->b.modes->len == 0) return;\
-    ren_uint32 mode = template->b.modes->len - 1;\
-    ren_size offset = g_array_index (template->b.modes, ren_size, mode);
+    if (tmplt->built) return;\
+    if (tmplt->b.modes->len == 0) return;\
+    ren_uint32 mode = tmplt->b.modes->len - 1;\
+    ren_size offset = g_array_index (tmplt->b.modes, ren_size, mode);
 
 void
-ren_template_material (RenTemplate *template, RenFace face, ren_uint08 material)
+ren_template_material (RenTemplate *tmplt, RenFace face, ren_uint08 material)
 {
     GET_LAST_MODE_AND_OFFSET
-    guint8 *mode_data = template->b.mode_data->data;
+    guint8 *mode_data = tmplt->b.mode_data->data;
     while (TRUE)
     {
-        if (offset > template->b.mode_data->len)
+        if (offset > tmplt->b.mode_data->len)
         {
             g_critical ("Bug in Reindeer. Template corrupted!");
             return;
         }
-        if (offset == template->b.mode_data->len ||
+        if (offset == tmplt->b.mode_data->len ||
             mode_data[offset+1] < REN_MODE_CMD_MATERIAL)
         {
             guint8 data[4] = {sizeof (data), REN_MODE_CMD_MATERIAL,
                 (face & REN_FACE_FRONT) ? material : 0,
                 (face & REN_FACE_BACK) ? material : 0};
-            g_array_insert_vals (template->b.mode_data,
+            g_array_insert_vals (tmplt->b.mode_data,
                 offset, data, sizeof (data));
             break;
         }
@@ -272,5 +272,5 @@ ren_template_material (RenTemplate *template, RenFace face, ren_uint08 material)
         }
         offset += mode_data[offset];
     }
-    template->num_materials = MAX (template->num_materials, material);
+    tmplt->num_materials = MAX (tmplt->num_materials, material);
 }

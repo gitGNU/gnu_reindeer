@@ -26,7 +26,7 @@ struct _RenObject
 {
     ren_uint32 ref_count;
 
-    RenTemplate *template;
+    RenTemplate *tmplt;
 
     RenCoordArray *coord_array;
     RenColorArray *color_array;
