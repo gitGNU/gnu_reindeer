@@ -17,8 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef _REN_BACK_DATA_H
-#define _REN_BACK_DATA_H
+#ifndef _REN_REINDEER_BACKDATA_H
+#define _REN_REINDEER_BACKDATA_H
 
 typedef struct _RenBackDataItem _RenBackDataItem;
 struct _RenBackDataItem
@@ -207,4 +207,4 @@ of type "ren_bool".
             item->changed = TRUE;\
     } G_STMT_END
 
-#endif /* _REN_BACK_DATA_H */ 
+#endif /* _REN_REINDEER_BACKDATA_H */

@@ -17,8 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ren/ren.h>
-#include <ren/impl.h>
+#include <ren/normalarray.h>
+#include <ren/datablock.h>
 #include <glib.h>
 
 struct _RenNormalArray
@@ -60,18 +60,6 @@ ren_normal_array_new (RenType type, ren_uint08 num,
     return vx_array;
 }
 
-void
-ren_normal_array_destroy (RenNormalArray *vx_array)
-{
-    ren_normal_array_unref (vx_array);
-}
-
-void
-ren_normal_array_set_size (RenNormalArray *vx_array, ren_size count)
-{
-    vx_array->count = count;
-}
-
 RenNormalArray*
 ren_normal_array_ref (RenNormalArray *vx_array)
 {
@@ -87,6 +75,12 @@ ren_normal_array_unref (RenNormalArray *vx_array)
 
     ren_data_block_unref (vx_array->data_block);
     g_free (vx_array);
+}
+
+void
+ren_normal_array_set_size (RenNormalArray *vx_array, ren_size count)
+{
+    vx_array->count = count;
 }
 
 void

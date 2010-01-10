@@ -17,8 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ren/ren.h>
-#include <ren/impl.h>
+#include <ren/indexarray.h>
+#include <ren/datablock.h>
 #include <glib.h>
 
 struct _RenIndexArray
@@ -55,18 +55,6 @@ ren_index_array_new (RenType type, RenDataBlock *data_block,
     return ix_array;
 }
 
-void
-ren_index_array_destroy (RenIndexArray *ix_array)
-{
-    ren_index_array_unref (ix_array);
-}
-
-void
-ren_index_array_set_size (RenIndexArray *ix_array, ren_size count)
-{
-    ix_array->count = count;
-}
-
 RenIndexArray*
 ren_index_array_ref (RenIndexArray *ix_array)
 {
@@ -82,6 +70,12 @@ ren_index_array_unref (RenIndexArray *ix_array)
 
     ren_data_block_unref (ix_array->data_block);
     g_free (ix_array);
+}
+
+void
+ren_index_array_set_size (RenIndexArray *ix_array, ren_size count)
+{
+    ix_array->count = count;
 }
 
 void

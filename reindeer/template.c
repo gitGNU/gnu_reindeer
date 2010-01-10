@@ -17,8 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ren/ren.h>
-#include <ren/impl.h>
+#include <ren/template.h>
+#include <ren/indexarray.h>
 #include <glib.h>
 #include <string.h>
 
@@ -44,12 +44,6 @@ ren_template_new (RenIndexArray *ix_array)
         sizeof (struct _RenTemplatePrimitive));
     
     return template;
-}
-
-void
-ren_template_destroy (RenTemplate *template)
-{
-    ren_template_unref (template);
 }
 
 RenTemplate*

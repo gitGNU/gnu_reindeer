@@ -41,6 +41,19 @@ typedef gfloat      ren_sfloat;
 typedef gdouble     ren_dfloat;
 typedef gsize       ren_size;
 
+typedef struct _RenMatrix RenMatrix;
+typedef struct _RenVector RenVector;
+typedef struct _RenColor RenColor;
+typedef struct _RenDataBlock RenDataBlock;
+typedef struct _RenCoordArray RenCoordArray;
+typedef struct _RenColorArray RenColorArray;
+typedef struct _RenNormalArray RenNormalArray;
+typedef struct _RenIndexArray RenIndexArray;
+typedef struct _RenMaterial RenMaterial;
+typedef struct _RenLight RenLight;
+typedef struct _RenTemplate RenTemplate;
+typedef struct _RenObject RenObject;
+
 typedef enum
 {
     REN_TYPE_NONE,
@@ -59,10 +72,10 @@ typedef enum
 
 typedef enum
 {
-    REN_BUFFER_COLOR        = 0x01,
-    REN_BUFFER_DEPTH        = 0x02,
-    REN_BUFFER_STENCIL      = 0x04,
-    REN_BUFFER_ACCUM        = 0x08,
+    REN_BUFFER_COLOR        = (1 << 0),
+    REN_BUFFER_DEPTH        = (1 << 1),
+    REN_BUFFER_STENCIL      = (1 << 2),
+    REN_BUFFER_ACCUM        = (1 << 3),
 } RenBuffer;
 
 typedef enum
@@ -86,22 +99,12 @@ typedef enum
     REN_TRANSFORM_MODE_TEXTURE,
 } RenTransformMode;
 
-typedef struct _RenMatrix RenMatrix;
-
-typedef struct _RenVector RenVector;
-
-typedef struct _RenColor RenColor;
-
 typedef enum
 {
     REN_COLOR_FORMAT_RGB,
     REN_COLOR_FORMAT_RGBA,
     REN_COLOR_FORMAT_DEPTH,
 } RenColorFormat;
-
-typedef struct _RenDataBlock RenDataBlock;
-
-typedef void (*RenDataBlockCallback) (RenDataBlock *datablock, void *user_data);
 
 typedef enum
 {
@@ -111,12 +114,6 @@ typedef enum
     REN_USAGE_STATIC,
     REN_USAGE_DYNAMIC,
 } RenUsage;
-
-typedef struct _RenCoordArray RenCoordArray;
-typedef struct _RenColorArray RenColorArray;
-typedef struct _RenNormalArray RenNormalArray;
-
-typedef struct _RenIndexArray RenIndexArray;
 
 typedef enum
 {
@@ -136,11 +133,6 @@ typedef enum
     REN_PRIMITIVE_CYLINDERS,
 } RenPrimitive;
 
-typedef struct _RenTemplate RenTemplate;
-typedef struct _RenObject RenObject;
-
-typedef struct _RenMaterial RenMaterial;
-
 typedef enum
 {
     REN_FACE_FRONT  = (1 << 0),
@@ -148,14 +140,14 @@ typedef enum
     REN_FACE_BOTH   = REN_FACE_FRONT | REN_FACE_BACK,
 } RenFace;
 
-typedef struct _RenLight RenLight;
-
 typedef enum
 {
     REN_LIGHT_TYPE_POINT_LIGHT,
     REN_LIGHT_TYPE_DIRECTIONAL,
     REN_LIGHT_TYPE_SPOT_LIGHT,
 } RenLightType;
+
+typedef void (*RenDataBlockCallback) (RenDataBlock *datablock, void *user_data);
 
 #define _REN_FUNC(F)\
     typedef _REN_RET(F) (* _REN_FTP(F)) _REN_PRM(F);

@@ -20,8 +20,8 @@
 #ifndef REN_REN_H
 #define REN_REN_H
 
-#include <ren/types.h>
 #include <ren/tmpl.h>
+#include <ren/types.h>
 
 extern ren_bool
 ren_library_init (void);
@@ -52,10 +52,10 @@ ren_type_sizeof (RenType type)
         sizeof (ren_uint08),    /*REN_TYPE_UINT08*/
         sizeof (ren_sint16),    /*REN_TYPE_SINT16*/
         sizeof (ren_uint16),    /*REN_TYPE_UINT16*/
-        sizeof (ren_sint16),    /*REN_TYPE_SINT32*/
-        sizeof (ren_uint16),    /*REN_TYPE_UINT32*/
-        sizeof (ren_sint32),    /*REN_TYPE_SINT64*/
-        sizeof (ren_uint32),    /*REN_TYPE_UINT64*/
+        sizeof (ren_sint32),    /*REN_TYPE_SINT32*/
+        sizeof (ren_uint32),    /*REN_TYPE_UINT32*/
+        sizeof (ren_sint64),    /*REN_TYPE_SINT64*/
+        sizeof (ren_uint64),    /*REN_TYPE_UINT64*/
         sizeof (ren_sfloat),    /*REN_TYPE_SFLOAT*/
         sizeof (ren_dfloat),    /*REN_TYPE_DFLOAT*/
     };
@@ -65,186 +65,27 @@ ren_type_sizeof (RenType type)
         return 0;
 }
 
-extern RenMatrix*
-ren_matrix_new (const void *data, ren_size width, ren_size height,
-    RenType type, ren_bool transposed);
-
-extern void
-ren_matrix_destroy (RenMatrix *matrix);
-
-extern void
-ren_matrix_changed (RenMatrix *matrix);
-
-extern RenVector*
-ren_vector_new (const void *data, ren_size length, RenType type);
-
-extern void
-ren_vector_destroy (RenVector *vector);
-
-extern void
-ren_vector_changed (RenVector *vector);
-
-extern RenColor*
-ren_color_new (const void *data, RenColorFormat format, RenType type);
-
-extern void
-ren_color_destroy (RenColor *color);
-
-extern void
-ren_color_changed (RenColor *color);
-
-extern RenDataBlock*
-ren_data_block_new (const void *data, ren_size size, RenUsage usage);
-
-extern void
-ren_data_block_destroy (RenDataBlock *datablock);
-
-extern void
-ren_data_block_callback (
-    RenDataBlock *datablock,
-    RenDataBlockCallback reload_func,
-    RenDataBlockCallback unload_func,
-    void *user_data);
-
-extern void
-ren_data_block_relocated (RenDataBlock *datablock, const void *data);
-
-extern void
-ren_data_block_resized (RenDataBlock *datablock, ren_size size);
-
-extern void
-ren_data_block_changed (RenDataBlock *datablock, ren_size from, ren_size to);
-
-extern RenCoordArray*
-ren_coord_array_new (RenType type, ren_uint08 num,
-    RenDataBlock *datablock, ren_size start, ren_size count, ren_size stride);
-
-extern void
-ren_coord_array_destroy (RenCoordArray *vxarray);
-
-extern void
-ren_coord_array_set_size (RenCoordArray *vxarray, ren_size count);
-
-extern RenColorArray*
-ren_color_array_new (RenType type, RenColorFormat format,
-    RenDataBlock *datablock, ren_size start, ren_size count, ren_size stride);
-
-extern void
-ren_color_array_destroy (RenColorArray *vxarray);
-
-extern void
-ren_color_array_set_size (RenColorArray *vxarray, ren_size count);
-
-extern RenNormalArray*
-ren_normal_array_new (RenType type, ren_uint08 num,
-    RenDataBlock *datablock, ren_size start, ren_size count, ren_size stride);
-
-extern void
-ren_normal_array_destroy (RenNormalArray *vxarray);
-
-extern void
-ren_normal_array_set_size (RenNormalArray *vxarray, ren_size count);
-
-/* Index arrays for primitives */
-
-extern RenIndexArray*
-ren_index_array_new (RenType type, RenDataBlock *datablock,
-    ren_size start, ren_size count);
-
-extern void
-ren_index_array_destroy (RenIndexArray *ixarray);
-
-extern void
-ren_index_array_set_size (RenIndexArray *ixarray, ren_size count);
-
 extern ren_size
 ren_primitive_vertex_count (RenPrimitive prim, ren_size count);
 
-extern RenTemplate*
-ren_template_new (RenIndexArray *ix_array);
-
-extern void
-ren_template_destroy (RenTemplate *template);
-
-extern void
-ren_template_build (RenTemplate *template);
-
-extern void
-ren_template_debug (RenTemplate *template);
-
-extern void
-ren_template_primitive (RenTemplate *template,
-    RenPrimitive prim, ren_size offset, ren_size count);
-
-extern ren_uint32
-ren_template_new_mode (RenTemplate *template);
-
-extern void
-ren_template_material (RenTemplate *template,
-    RenFace face, ren_uint08 material);
-
-extern RenObject*
-ren_object_new (RenTemplate *template, RenCoordArray *coord_array);
-
-extern void
-ren_object_destroy (RenObject *object);
-
-extern void
-ren_object_coord_array (RenObject *object, RenCoordArray *coord_array);
-
-extern void
-ren_object_color_array (RenObject *object, RenColorArray *color_array);
-
-extern void
-ren_object_normal_array (RenObject *object, RenNormalArray *normal_array);
-
-extern void
-ren_object_material (RenObject *object, ren_uint08 id, RenMaterial *material);
-
-/* Lighting */
-
-extern RenMaterial*
-ren_material_new ();
-
-extern void
-ren_material_destroy (RenMaterial *material);
-
-extern void
-ren_material_ambient (RenMaterial *material, RenColor *color);
-
-extern void
-ren_material_diffuse (RenMaterial *material, RenColor *color);
-
-extern void
-ren_material_specular (RenMaterial *material, RenColor *color);
-
-extern void
-ren_material_emission (RenMaterial *material, RenColor *color);
-
-extern void
-ren_material_shininess (RenMaterial *material, ren_dfloat shininess);
-
-extern RenLight*
-ren_light_new (RenLightType type);
-
-extern void
-ren_light_destroy (RenLight *light);
-
-extern void
-ren_light_ambient (RenLight *light, RenColor *color);
-
-extern void
-ren_light_diffuse (RenLight *light, RenColor *color);
-
-extern void
-ren_light_specular (RenLight *light, RenColor *color);
-
-extern void
-ren_light_attenuation (RenLight *light, RenVector *k);
+#include <ren/matrix.h>
+#include <ren/vector.h>
+#include <ren/color.h>
+#include <ren/datablock.h>
+#include <ren/coordarray.h>
+#include <ren/colorarray.h>
+#include <ren/normalarray.h>
+#include <ren/indexarray.h>
+#include <ren/material.h>
+#include <ren/light.h>
+#include <ren/template.h>
+#include <ren/object.h>
 
 #define _REN_FUNC(F)\
     extern _REN_RET(F) _REN_SYM(F) _REN_PRM(F);
 #include <ren/funcs.h>
 #undef _REN_FUNC
+
+#include <ren/impl.h>
 
 #endif /* REN_REN_H */

@@ -17,8 +17,9 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ren/ren.h>
-#include <ren/impl.h>
+#include <ren/light.h>
+#include <ren/color.h>
+#include <ren/vector.h>
 #include <glib.h>
 
 struct _RenLight
@@ -48,10 +49,28 @@ ren_light_new (RenLightType type)
     return light;
 }
 
-void
-ren_light_destroy (RenLight *light)
+RenLight*
+ren_light_ref (RenLight *light)
 {
-    ren_light_unref (light);
+    ++(light->ref_count);
+    return light;
+}
+
+void
+ren_light_unref (RenLight *light)
+{
+    if (--(light->ref_count) > 0)
+        return;
+
+    if (light->ambient != NULL)
+        ren_color_unref (light->ambient);
+    if (light->diffuse != NULL)
+        ren_color_unref (light->diffuse);
+    if (light->specular != NULL)
+        ren_color_unref (light->specular);
+    if (light->attenuation != NULL)
+        ren_vector_unref (light->attenuation);
+    g_free (light);
 }
 
 void
@@ -84,30 +103,6 @@ ren_light_attenuation (RenLight *light, RenVector *k)
     if (light->attenuation != NULL)
         ren_vector_unref (light->attenuation);
     light->attenuation = (k != NULL) ? ren_vector_ref (k) : NULL;
-}
-
-RenLight*
-ren_light_ref (RenLight *light)
-{
-    ++(light->ref_count);
-    return light;
-}
-
-void
-ren_light_unref (RenLight *light)
-{
-    if (--(light->ref_count) > 0)
-        return;
-
-    if (light->ambient != NULL)
-        ren_color_unref (light->ambient);
-    if (light->diffuse != NULL)
-        ren_color_unref (light->diffuse);
-    if (light->specular != NULL)
-        ren_color_unref (light->specular);
-    if (light->attenuation != NULL)
-        ren_vector_unref (light->attenuation);
-    g_free (light);
 }
 
 void

@@ -74,19 +74,6 @@ ren_vector_new (const void *data, ren_size length, RenType type)
     return vector;
 }
 
-void
-ren_vector_destroy (RenVector *vector)
-{
-    ren_vector_unref (vector);
-}
-
-void
-ren_vector_changed (RenVector *vector)
-{
-    _REN_RES_BACK_DATA_LIST_ITERATE (Vector, vector,
-        vector, _REN_BACK_DATA_SIMPLE_CHANGED_FUNC);
-}
-
 RenVector*
 ren_vector_ref (RenVector *vector)
 {
@@ -104,6 +91,13 @@ ren_vector_unref (RenVector *vector)
         vector, _REN_BACK_DATA_SIMPLE_FINI_FUNC);
 
     g_free (vector);
+}
+
+void
+ren_vector_changed (RenVector *vector)
+{
+    _REN_RES_BACK_DATA_LIST_ITERATE (Vector, vector,
+        vector, _REN_BACK_DATA_SIMPLE_CHANGED_FUNC);
 }
 
 void

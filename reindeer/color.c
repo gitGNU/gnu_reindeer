@@ -17,8 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ren/ren.h>
-#include <ren/impl.h>
+#include <ren/color.h>
 #include <glib.h>
 
 #include "reindeer.h"
@@ -74,19 +73,6 @@ ren_color_new (const void *data, RenColorFormat format, RenType type)
     return color;
 }
 
-void
-ren_color_destroy (RenColor *color)
-{
-    ren_color_unref (color);
-}
-
-void
-ren_color_changed (RenColor *color)
-{
-    _REN_RES_BACK_DATA_LIST_ITERATE (Color, color,
-        color, _REN_BACK_DATA_SIMPLE_CHANGED_FUNC);
-}
-
 RenColor*
 ren_color_ref (RenColor *color)
 {
@@ -104,6 +90,13 @@ ren_color_unref (RenColor *color)
         color, _REN_BACK_DATA_SIMPLE_FINI_FUNC);
 
     g_free (color);
+}
+
+void
+ren_color_changed (RenColor *color)
+{
+    _REN_RES_BACK_DATA_LIST_ITERATE (Color, color,
+        color, _REN_BACK_DATA_SIMPLE_CHANGED_FUNC);
 }
 
 void

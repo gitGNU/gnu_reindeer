@@ -50,9 +50,9 @@ reindeer_libreindeer_la_SOURCES = \
     reindeer/matrix.c reindeer/vector.c reindeer/color.c reindeer/datablock.c \
     reindeer/coordarray.c reindeer/colorarray.c reindeer/normalarray.c \
     reindeer/indexarray.c \
+    reindeer/material.c reindeer/light.c \
     reindeer/template.c reindeer/template.h \
-    reindeer/object.c reindeer/object.h \
-    reindeer/light.c reindeer/material.c
+    reindeer/object.c reindeer/object.h
 
 reindeer_libreindeer_la_LIBADD = \
     $(LTLIBOBJS) $(LIBLTDL) $(GLIB_LIBS)
@@ -62,6 +62,11 @@ reindeer_libreindeer_la_LDFLAGS = \
 
 renincludedir = $(includedir)/ren
 reninclude_HEADERS = \
-    ren/ren.h ren/types.h ren/impl.h ren/tmpl.h ren/funcs.h
+    ren/ren.h ren/types.h ren/impl.h ren/tmpl.h ren/funcs.h \
+        ren/matrix.h ren/vector.h ren/color.h ren/datablock.h \
+        ren/coordarray.h ren/colorarray.h ren/normalarray.h \
+        ren/indexarray.h \
+        ren/material.h ren/light.h \
+        ren/template.h ren/object.h
 
 pkgconfig_DATA += reindeer/reindeer.pc

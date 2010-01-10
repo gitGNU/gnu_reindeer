@@ -17,8 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ren/ren.h>
-#include <ren/impl.h>
+#include <ren/matrix.h>
 #include <glib.h>
 
 #include "reindeer.h"
@@ -79,19 +78,6 @@ ren_matrix_new (const void *data, ren_size width, ren_size height,
     return matrix;
 }
 
-void
-ren_matrix_destroy (RenMatrix *matrix)
-{
-    ren_matrix_unref (matrix);
-}
-
-void
-ren_matrix_changed (RenMatrix *matrix)
-{
-    _REN_RES_BACK_DATA_LIST_ITERATE (Matrix, matrix,
-        matrix, _REN_BACK_DATA_SIMPLE_CHANGED_FUNC);
-}
-
 RenMatrix*
 ren_matrix_ref (RenMatrix *matrix)
 {
@@ -109,6 +95,13 @@ ren_matrix_unref (RenMatrix *matrix)
         matrix, _REN_BACK_DATA_SIMPLE_FINI_FUNC);
 
     g_free (matrix);
+}
+
+void
+ren_matrix_changed (RenMatrix *matrix)
+{
+    _REN_RES_BACK_DATA_LIST_ITERATE (Matrix, matrix,
+        matrix, _REN_BACK_DATA_SIMPLE_CHANGED_FUNC);
 }
 
 void

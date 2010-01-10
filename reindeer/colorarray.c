@@ -17,8 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ren/ren.h>
-#include <ren/impl.h>
+#include <ren/colorarray.h>
+#include <ren/datablock.h>
 #include <glib.h>
 
 struct _RenColorArray
@@ -58,18 +58,6 @@ ren_color_array_new (RenType type, RenColorFormat format,
     return vx_array;
 }
 
-void
-ren_color_array_destroy (RenColorArray *vx_array)
-{
-    ren_color_array_unref (vx_array);
-}
-
-void
-ren_color_array_set_size (RenColorArray *vx_array, ren_size count)
-{
-    vx_array->count = count;
-}
-
 RenColorArray*
 ren_color_array_ref (RenColorArray *vx_array)
 {
@@ -85,6 +73,12 @@ ren_color_array_unref (RenColorArray *vx_array)
 
     ren_data_block_unref (vx_array->data_block);
     g_free (vx_array);
+}
+
+void
+ren_color_array_set_size (RenColorArray *vx_array, ren_size count)
+{
+    vx_array->count = count;
 }
 
 void

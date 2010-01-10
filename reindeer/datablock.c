@@ -17,8 +17,7 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ren/ren.h>
-#include <ren/impl.h>
+#include <ren/datablock.h>
 #include <glib.h>
 
 struct _RenDataBlock
@@ -47,10 +46,22 @@ ren_data_block_new (const void *data, ren_size size, RenUsage usage)
     return datablock;
 }
 
-void
-ren_data_block_destroy (RenDataBlock *datablock)
+RenDataBlock*
+ren_data_block_ref (RenDataBlock *datablock)
 {
-    ren_data_block_unref (datablock);
+    ++(datablock->ref_count);
+    return datablock;
+}
+
+void
+ren_data_block_unref (RenDataBlock *datablock)
+{
+    if (--(datablock->ref_count) > 0)
+        return;
+
+    if (datablock->unload_func != NULL)
+        datablock->unload_func (NULL, datablock->user_data);
+    g_free (datablock);
 }
 
 void
@@ -86,24 +97,6 @@ ren_data_block_changed (RenDataBlock *datablock,
     ren_size from, ren_size to)
 {
 
-}
-
-RenDataBlock*
-ren_data_block_ref (RenDataBlock *datablock)
-{
-    ++(datablock->ref_count);
-    return datablock;
-}
-
-void
-ren_data_block_unref (RenDataBlock *datablock)
-{
-    if (--(datablock->ref_count) > 0)
-        return;
-
-    if (datablock->unload_func != NULL)
-        datablock->unload_func (NULL, datablock->user_data);
-    g_free (datablock);
 }
 
 void

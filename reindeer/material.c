@@ -17,8 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ren/ren.h>
-#include <ren/impl.h>
+#include <ren/material.h>
+#include <ren/color.h>
 #include <glib.h>
 
 struct _RenMaterial
@@ -42,10 +42,28 @@ ren_material_new ()
     return material;
 }
 
-void
-ren_material_destroy (RenMaterial *material)
+RenMaterial*
+ren_material_ref (RenMaterial *material)
 {
-    ren_material_unref (material);
+    ++(material->ref_count);
+    return material;
+}
+
+void
+ren_material_unref (RenMaterial *material)
+{
+    if (--(material->ref_count) > 0)
+        return;
+
+    if (material->ambient != NULL)
+        ren_color_unref (material->ambient);
+    if (material->diffuse != NULL)
+        ren_color_unref (material->diffuse);
+    if (material->specular != NULL)
+        ren_color_unref (material->specular);
+    if (material->emission != NULL)
+        ren_color_unref (material->emission);
+    g_free (material);
 }
 
 void
@@ -84,30 +102,6 @@ void
 ren_material_shininess (RenMaterial *material, ren_dfloat shininess)
 {
     material->shininess = shininess;
-}
-
-RenMaterial*
-ren_material_ref (RenMaterial *material)
-{
-    ++(material->ref_count);
-    return material;
-}
-
-void
-ren_material_unref (RenMaterial *material)
-{
-    if (--(material->ref_count) > 0)
-        return;
-
-    if (material->ambient != NULL)
-        ren_color_unref (material->ambient);
-    if (material->diffuse != NULL)
-        ren_color_unref (material->diffuse);
-    if (material->specular != NULL)
-        ren_color_unref (material->specular);
-    if (material->emission != NULL)
-        ren_color_unref (material->emission);
-    g_free (material);
 }
 
 void

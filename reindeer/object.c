@@ -18,7 +18,6 @@
 */
 
 #include <ren/ren.h>
-#include <ren/impl.h>
 #include <glib.h>
 
 #include "reindeer.h"
@@ -51,12 +50,6 @@ ren_object_new (RenTemplate *template, RenCoordArray *coord_array)
     object->materials = (gpointer) object + material_array_offset;
 
     return object;
-}
-
-void
-ren_object_destroy (RenObject *object)
-{
-    ren_object_unref (object);
 }
 
 RenObject*
