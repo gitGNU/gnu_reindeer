@@ -48,7 +48,7 @@ ren_library_init (void)
     }
 
     const char *orig_path = lt_dlgetsearchpath ();
-    const char *renlibdir_path = AC_libdir "/reindeer";
+    const char *renlibdir_path = AC_libdir "/reindeer-0.0";
     const char *reindeer_path = g_getenv ("REINDEER_PATH");
     char *search_paths;
     if (reindeer_path)

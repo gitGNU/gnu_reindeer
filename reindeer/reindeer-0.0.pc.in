@@ -8,5 +8,5 @@ Name: Reindeer
 Description: Render abstraction library
 Version: @VERSION@
 Requires: glib-2.0 >= @GLIB_REQUIRED@
-Libs: -L${libdir} -lreindeer -lltdl
-Cflags: -I${includedir}
+Libs: -L${libdir} -lreindeer-0.0 -lltdl
+Cflags: -I${includedir}/reindeer-0.0

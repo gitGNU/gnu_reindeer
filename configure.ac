@@ -32,6 +32,6 @@ GNULIB_INIT
 AC_CONFIG_FILES([
     Makefile
     libgnu/Makefile
-    reindeer/reindeer.pc
+    reindeer/reindeer-0.0.pc
 ])
 AC_OUTPUT

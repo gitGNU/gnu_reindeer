@@ -42,9 +42,9 @@ include libltdl/Makefile.inc
 # libreindeer
 #
 
-lib_LTLIBRARIES += reindeer/libreindeer.la
+lib_LTLIBRARIES += reindeer/libreindeer-0.0.la
 
-reindeer_libreindeer_la_SOURCES = \
+reindeer_libreindeer_0_0_la_SOURCES = \
     reindeer/reindeer.c reindeer/reindeer.h \
     reindeer/backdata.c reindeer/backdata.h \
     reindeer/matrix.c reindeer/vector.c reindeer/color.c reindeer/datablock.c \
@@ -54,13 +54,13 @@ reindeer_libreindeer_la_SOURCES = \
     reindeer/template.c reindeer/template.h \
     reindeer/object.c reindeer/object.h
 
-reindeer_libreindeer_la_LIBADD = \
+reindeer_libreindeer_0_0_la_LIBADD = \
     $(LTLIBOBJS) $(LIBLTDL) $(GLIB_LIBS)
 
-reindeer_libreindeer_la_LDFLAGS = \
+reindeer_libreindeer_0_0_la_LDFLAGS = \
     -export-dynamic -version-info 0:0:0
 
-renincludedir = $(includedir)/ren
+renincludedir = $(includedir)/reindeer-0.0/ren
 reninclude_HEADERS = \
     ren/ren.h ren/types.h ren/impl.h ren/tmpl.h ren/funcs.h \
         ren/matrix.h ren/vector.h ren/color.h ren/datablock.h \
@@ -69,4 +69,4 @@ reninclude_HEADERS = \
         ren/material.h ren/light.h \
         ren/template.h ren/object.h
 
-pkgconfig_DATA += reindeer/reindeer.pc
+pkgconfig_DATA += reindeer/reindeer-0.0.pc
