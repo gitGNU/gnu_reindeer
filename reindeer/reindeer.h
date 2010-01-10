@@ -48,6 +48,7 @@ struct _RenBackendData
 
 struct _RenReindeer
 {
+    ren_uint32 ref_count;
     RenBackend *backend;
     _RenBackendData backend_data;
     RenReindeerBackData *back_data;

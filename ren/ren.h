@@ -32,8 +32,11 @@ ren_library_exit (void);
 extern RenReindeer*
 ren_reindeer_new (RenBackend *backend);
 
+extern RenReindeer*
+ren_reindeer_ref (RenReindeer *r);
+
 extern void
-ren_reindeer_destroy (RenReindeer *r);
+ren_reindeer_unref (RenReindeer *r);
 
 extern RenBackend*
 ren_reindeer_backend (RenReindeer *r);

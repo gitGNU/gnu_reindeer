@@ -114,10 +114,20 @@ ren_reindeer_new (RenBackend *backend)
     return r;
 }
 
+RenReindeer*
+ren_reindeer_ref (RenReindeer *r)
+{
+    ++(r->ref_count);
+    return r;
+}
+
 void
-ren_reindeer_destroy (RenReindeer *r)
+ren_reindeer_unref (RenReindeer *r)
 {
     if (!initialized || r == NULL)
+        return;
+
+    if (--(r->ref_count) > 0)
         return;
 
     RenReindeerFiniFunc reindeer_fini =
