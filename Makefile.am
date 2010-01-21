@@ -62,7 +62,7 @@ reindeer_libreindeer_0_0_la_LDFLAGS = \
 
 renincludedir = $(includedir)/reindeer-0.0/ren
 reninclude_HEADERS = \
-    ren/ren.h ren/types.h ren/impl.h ren/tmpl.h ren/funcs.h \
+    ren/ren.h ren/types.h ren/base.h ren/impl.h ren/tmpl.h ren/funcs.h \
         ren/matrix.h ren/vector.h ren/color.h ren/datablock.h \
         ren/coordarray.h ren/colorarray.h ren/normalarray.h \
         ren/indexarray.h \

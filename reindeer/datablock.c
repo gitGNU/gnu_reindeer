@@ -24,89 +24,75 @@ struct _RenDataBlock
 {
     ren_uint32 ref_count;
 
-    RenDataBlockCallback reload_func;
-    RenDataBlockCallback unload_func;
-    void *user_data;
-
-    const void *data;
+    void *data;
     ren_size size;
     RenUsage usage;
 };
 
 RenDataBlock*
-ren_data_block_new (const void *data, ren_size size, RenUsage usage)
+ren_data_block_new (ren_size size, RenUsage usage)
 {
-    RenDataBlock *datablock = g_new0 (RenDataBlock, 1);
+    RenDataBlock *data_block = g_new0 (RenDataBlock, 1);
 
-    datablock->ref_count = 1;
-    datablock->data = data;
-    datablock->size = size;
-    datablock->usage = usage;
+    data_block->ref_count = 1;
 
-    return datablock;
+    data_block->data = g_malloc (size);
+    data_block->size = size;
+    data_block->usage = usage;
+
+    return data_block;
 }
 
 RenDataBlock*
-ren_data_block_ref (RenDataBlock *datablock)
+ren_data_block_ref (RenDataBlock *data_block)
 {
-    ++(datablock->ref_count);
-    return datablock;
+    ++(data_block->ref_count);
+    return data_block;
 }
 
 void
-ren_data_block_unref (RenDataBlock *datablock)
+ren_data_block_unref (RenDataBlock *data_block)
 {
-    if (--(datablock->ref_count) > 0)
+    if (--(data_block->ref_count) > 0)
         return;
 
-    if (datablock->unload_func != NULL)
-        datablock->unload_func (NULL, datablock->user_data);
-    g_free (datablock);
+    g_free (data_block->data);
+    g_free (data_block);
 }
 
 void
-ren_data_block_callback (
-    RenDataBlock *datablock,
-    RenDataBlockCallback reload_func,
-    RenDataBlockCallback unload_func,
-    void *user_data)
+ren_data_block_resize (RenDataBlock *data_block, ren_size size)
 {
-    datablock->reload_func = reload_func;
-    datablock->unload_func = unload_func;
-    datablock->user_data = user_data;
+
 }
 
-void
-ren_data_block_relocated (RenDataBlock *datablock, const void *data)
+void*
+ren_data_block_begin_edit (RenDataBlock *data_block)
 {
-    datablock->data = data;
-    /* TODO: This might need to be notified to binders, even though it does
-    not change the actual data... */
+    return data_block->data;
 }
 
 void
-ren_data_block_resized (RenDataBlock *datablock, ren_size size)
-{
-    datablock->size = size;
-    /* TODO: This might need to be notified to binders, even though it does
-    not change the actual data if new size > old size... */
-}
-
-void
-ren_data_block_changed (RenDataBlock *datablock,
-    ren_size from, ren_size to)
+ren_data_block_end_edit (RenDataBlock *data_block)
 {
 
 }
 
 void
-ren_data_block_data (RenDataBlock *datablock, const void **datap,
-    ren_size *sizep, RenUsage *usagep)
+ren_data_block_changed (RenDataBlock *data_block,
+    ren_size from, ren_size count)
 {
-    if (datap)
-        (*datap) = datablock->data;
-    if (sizep)
-        (*sizep) = datablock->size;
-    if (usagep)
-        (*usagep) = datablock->usage;
+
+}
+
+void
+ren_data_block_data (RenDataBlock *data_block, const void **data_p,
+    ren_size *size_p, RenUsage *usage_p)
+{
+    if (data_p)
+        (*data_p) = data_block->data;
+    if (size_p)
+        (*size_p) = data_block->size;
+    if (usage_p)
+        (*usage_p) = data_block->usage;
 }

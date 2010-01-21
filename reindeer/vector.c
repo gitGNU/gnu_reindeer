@@ -17,8 +17,8 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ren/ren.h>
-#include <ren/impl.h>
+#include <ren/vector.h>
+#include <ren/base.h>
 #include <glib.h>
 
 #include "reindeer.h"
@@ -32,7 +32,7 @@ struct _RenVector
 
     _RenVectorBackDataItem *bd_list;
 
-    const void *data;
+    void *data;
     ren_size length;
     RenType type;
 };
@@ -56,7 +56,7 @@ struct _RenVectorBackDataItem
 };
 
 RenVector*
-ren_vector_new (const void *data, ren_size length, RenType type)
+ren_vector_new (ren_size length, RenType type)
 {
     if (type != REN_TYPE_SFLOAT && type != REN_TYPE_DFLOAT)
         return NULL;
@@ -67,7 +67,7 @@ ren_vector_new (const void *data, ren_size length, RenType type)
 
     vector->bd_list = NULL;
 
-    vector->data = data;
+    vector->data = g_malloc (length * ren_type_sizeof (type));
     vector->length = length;
     vector->type = type;
 
@@ -90,11 +90,18 @@ ren_vector_unref (RenVector *vector)
     _REN_RES_BACK_DATA_LIST_CLEAR (Vector, vector,
         vector, _REN_BACK_DATA_SIMPLE_FINI_FUNC);
 
+    g_free (vector->data);
     g_free (vector);
 }
 
+void*
+ren_vector_begin_edit (RenVector *vector)
+{
+    return vector->data;
+}
+
 void
-ren_vector_changed (RenVector *vector)
+ren_vector_end_edit (RenVector *vector)
 {
     _REN_RES_BACK_DATA_LIST_ITERATE (Vector, vector,
         vector, _REN_BACK_DATA_SIMPLE_CHANGED_FUNC);

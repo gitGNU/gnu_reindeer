@@ -25,7 +25,7 @@
 /* Public */
 
 extern RenDataBlock*
-ren_data_block_new (const void *data, ren_size size, RenUsage usage);
+ren_data_block_new (ren_size size, RenUsage usage);
 
 extern RenDataBlock*
 ren_data_block_ref (RenDataBlock *data_block);
@@ -34,20 +34,17 @@ extern void
 ren_data_block_unref (RenDataBlock *data_block);
 
 extern void
-ren_data_block_callback (
-    RenDataBlock *datablock,
-    RenDataBlockCallback reload_func,
-    RenDataBlockCallback unload_func,
-    void *user_data);
+ren_data_block_resize (RenDataBlock *data_block, ren_size size);
+
+extern void*
+ren_data_block_begin_edit (RenDataBlock *data_block);
 
 extern void
-ren_data_block_relocated (RenDataBlock *datablock, const void *data);
+ren_data_block_end_edit (RenDataBlock *data_block);
 
 extern void
-ren_data_block_resized (RenDataBlock *datablock, ren_size size);
-
-extern void
-ren_data_block_changed (RenDataBlock *datablock, ren_size from, ren_size to);
+ren_data_block_changed (RenDataBlock *data_block,
+    ren_size from, ren_size count);
 
 /* Backend */
 

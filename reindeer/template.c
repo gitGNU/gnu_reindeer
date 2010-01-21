@@ -18,6 +18,7 @@
 */
 
 #include <ren/template.h>
+#include <ren/base.h>
 #include <ren/indexarray.h>
 #include <glib.h>
 #include <string.h>

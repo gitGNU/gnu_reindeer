@@ -25,7 +25,7 @@
 /* Public */
 
 extern RenVector*
-ren_vector_new (const void *data, ren_size length, RenType type);
+ren_vector_new (ren_size length, RenType type);
 
 extern RenVector*
 ren_vector_ref (RenVector *vector);
@@ -33,8 +33,11 @@ ren_vector_ref (RenVector *vector);
 extern void
 ren_vector_unref (RenVector *vector);
 
+extern void*
+ren_vector_begin_edit (RenVector *vector);
+
 extern void
-ren_vector_changed (RenVector *vector);
+ren_vector_end_edit (RenVector *vector);
 
 /* Backend */
 

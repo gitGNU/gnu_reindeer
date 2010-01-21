@@ -147,8 +147,6 @@ typedef enum
     REN_LIGHT_TYPE_SPOT_LIGHT,
 } RenLightType;
 
-typedef void (*RenDataBlockCallback) (RenDataBlock *datablock, void *user_data);
-
 #define _REN_FUNC(F)\
     typedef _REN_RET(F) (* _REN_FTP(F)) _REN_PRM(F);
 #include <ren/funcs.h>

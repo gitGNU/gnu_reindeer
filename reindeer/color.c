@@ -18,6 +18,7 @@
 */
 
 #include <ren/color.h>
+#include <ren/base.h>
 #include <glib.h>
 
 #include "reindeer.h"
@@ -31,7 +32,7 @@ struct _RenColor
 
     _RenColorBackDataItem *bd_list;
 
-    const void *data;
+    void *data;
     RenColorFormat format;
     RenType type;
 };
@@ -55,7 +56,7 @@ struct _RenColorBackDataItem
 };
 
 RenColor*
-ren_color_new (const void *data, RenColorFormat format, RenType type)
+ren_color_new (RenColorFormat format, RenType type)
 {
     if (type == REN_TYPE_BOOL)
         return NULL;
@@ -66,7 +67,7 @@ ren_color_new (const void *data, RenColorFormat format, RenType type)
 
     color->bd_list = NULL;
 
-    color->data = data;
+    color->data = g_malloc (ren_color_format_sizeof (format, type));
     color->format = format;
     color->type = type;
 
@@ -89,11 +90,18 @@ ren_color_unref (RenColor *color)
     _REN_RES_BACK_DATA_LIST_CLEAR (Color, color,
         color, _REN_BACK_DATA_SIMPLE_FINI_FUNC);
 
+    g_free (color->data);
     g_free (color);
 }
 
+void*
+ren_color_begin_edit (RenColor *color)
+{
+    return color->data;
+}
+
 void
-ren_color_changed (RenColor *color)
+ren_color_end_edit (RenColor *color)
 {
     _REN_RES_BACK_DATA_LIST_ITERATE (Color, color,
         color, _REN_BACK_DATA_SIMPLE_CHANGED_FUNC);
@@ -157,4 +165,16 @@ ren_color_back_data (RenColor *color, RenColorBackDataKey *key)
         color, key,
         _REN_BACK_DATA_SIMPLE_INIT_FUNC,
         _REN_BACK_DATA_SIMPLE_UPDATE_FUNC);
+}
+
+ren_size
+ren_color_format_sizeof (RenColorFormat format, RenType type)
+{
+    switch (format)
+    {
+        case REN_COLOR_FORMAT_RGB:      return 3 * ren_type_sizeof (type);
+        case REN_COLOR_FORMAT_RGBA:     return 4 * ren_type_sizeof (type);
+        case REN_COLOR_FORMAT_DEPTH:    return 1 * ren_type_sizeof (type);
+        default: return 0;
+    }
 }

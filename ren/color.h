@@ -25,7 +25,7 @@
 /* Public */
 
 extern RenColor*
-ren_color_new (const void *data, RenColorFormat format, RenType type);
+ren_color_new (RenColorFormat format, RenType type);
 
 extern RenColor*
 ren_color_ref (RenColor *color);
@@ -33,8 +33,11 @@ ren_color_ref (RenColor *color);
 extern void
 ren_color_unref (RenColor *color);
 
+extern void*
+ren_color_begin_edit (RenColor *color);
+
 extern void
-ren_color_changed (RenColor *color);
+ren_color_end_edit (RenColor *color);
 
 /* Backend */
 

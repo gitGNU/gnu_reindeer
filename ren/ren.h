@@ -22,55 +22,7 @@
 
 #include <ren/tmpl.h>
 #include <ren/types.h>
-
-extern ren_bool
-ren_library_init (void);
-
-extern void
-ren_library_exit (void);
-
-extern RenReindeer*
-ren_reindeer_new (RenBackend *backend);
-
-extern RenReindeer*
-ren_reindeer_ref (RenReindeer *r);
-
-extern void
-ren_reindeer_unref (RenReindeer *r);
-
-extern RenBackend*
-ren_reindeer_backend (RenReindeer *r);
-
-extern RenBackend*
-ren_backend_lookup (const char *name);
-
-static inline ren_size
-ren_type_sizeof (RenType type)
-{
-    static const ren_size type_sizes[] =
-    {
-        0,                      /*REN_TYPE_NONE*/
-        sizeof (ren_bool),      /*REN_TYPE_BOOL*/
-        sizeof (ren_sint08),    /*REN_TYPE_SINT08*/
-        sizeof (ren_uint08),    /*REN_TYPE_UINT08*/
-        sizeof (ren_sint16),    /*REN_TYPE_SINT16*/
-        sizeof (ren_uint16),    /*REN_TYPE_UINT16*/
-        sizeof (ren_sint32),    /*REN_TYPE_SINT32*/
-        sizeof (ren_uint32),    /*REN_TYPE_UINT32*/
-        sizeof (ren_sint64),    /*REN_TYPE_SINT64*/
-        sizeof (ren_uint64),    /*REN_TYPE_UINT64*/
-        sizeof (ren_sfloat),    /*REN_TYPE_SFLOAT*/
-        sizeof (ren_dfloat),    /*REN_TYPE_DFLOAT*/
-    };
-    if (type < (sizeof (type_sizes)/sizeof (type_sizes[0])))
-        return type_sizes[type];
-    else
-        return 0;
-}
-
-extern ren_size
-ren_primitive_vertex_count (RenPrimitive prim, ren_size count);
-
+#include <ren/base.h>
 #include <ren/matrix.h>
 #include <ren/vector.h>
 #include <ren/color.h>

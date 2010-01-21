@@ -18,6 +18,7 @@
 */
 
 #include <ren/matrix.h>
+#include <ren/base.h>
 #include <glib.h>
 
 #include "reindeer.h"
@@ -31,7 +32,7 @@ struct _RenMatrix
 
     _RenMatrixBackDataItem *bd_list;
 
-    const void *data;
+    void *data;
     ren_size width;
     ren_size height;
     RenType type;
@@ -57,7 +58,7 @@ struct _RenMatrixBackDataItem
 };
 
 RenMatrix*
-ren_matrix_new (const void *data, ren_size width, ren_size height,
+ren_matrix_new (ren_size width, ren_size height,
     RenType type, ren_bool transposed)
 {
     if (type != REN_TYPE_SFLOAT && type != REN_TYPE_DFLOAT)
@@ -69,7 +70,7 @@ ren_matrix_new (const void *data, ren_size width, ren_size height,
 
     matrix->bd_list = NULL;
 
-    matrix->data = data;
+    matrix->data = g_malloc (ren_type_sizeof (type) * width * height);
     matrix->width = width;
     matrix->height = height;
     matrix->type = type;
@@ -94,11 +95,18 @@ ren_matrix_unref (RenMatrix *matrix)
     _REN_RES_BACK_DATA_LIST_CLEAR (Matrix, matrix,
         matrix, _REN_BACK_DATA_SIMPLE_FINI_FUNC);
 
+    g_free (matrix->data);
     g_free (matrix);
 }
 
+void*
+ren_matrix_begin_edit (RenMatrix *matrix)
+{
+    return matrix->data;
+}
+
 void
-ren_matrix_changed (RenMatrix *matrix)
+ren_matrix_end_edit (RenMatrix *matrix)
 {
     _REN_RES_BACK_DATA_LIST_ITERATE (Matrix, matrix,
         matrix, _REN_BACK_DATA_SIMPLE_CHANGED_FUNC);

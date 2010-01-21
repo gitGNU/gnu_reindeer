@@ -25,7 +25,7 @@
 /* Public */
 
 extern RenMatrix*
-ren_matrix_new (const void *data, ren_size width, ren_size height,
+ren_matrix_new (ren_size width, ren_size height,
     RenType type, ren_bool transposed);
 
 extern RenMatrix*
@@ -34,8 +34,11 @@ ren_matrix_ref (RenMatrix *matrix);
 extern void
 ren_matrix_unref (RenMatrix *matrix);
 
+extern void*
+ren_matrix_begin_edit (RenMatrix *matrix);
+
 extern void
-ren_matrix_changed (RenMatrix *matrix);
+ren_matrix_end_edit (RenMatrix *matrix);
 
 /* Backend */
 
