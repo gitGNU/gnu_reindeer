@@ -102,6 +102,7 @@ ren_reindeer_new (RenBackend *backend)
 
     _RenBackendData *backend_data = backend->data;
     RenReindeer *r = g_new (RenReindeer, 1);
+    r->ref_count = 1;
     r->backend = backend;
     memcpy (&(r->backend_data), backend_data, sizeof (_RenBackendData));
     r->back_data = g_malloc0 (backend_data->reindeer_back_data_size);
