@@ -17,6 +17,9 @@ noinst_LTLIBRARIES =
 lib_LTLIBRARIES =
 EXTRA_LTLIBRARIES =
 
+renlibdir = $(libdir)/reindeer-0.0
+renlib_LTLIBRARIES =
+
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA =
 
@@ -70,3 +73,18 @@ reninclude_HEADERS = \
         ren/template.h ren/object.h
 
 pkgconfig_DATA += reindeer/reindeer-0.0.pc
+
+#
+# libreindeer-debug
+#
+
+renlib_LTLIBRARIES += debug/libreindeer-debug.la
+
+debug_libreindeer_debug_la_SOURCES = \
+    debug/debug.c
+
+debug_libreindeer_debug_la_LIBADD = \
+    $(LTLIBOBJS) reindeer/libreindeer-0.0.la
+
+debug_libreindeer_debug_la_LDFLAGS = \
+    -module -version-info 0:0:0
