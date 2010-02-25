@@ -162,7 +162,8 @@ ren_backend_lookup (const char *name)
     const char *i = name;
     while (*(++i) != '\0')
     {
-        if (*i < 'a' || *i > 'z')
+        char c = *i;
+        if ((c < 'a' || c > 'z') && (c < '0' || c > '9') && c != '-')
         {
             g_warning ("Not a valid backend name: %s", name);
             return NULL;
