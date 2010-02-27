@@ -28,6 +28,9 @@ ren_library_init (void);
 extern void
 ren_library_exit (void);
 
+extern ren_bool
+ren_library_is_inited (void);
+
 extern RenReindeer*
 ren_reindeer_new (RenBackend *backend);
 

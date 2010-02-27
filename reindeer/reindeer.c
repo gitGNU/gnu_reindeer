@@ -25,6 +25,7 @@
 
 static GHashTable *backend_table = NULL;
 static ren_bool initialized = FALSE;
+static ren_bool exited = FALSE;
 
 static RenBackend*
 backend_get (const char* name);
@@ -39,7 +40,15 @@ ren_bool
 ren_library_init (void)
 {
     if (initialized)
+    {
+        g_warning ("Reindeer library already initialized");
         return TRUE;
+    }
+    if (exited)
+    {
+        g_warning ("Reindeer library should never be reinitialized");
+        return FALSE;
+    }
 
     if (lt_dlinit () != 0)
     {
@@ -92,6 +101,15 @@ ren_library_exit (void)
     {
         g_warning ("LTDL error on exit: %s", lt_dlerror ());
     }
+
+    initialized = FALSE;
+    exited = TRUE;
+}
+
+ren_bool
+ren_library_is_inited (void)
+{
+    return initialized;
 }
 
 RenReindeer*
