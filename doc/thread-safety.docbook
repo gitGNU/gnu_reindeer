@@ -1,0 +1,20 @@
+<?xml version="1.0"?>
+<section id="thread-safety">
+    <title>Thread Safety</title>
+    <para>
+    Reindeer is intentionally not entirely thread safe. This is because it is
+    much more efficient if the application locks on large amount of operations
+    rather than if Reindeer locks on individual operations.
+    </para>
+    <para>
+    Generally, there is no locking between modifying Reindeer resources and
+    reading from them. Thus applications should make sure that a Reindeer
+    resource is never modified when it may be being read at the same time. In
+    practice the most efficient and easiest way to fulfil this requirement is to
+    separate scene updating (modifying) from scene redrawing (reading). It's
+    perfectly fine to read from the same resource at the same time so any number
+    of Reindeer contexts may render at the same time. However, updating should
+    never be done simultaneously with any rendering that could potentially use
+    the resources being updated.
+    </para>
+</section>

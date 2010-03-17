@@ -13,6 +13,9 @@ LTDL_INIT([nonrecursive installable])
 # Checks for programs.
 AC_PROG_CC
 GNULIB_EARLY
+AX_PROG_XSLTPROC([--nonet])
+AC_CHECK_DOCBOOK_XSLT
+AM_CONDITIONAL([HAVE_DOCBOOK_XSLT], [test x$XSLTPROC != x -a x$HAVE_DOCBOOK_XSLT = xyes])
 
 # Checks for libraries.
 GLIB_REQUIRED=2.16

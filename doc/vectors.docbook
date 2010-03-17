@@ -1,0 +1,70 @@
+<?xml version="1.0"?>
+<section id="vectors">
+    <title>Vectors</title>
+
+    <para>
+    Vectors are mainly used in Reindeer to describe a list of numbers.
+    They may be used to describe individual positions or directions, but more
+    generally they may represent anything that can be described with a list of
+    numbers. They are never used for large arrays of positions or directions,
+    because then <link linkend="coord-arrays">RenCoordArray</link> or <link
+    linkend="normal-arrays">RenNormalArrays</link> are used. Also, they are
+    never used to represent colors because then <link
+    linkend="colors">RenColor</link> is preferred.
+    </para>
+
+    <funcsynopsis>
+    <funcprototype>
+        <funcdef>RenVector* <function>ren_vector_new</function></funcdef>
+        <paramdef>ren_size <parameter>length</parameter></paramdef>
+        <paramdef>RenType <parameter>type</parameter></paramdef>
+    </funcprototype>
+    </funcsynopsis>
+    <para>
+    Define a new vector. Vector data will be internally allocated, with vector
+    length and element type as specified.
+    </para>
+
+    <funcsynopsis>
+    <funcprototype>
+        <funcdef>RenVector* <function>ren_vector_ref</function></funcdef>
+        <paramdef>RenVector* <parameter>vector</parameter></paramdef>
+    </funcprototype>
+    </funcsynopsis>
+    <para>
+    Increases the reference count of the Vector instance and then returns it.
+    </para>
+
+    <funcsynopsis>
+    <funcprototype>
+        <funcdef>void <function>ren_vector_unref</function></funcdef>
+        <paramdef>RenVector* <parameter>vector</parameter></paramdef>
+    </funcprototype>
+    </funcsynopsis>
+    <para>
+    Decreases the reference count of the Vector instance. When its reference
+    count drops to 0, it will be destroyed automatically.
+    </para>
+
+    <funcsynopsis>
+    <funcprototype>
+        <funcdef>void* <function>ren_vector_begin_edit</function></funcdef>
+        <paramdef>RenVector* <parameter>vector</parameter></paramdef>
+    </funcprototype>
+    </funcsynopsis>
+    <para>
+    Get the internal data of the vector with the intention of modifying it. This
+    function may lock while some other thread is already using the data.
+    </para>
+
+    <funcsynopsis>
+    <funcprototype>
+        <funcdef>void <function>ren_vector_end_edit</function></funcdef>
+        <paramdef>RenVector* <parameter>vector</parameter></paramdef>
+    </funcprototype>
+    </funcsynopsis>
+    <para>
+    Mark an end of modifying the internal data. The pointer received with
+    <function>ren_vector_begin_edit</function> must not be used anymore.
+    </para>
+</section>

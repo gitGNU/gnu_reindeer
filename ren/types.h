@@ -109,10 +109,10 @@ typedef enum
 typedef enum
 {
     REN_USAGE_DONT_CARE,
-    REN_USAGE_ONCE,
-    REN_USAGE_STREAM,
+    REN_USAGE_IMMUTABLE,
     REN_USAGE_STATIC,
     REN_USAGE_DYNAMIC,
+    REN_USAGE_STREAM,
 } RenUsage;
 
 typedef enum

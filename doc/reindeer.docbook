@@ -1,0 +1,73 @@
+<?xml version="1.0"?>
+<book xml:lang="en" xml:base="" xmlns="http://docbook.org/ns/docbook" version="5.0" xmlns:xi="http://www.w3.org/2001/XInclude">
+<info>
+    <title>Reindeer Reference Manual</title>
+    <author><firstname>Patrik</firstname><surname>Olsson</surname></author>
+    <copyright>
+        <year>2008</year><year>2009</year>
+        <holder>Patrik Olsson</holder>
+    </copyright>
+    <legalnotice>
+Permission is granted to copy, distribute and/or modify this document under the
+terms of the GNU Free Documentation License, Version 1.3 or any later version
+published by the Free Software Foundation; with no Invariant Sections, no
+Front-Cover Texts, and no Back-Cover Texts. A copy of the license is included in
+the section entitled &#8220;GNU Free Documentation License&#8221;.
+    </legalnotice>
+</info>
+<chapter id="introduction">
+    <title>Introduction</title>
+    <xi:include href="about.docbook"/>
+    <xi:include href="obtaining.docbook"/>
+    <xi:include href="compiling.docbook"/>
+    <!--
+    <xi:include href="compiling-apps.docbook"/>
+    <xi:include href="running-apps.docbook"/>
+    -->
+</chapter>
+<chapter id="basics">
+    <title>Library basics</title>
+    <xi:include href="basic-example.docbook"/>
+    <xi:include href="thread-safety.docbook"/>
+    <xi:include href="types.docbook"/>
+    <!--<xi:include href="errors.docbook"/>-->
+    <xi:include href="init-fini.docbook"/>
+</chapter>
+<chapter id="storage-types">
+    <title>Storage types</title>
+    <para>
+    The following storage types wrap around data. When documentation mention
+    taking the value of these types it means the actual data is read and used,
+    rather than keeping the reference to the data for later use. Since the data
+    may be copied by the backends it is necessary to signal changes in the
+    underlying data so that the backends can update their copies.
+    </para>
+    <xi:include href="colors.docbook"/>
+    <xi:include href="data-blocks.docbook"/>
+    <xi:include href="matrices.docbook"/>
+    <xi:include href="vectors.docbook"/>
+</chapter>
+<xi:include href="buffers.docbook"/>
+<xi:include href="transformation.docbook"/>
+<chapter id="vertex-arrays">
+    <title>Vertex arrays</title>
+    <xi:include href="coord-arrays.docbook"/>
+    <xi:include href="color-arrays.docbook"/>
+    <xi:include href="normal-arrays.docbook"/>
+</chapter>
+<chapter id="lighting">
+    <title>Lighting</title>
+    <xi:include href="lights.docbook"/>
+    <xi:include href="materials.docbook"/>
+    <!--<xi:include href="textures.docbook"/>-->
+</chapter>
+<chapter id="putting-together">
+    <title>Putting it together</title>
+    <!--<xi:include href="index-arrays.docbook"/>-->
+    <!--<xi:include href="primitives.docbook"/>-->
+    <xi:include href="templates.docbook"/>
+    <xi:include href="objects.docbook"/>
+</chapter>
+<xi:include href="fdl-1.3.docbook"/>
+<!--<index> ... </index>-->
+</book>

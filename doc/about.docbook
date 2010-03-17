@@ -1,0 +1,36 @@
+<?xml version="1.0"?>
+<section id="about">
+    <title>About Reindeer</title>
+
+    <para>
+    Reindeer is a C library for the rendering of virtual scenes, mainly in three
+    dimensions. The library dynamically loads backend modules to do the
+    rendering.
+    </para>
+
+    <para>
+    Any number of rendering contexts can live at the same time. Contexts are
+    tied to a backend and backends are automatically loaded and unloaded on
+    demand. Resources are defined globally and can be used by any number of
+    contexts at the same time, even in different backends.
+    </para>
+
+    <para>
+    The main goal is to make it easier for developers to write applications
+    that have many rendering contexts with shared resources and automatic state
+    management. Another advantage is that the user can choose in which way a
+    scene should be rendered without recompiling the application. For example, a
+    scene could be rendered with a rasterizer like OpenGL at one point, and with
+    a raytracer at another. Reindeer can also be used to get portable graphics
+    output. Reindeer is not a scene-graph library or a game engine, but it can
+    be used to implement them.
+    </para>
+
+    <para>
+    It's still up to the application to create and manage the native contexts
+    that the Reindeer backends can work on. For example, an application would
+    still need to use GLX or equivalent to be able to use the OpenGL backend.
+    The Reindeer project also provides a package called GTK-Reindeer that makes
+    this easier for developers of GTK+ applications.
+    </para>
+</section>

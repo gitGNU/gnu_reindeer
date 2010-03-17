@@ -6,6 +6,9 @@ AM_CPPFLAGS = \
     $(GLIB_CFLAGS) \
     -D AC_libdir=\"$(libdir)\"
 AM_LDFLAGS =
+AM_XSLTPROC_FLAGS = \
+    --xinclude \
+    --path /usr/share/xml/docbook/stylesheet/docbook-xsl
 
 BUILT_SOURCES =
 EXTRA_DIST =
@@ -88,3 +91,57 @@ debug_libreindeer_debug_la_LIBADD = \
 
 debug_libreindeer_debug_la_LDFLAGS = \
     -module -version-info 0:0:0
+
+#
+# documentation
+#
+
+reindeer_DOCBOOK = \
+    doc/reindeer.docbook \
+    doc/about.docbook \
+    doc/obtaining.docbook \
+    doc/compiling.docbook \
+    doc/basic-example.docbook \
+    doc/thread-safety.docbook \
+    doc/types.docbook \
+    doc/init-fini.docbook \
+    doc/colors.docbook \
+    doc/data-blocks.docbook \
+    doc/matrices.docbook \
+    doc/vectors.docbook \
+    doc/buffers.docbook \
+    doc/transformation.docbook \
+    doc/coord-arrays.docbook \
+    doc/color-arrays.docbook \
+    doc/normal-arrays.docbook \
+    doc/lights.docbook \
+    doc/materials.docbook \
+    doc/templates.docbook \
+    doc/objects.docbook \
+    doc/fdl-1.3.docbook
+
+CLEANFILES += \
+    doc/reindeer.html doc/html_node.stamp doc/html_node/*.html
+EXTRA_DIST += \
+    $(reindeer_DOCBOOK) \
+    doc/common.xsl doc/html.xsl doc/html-chunk.xsl
+
+if HAVE_DOCBOOK_XSLT
+dist_html_DATA = doc/reindeer.html
+
+htmlnodedir = $(htmldir)/html_node
+dist_htmlnode_DATA = doc/html_node/*.html
+endif
+
+doc/reindeer.html: $(reindeer_DOCBOOK) $(srcdir)/doc/html.xsl
+	$(XSLTPROC) -o $@ $(AM_XSLTPROC_FLAGS) $(XSLTPROC_FLAGS) \
+		--path /usr/share/xml/docbook/stylesheet/docbook-xsl/html \
+		$(srcdir)/doc/html.xsl $(srcdir)/doc/reindeer.docbook
+
+doc/html_node/*.html: doc/html_node.stamp
+
+doc/html_node.stamp: $(reindeer_DOCBOOK) $(srcdir)/doc/html-chunk.xsl
+	$(XSLTPROC) -o doc/html_node/ $(AM_XSLTPROC_FLAGS) $(XSLTPROC_FLAGS) \
+		--path /usr/share/xml/docbook/stylesheet/docbook-xsl/html \
+		$(srcdir)/doc/html-chunk.xsl $(srcdir)/doc/reindeer.docbook
+	touch $@

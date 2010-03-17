@@ -1,0 +1,72 @@
+<?xml version="1.0"?>
+<section id="matrices">
+    <title>Matrices</title>
+
+    <para>
+    Matrices are mainly used in Reindeer to do linear transformations as
+    described in <xref linkend="transformation"/>.
+    </para>
+
+    <funcsynopsis>
+    <funcprototype>
+        <funcdef>RenMatrix* <function>ren_matrix_new</function></funcdef>
+        <paramdef>ren_size <parameter>width</parameter></paramdef>
+        <paramdef>ren_size <parameter>height</parameter></paramdef>
+        <paramdef>RenType <parameter>type</parameter></paramdef>
+        <paramdef>ren_bool <parameter>transposed</parameter></paramdef>
+    </funcprototype>
+    </funcsynopsis>
+    <para>
+    Define a new matrix. Matrix data will be internally allocated, with matrix
+    width, height and element type as specified.
+    </para>
+    <para>
+    Matrix data is expected to be stored in column-major order. If your program
+    uses row-major order matrices, you should set
+    <parameter>transposed</parameter> to <constant>TRUE</constant>, otherwise
+    set it to <constant>FALSE</constant>.
+    </para>
+
+    <funcsynopsis>
+    <funcprototype>
+        <funcdef>RenMatrix* <function>ren_matrix_ref</function></funcdef>
+        <paramdef>RenMatrix* <parameter>matrix</parameter></paramdef>
+    </funcprototype>
+    </funcsynopsis>
+    <para>
+    Increases the reference count of the Matrix instance and then returns it.
+    </para>
+
+    <funcsynopsis>
+    <funcprototype>
+        <funcdef>void <function>ren_matrix_unref</function></funcdef>
+        <paramdef>RenMatrix* <parameter>matrix</parameter></paramdef>
+    </funcprototype>
+    </funcsynopsis>
+    <para>
+    Decreases the reference count of the Matrix instance. When its reference
+    count drops to 0, it will be destroyed automatically.
+    </para>
+
+    <funcsynopsis>
+    <funcprototype>
+        <funcdef>void* <function>ren_matrix_begin_edit</function></funcdef>
+        <paramdef>RenMatrix* <parameter>matrix</parameter></paramdef>
+    </funcprototype>
+    </funcsynopsis>
+    <para>
+    Get the internal data of the matrix with the intention of modifying it. This
+    function may lock while some other thread is already using the data.
+    </para>
+
+    <funcsynopsis>
+    <funcprototype>
+        <funcdef>void <function>ren_matrix_end_edit</function></funcdef>
+        <paramdef>RenMatrix* <parameter>matrix</parameter></paramdef>
+    </funcprototype>
+    </funcsynopsis>
+    <para>
+    Mark an end of modifying the internal data. The pointer received with
+    <function>ren_matrix_begin_edit</function> must not be used anymore.
+    </para>
+</section>

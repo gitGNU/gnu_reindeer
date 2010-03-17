@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<section id="obtaining" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <title>Obtain a copy of Reindeer</title>
+
+    <para>
+    Assuming you have not already found a copy of Reindeer, you can find one at
+    <link xlink:href="http://download.savannah.nongnu.org/releases/reindeer/">
+    the download site of the project at GNU Savannah</link>. Here you can also
+    find the latest version.
+    </para>
+
+    <para>
+    There might also be built packages you can get from the software repository
+    of your operating system distribution. If you just want to get Reindeer to
+    use programs that need the Reindeer library it's usually here you get it
+    from.
+    </para>
+
+    <para>
+    It is also possible to obtain the very latest development versions of
+    Reindeer from the source code repository at <link
+    xlink:href="http://git.savannah.gnu.org/cgit/reindeer.git/"/>.
+    </para>
+
+</section>

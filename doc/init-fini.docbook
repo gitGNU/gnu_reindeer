@@ -1,0 +1,101 @@
+<?xml version="1.0"?>
+<section id="init-fini">
+    <title>Initialization and finalization</title>
+
+    <funcsynopsis>
+    <funcprototype>
+        <funcdef>ren_bool <function>ren_library_init</function></funcdef>
+        <void/>
+    </funcprototype>
+    </funcsynopsis>
+    <para>
+    Initialize the library. This must be called before any other library
+    function is called. If it returns <constant>FALSE</constant>, do not
+    continue using the library.
+    </para>
+
+    <funcsynopsis>
+    <funcprototype>
+        <funcdef>void <function>ren_library_exit</function></funcdef>
+        <void/>
+    </funcprototype>
+    </funcsynopsis>
+    <para>
+    Finalize the library. No library function must be called after this point.
+    It's not possible to initialize it again. Typically this will be called
+    shortly before exiting the program.
+    </para>
+
+    <funcsynopsis>
+    <funcprototype>
+        <funcdef>RenBackend* <function>ren_backend_lookup</function></funcdef>
+        <paramdef>const char* <parameter>name</parameter></paramdef>
+    </funcprototype>
+    </funcsynopsis>
+    <para>
+    Try to find a backend. If the backend is available for use it will be
+    returned, otherwise NULL will be returned.
+    </para>
+
+    <funcsynopsis>
+    <funcprototype>
+        <funcdef>RenReindeer* <function>ren_reindeer_new</function></funcdef>
+        <paramdef>RenBackend* <parameter>backend</parameter></paramdef>
+    </funcprototype>
+    </funcsynopsis>
+    <para>
+    Load a Reindeer context for a backend. Note that Reindeer contexts are not
+    necessarily equivalent to the contexts of the target API. However, usually
+    one wants to pair them. Backends should mention in their respective
+    reference manuals how one is supposed to set up Reindeer contexts with it
+    and how they work together with the native contexts of the backend.
+    </para>
+    <para>
+    Some Reindeer functions will take a Reindeer context. It is often the case
+    that the backend must be in a certain state before those calls are valid.
+    For example, OpenGL needs to have the associated OpenGL context current.
+    These functions will be marked with "virtual" in their descriptions.
+    </para>
+
+    <funcsynopsis>
+    <funcprototype>
+        <funcdef>RenReindeer* <function>ren_reindeer_ref</function></funcdef>
+        <paramdef>RenReindeer* <parameter>r</parameter></paramdef>
+    </funcprototype>
+    </funcsynopsis>
+    <para>
+    Increases the reference count of the Reindeer context and then returns it.
+    </para>
+
+    <funcsynopsis>
+    <funcprototype>
+        <funcdef>void <function>ren_reindeer_unref</function></funcdef>
+        <paramdef>RenReindeer* <parameter>r</parameter></paramdef>
+    </funcprototype>
+    </funcsynopsis>
+    <para>
+    Decreases the reference count of the Reindeer context. When its reference
+    count drops to 0, it will be destroyed automatically.
+    </para>
+
+    <funcsynopsis>
+    <funcprototype>
+        <funcdef>RenBackend* <function>ren_reindeer_backend</function></funcdef>
+        <paramdef>RenReindeer* <parameter>r</parameter></paramdef>
+    </funcprototype>
+    </funcsynopsis>
+    <para>
+    Get the backend a Reindeer context uses.
+    </para>
+
+    <funcsynopsis>
+    <funcprototype>
+        <funcdef>virtual ren_bool <function>ren_init</function></funcdef>
+        <paramdef>RenReindeer* <parameter>r</parameter></paramdef>
+    </funcprototype>
+    </funcsynopsis>
+    <para>
+    Virtual function to initialize a Reindeer context. This must be called
+    before any other virtual Reindeer context function.
+    </para>
+</section>
