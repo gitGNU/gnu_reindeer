@@ -57,7 +57,7 @@ _ren_back_data_table_ins (_RenBackDataItem *item)
 {
     void *hash = (void *) ((ren_size) item->resource ^ (ren_size) item->key);
     _RenBackDataItem* tmp;
-    
+
     tmp = g_hash_table_lookup (bd_table, hash);
     if (tmp == NULL)
     {

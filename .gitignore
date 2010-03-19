@@ -4,6 +4,9 @@
 *.la
 *.tar
 *.tar.*
+*.html
+*.stamp
+.dirstamp
 .deps
 .libs
 ChangeLog
@@ -19,9 +22,10 @@ config.log
 config.status
 config.sub
 configure
+doc/html_node
 libgnu
 libltdl
 libtool
 m4
-reindeer/reindeer.pc
+reindeer/reindeer-0.0.pc
 stamp-h1

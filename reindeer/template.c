@@ -32,18 +32,18 @@ RenTemplate*
 ren_template_new (RenIndexArray *ix_array)
 {
     RenTemplate *tmplt = g_new (RenTemplate, 1);
-    
+
     tmplt->ref_count = 1;
-    
+
     tmplt->built = FALSE;
     tmplt->ix_array = (ix_array != NULL) ? ren_index_array_ref (ix_array) : NULL;
     tmplt->num_materials = 0;
-    
+
     tmplt->b.modes = g_array_new (FALSE, FALSE, sizeof (guint));
     tmplt->b.mode_data = g_array_new (FALSE, FALSE, sizeof (ren_uint08));
     tmplt->b.primitives = g_array_new (FALSE, FALSE,
         sizeof (struct _RenTemplatePrimitive));
-    
+
     return tmplt;
 }
 
@@ -103,7 +103,7 @@ ren_template_build (RenTemplate *tmplt)
     g_array_free (tmplt->b.primitives, TRUE);
     g_array_free (tmplt->b.modes, TRUE);
     g_array_free (tmplt->b.mode_data, TRUE);
-    
+
     tmplt->num_primitives = num_primitives;
     tmplt->primitives = data; /* Also sets tmplt->data.  */
     tmplt->num_modes = num_modes;
