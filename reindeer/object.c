@@ -79,19 +79,26 @@ ren_object_coord_array (RenObject *object, RenCoordArray *coord_array)
 {
     if (coord_array == NULL)
         return;
-    object->coord_array = coord_array;
+    ren_coord_array_unref (object->coord_array);
+    object->coord_array = ren_coord_array_ref (coord_array);
 }
 
 void
 ren_object_color_array (RenObject *object, RenColorArray *color_array)
 {
-    object->color_array = color_array;
+    if (object->color_array != NULL)
+        ren_color_array_unref (object->color_array);
+    object->color_array = (color_array != NULL) ?
+        ren_color_array_ref (color_array) : NULL;
 }
 
 void
 ren_object_normal_array (RenObject *object, RenNormalArray *normal_array)
 {
-    object->normal_array = normal_array;
+    if (object->normal_array != NULL)
+        ren_normal_array_unref (object->normal_array);
+    object->normal_array = (normal_array != NULL) ?
+        ren_normal_array_ref (normal_array) : NULL;
 }
 
 void
@@ -102,9 +109,8 @@ ren_object_material (RenObject *object, ren_uint08 id, RenMaterial *material)
     RenMaterial *prev_material = object->materials[id - 1];
     if (prev_material != NULL)
         ren_material_unref (prev_material);
-    if (material != NULL)
-        ren_material_ref (material);
-    object->materials[id - 1] = material;
+    object->materials[id - 1] = (material != NULL) ?
+        ren_material_ref (material) : NULL;
 }
 
 void
