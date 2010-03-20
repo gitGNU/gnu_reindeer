@@ -23,23 +23,28 @@
 
 #include "reindeer.h"
 
+#define lt_dlclose(libhandle)\
+    ((lt_dlclose (libhandle) != 0) ?\
+        (g_message ("LTDL close error: %s", lt_dlerror ()), FALSE) : TRUE)
+
 static GHashTable *backend_table = NULL;
-static ren_bool initialized = FALSE;
+static ren_bool inited = FALSE;
 static ren_bool exited = FALSE;
 
 static RenBackend*
-backend_get (const char* name);
+backend_get (const char* name, RenError **error);
 static ren_bool
-backend_ref (RenBackend *backend);
+backend_ref (RenBackend *backend, RenError **error);
 static void
 backend_unref (RenBackend *backend);
 static void
 backend_destroy (RenBackend *backend);
 
 ren_bool
-ren_library_init (void)
+ren_library_init (RenError **error)
 {
-    if (initialized)
+    g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+    if (inited)
     {
         g_warning ("Reindeer library already initialized");
         return TRUE;
@@ -52,7 +57,8 @@ ren_library_init (void)
 
     if (lt_dlinit () != 0)
     {
-        g_warning ("%s", lt_dlerror ());
+        g_set_error ((GError **) error, REN_ERROR, REN_ERROR_FAILED,
+            "LTDL init error: %s", lt_dlerror ());
         return FALSE;
     }
 
@@ -73,7 +79,12 @@ ren_library_init (void)
     if (lt_dlsetsearchpath (search_paths) != 0)
     {
         g_free (search_paths);
-        g_warning ("LTDL error on setting search path: %s", lt_dlerror ());
+        g_set_error ((GError **) error, REN_ERROR, REN_ERROR_FAILED,
+            "LTDL error on setting search path: %s", lt_dlerror ());
+        if (lt_dlexit () != 0)
+        {
+            g_message ("LTDL exit error: %s", lt_dlerror ());
+        }
         return FALSE;
     }
     g_free (search_paths);
@@ -83,14 +94,14 @@ ren_library_init (void)
 
     _ren_back_data_table_init ();
 
-    initialized = TRUE;
+    inited = TRUE;
     return TRUE;
 }
 
 void
 ren_library_exit (void)
 {
-    if (!initialized)
+    if (!inited)
         return;
 
     g_hash_table_destroy (backend_table);
@@ -99,24 +110,41 @@ ren_library_exit (void)
 
     if (lt_dlexit () != 0)
     {
-        g_warning ("LTDL error on exit: %s", lt_dlerror ());
+        g_message ("LTDL exit error on Reindeer library exit: %s",
+            lt_dlerror ());
     }
 
-    initialized = FALSE;
+    inited = FALSE;
     exited = TRUE;
 }
 
 ren_bool
 ren_library_is_inited (void)
 {
-    return initialized;
+    return inited;
 }
 
 RenReindeer*
-ren_reindeer_new (RenBackend *backend)
+ren_reindeer_new (RenBackend *backend, RenError **error)
 {
-    if (!initialized || backend == NULL || !backend_ref (backend))
+    g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+    g_return_val_if_fail (backend != NULL, NULL);
+    if (exited)
+    {
+        g_critical ("Reindeer library already exited");
         return NULL;
+    }
+    if (!inited)
+    {
+        g_critical ("Reindeer library not initialized");
+        return NULL;
+    }
+    if (!backend_ref (backend, error))
+    {
+        g_prefix_error ((GError **) error,
+            "Creating Reindeer context failed: ");
+        return NULL;
+    }
 
     _RenBackendData *backend_data = backend->data;
     RenReindeer *r = g_new (RenReindeer, 1);
@@ -143,7 +171,7 @@ ren_reindeer_ref (RenReindeer *r)
 void
 ren_reindeer_unref (RenReindeer *r)
 {
-    if (!initialized || r == NULL)
+    if (!inited || r == NULL)
         return;
 
     if (--(r->ref_count) > 0)
@@ -172,10 +200,18 @@ ren_reindeer_back_data (RenReindeer *r)
 }
 
 RenBackend*
-ren_backend_lookup (const char *name)
+ren_backend_lookup (const char *name, RenError **error)
 {
-    if (!initialized)
+    if (exited)
+    {
+        g_critical ("Reindeer library already exited");
         return NULL;
+    }
+    if (!inited)
+    {
+        g_critical ("Reindeer library not initialized");
+        return NULL;
+    }
 
     const char *i = name;
     while (*(++i) != '\0')
@@ -183,12 +219,25 @@ ren_backend_lookup (const char *name)
         char c = *i;
         if ((c < 'a' || c > 'z') && (c < '0' || c > '9') && c != '-')
         {
-            g_warning ("Not a valid backend name: %s", name);
+            g_set_error ((GError **) error, REN_ERROR, REN_ERROR_FAILED,
+                "Not a valid backend name: `%s'", name);
             return NULL;
         }
     }
 
-    return backend_get (name);
+    return backend_get (name, error);
+}
+
+void
+ren_error_free (RenError *error)
+{
+    g_error_free ((GError *) error);
+}
+
+GQuark
+ren_error_quark_ (void)
+{
+  return g_quark_from_static_string ("ren-error-quark");
 }
 
 #define _REN_FUNC(F)\
@@ -199,7 +248,7 @@ ren_backend_lookup (const char *name)
 #undef _REN_FUNC
 
 static lt_dlhandle
-backend_load (const char *name)
+backend_load (const char *name, RenError **error)
 {
     char *libname = g_strjoin ("-", "libreindeer", name, NULL);
 
@@ -208,8 +257,8 @@ backend_load (const char *name)
     g_free (libname);
     if (libhandle == NULL)
     {
-        g_warning ("Could not load backend `%s': %s",
-            name, lt_dlerror ());
+        g_set_error ((GError **) error, REN_ERROR, REN_ERROR_FAILED,
+            "Could not load Reindeer backend `%s': %s", name, lt_dlerror ());
         return NULL;
     }
     /* FIXME: Make sure it checks the libtool version of the library?  */
@@ -218,13 +267,13 @@ backend_load (const char *name)
 }
 
 static RenBackend*
-backend_get (const char* name)
+backend_get (const char* name, RenError **error)
 {
     RenBackend *backend = g_hash_table_lookup (backend_table, name);
     if (backend != NULL)
         return backend;
 
-    lt_dlhandle libhandle = backend_load (name);
+    lt_dlhandle libhandle = backend_load (name, error);
     if (libhandle == NULL)
         goto FAIL;
 
@@ -233,10 +282,8 @@ backend_get (const char* name)
 
     g_hash_table_insert (backend_table, backend->name, backend);
 
-    if (lt_dlclose (libhandle) != 0)
-    {
-        g_warning ("LTDL error on closing: %s", lt_dlerror ());
-    }
+    lt_dlclose (libhandle);
+
     return backend;
 
     FAIL:
@@ -260,7 +307,7 @@ backend_symbol (lt_dlhandle libhandle,
 }
 
 static ren_bool
-backend_ref (RenBackend *backend)
+backend_ref (RenBackend *backend, RenError **error)
 {
     if (++(backend->ref_count) != 1)
         return TRUE;
@@ -270,7 +317,7 @@ backend_ref (RenBackend *backend)
 
     const char *name = backend->name;
 
-    libhandle = backend_load (name);
+    libhandle = backend_load (name, error);
     if (libhandle == NULL)
         goto FAIL;
 
@@ -278,7 +325,8 @@ backend_ref (RenBackend *backend)
         backend_symbol (libhandle, name, "backend_init");
     if (backend_init != NULL && !backend_init (backend))
     {
-        g_warning ("Backend initialization failed");
+        g_set_error ((GError **) error, REN_ERROR, REN_ERROR_FAILED,
+            "Reindeer backend `%s' initialization failed", name);
         goto FAIL;
     }
 
@@ -332,7 +380,11 @@ backend_ref (RenBackend *backend)
     #undef LOAD_SYMBOL
 
     if (loading_error)
+    {
+        g_set_error ((GError **) error, REN_ERROR, REN_ERROR_FAILED,
+            "Reindeer backend `%s' implementation is incomplete", name);
         goto FAIL;
+    }
 
     backend->libhandle = libhandle;
     backend->data = data;
@@ -355,10 +407,9 @@ backend_unref (RenBackend *backend)
     RenBackendFiniFunc backend_fini =
         backend_symbol (backend->libhandle, backend->name, "backend_fini");
     if (backend_fini != NULL && !backend_fini ())
-        g_warning ("Backend finalization failed");
+        g_message ("Reindeer backend finalization failed");
 
-    if (lt_dlclose (backend->libhandle) != 0)
-        g_warning ("LTDL error on closing: %s", lt_dlerror ());
+    lt_dlclose (backend->libhandle);
 
     backend->libhandle = 0;
     g_free (backend->data);

@@ -64,4 +64,8 @@ struct _RenBackend
     _RenBackendData *data;
 };
 
+#define REN_ERROR ren_error_quark_ ()
+GQuark
+ren_error_quark_ (void);
+
 #endif /* _REN_REINDEER_H */

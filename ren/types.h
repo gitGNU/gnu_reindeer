@@ -70,6 +70,13 @@ typedef enum
     REN_TYPE_DFLOAT,
 } RenType;
 
+typedef GError RenError;
+
+enum RenErrorCode
+{
+    REN_ERROR_FAILED,
+};
+
 typedef enum
 {
     REN_BUFFER_COLOR        = (1 << 0),

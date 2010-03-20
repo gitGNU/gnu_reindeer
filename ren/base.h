@@ -23,7 +23,7 @@
 #include <ren/types.h>
 
 extern ren_bool
-ren_library_init (void);
+ren_library_init (RenError **error);
 
 extern void
 ren_library_exit (void);
@@ -32,7 +32,7 @@ extern ren_bool
 ren_library_is_inited (void);
 
 extern RenReindeer*
-ren_reindeer_new (RenBackend *backend);
+ren_reindeer_new (RenBackend *backend, RenError **error);
 
 extern RenReindeer*
 ren_reindeer_ref (RenReindeer *r);
@@ -44,7 +44,7 @@ extern RenBackend*
 ren_reindeer_backend (RenReindeer *r);
 
 extern RenBackend*
-ren_backend_lookup (const char *name);
+ren_backend_lookup (const char *name, RenError **error);
 
 static inline ren_size
 ren_type_sizeof (RenType type)
@@ -69,6 +69,9 @@ ren_type_sizeof (RenType type)
     else
         return 0;
 }
+
+extern void
+ren_error_free (RenError *error);
 
 extern ren_size
 ren_color_format_sizeof (RenColorFormat format, RenType type);
