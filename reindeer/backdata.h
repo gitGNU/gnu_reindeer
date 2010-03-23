@@ -168,21 +168,24 @@ is of the same type as INIT_FUNC in _REN_BACK_DATA_RETURN.
     } G_STMT_END
 
 /*
-The following macros implement common init, fini, update and iter functions for
-resource types that only keep track of any change at all. They require the
-key struct to have three more fields:
+The following macros implement common init, fini, update and signal change
+functions for resource types that only keep track of any change at all. They
+require the key struct to have three more fields:
 void (* init) (Ren##ResName *res, Ren##ResName##BackData *data);
 void (* fini) (Ren##ResName *res, Ren##ResName##BackData *data);
 void (* update) (Ren##ResName *res, Ren##ResName##BackData *data);
-Additionally, the derived back data item struct needs a field called "changed"
-of type "ren_bool".
+Additionally, the derived back data item struct and the resource struct needs a
+field called "change" of type "ren_uint32". The field should be initialized to
+1 in the resource instance.
 */
 #define _REN_BACK_DATA_SIMPLE_INIT_FUNC(res, key, item, data)\
     G_STMT_START {\
         if (key->init != NULL)\
             key->init (res, data);\
         if (key->update != NULL)\
-            item->changed = TRUE;\
+            item->change = 0;\
+        else\
+            item->change = G_MAXUINT32;\
     } G_STMT_END
 
 #define _REN_BACK_DATA_SIMPLE_FINI_FUNC(res, key, item, data)\
@@ -193,18 +196,29 @@ of type "ren_bool".
 
 #define _REN_BACK_DATA_SIMPLE_UPDATE_FUNC(res, key, item, data)\
     G_STMT_START {\
-        if (key->update != NULL && item->changed)\
+        if (item->change < res->change)\
         {\
             key->update (res, data);\
-            item->changed = FALSE;\
+            item->change = res->change;\
         }\
     } G_STMT_END
 
-/* Used in ITERATE macro in the res_name##_changed() function.  */
 #define _REN_BACK_DATA_SIMPLE_CHANGED_FUNC(res, key, item)\
     G_STMT_START {\
         if (key->update != NULL)\
-            item->changed = TRUE;\
+            item->change = 0;\
+    } G_STMT_END
+
+#define _REN_BACK_DATA_SIMPLE_CHANGED(ResName,res_name,res)\
+    G_STMT_START {\
+        if (res->change == G_MAXUINT32)\
+        {\
+            _REN_RES_BACK_DATA_LIST_ITERATE (ResName, res_name,\
+                res, _REN_BACK_DATA_SIMPLE_CHANGED_FUNC);\
+            res->change = 1;\
+        }\
+        else\
+            ++(res->change);\
     } G_STMT_END
 
 #endif /* _REN_REINDEER_BACKDATA_H */

@@ -31,6 +31,7 @@ struct _RenMatrix
     ren_uint32 ref_count;
 
     _RenMatrixBackDataItem *bd_list;
+    ren_uint32 change;
 
     void *data;
     ren_size width;
@@ -54,7 +55,7 @@ struct _RenMatrixBackDataKey
 struct _RenMatrixBackDataItem
 {
     _RenBackDataItem base;
-    ren_bool changed;
+    ren_uint32 change;
 };
 
 RenMatrix*
@@ -69,6 +70,7 @@ ren_matrix_new (ren_size width, ren_size height,
     matrix->ref_count = 1;
 
     matrix->bd_list = NULL;
+    matrix->change = 1;
 
     matrix->data = g_malloc (ren_type_sizeof (type) * width * height);
     matrix->width = width;
@@ -108,8 +110,7 @@ ren_matrix_begin_edit (RenMatrix *matrix)
 void
 ren_matrix_end_edit (RenMatrix *matrix)
 {
-    _REN_RES_BACK_DATA_LIST_ITERATE (Matrix, matrix,
-        matrix, _REN_BACK_DATA_SIMPLE_CHANGED_FUNC);
+    _REN_BACK_DATA_SIMPLE_CHANGED (Matrix, matrix, matrix);
 }
 
 void

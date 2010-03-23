@@ -31,6 +31,7 @@ struct _RenVector
     ren_uint32 ref_count;
 
     _RenVectorBackDataItem *bd_list;
+    ren_uint32 change;
 
     void *data;
     ren_size length;
@@ -52,7 +53,7 @@ struct _RenVectorBackDataKey
 struct _RenVectorBackDataItem
 {
     _RenBackDataItem base;
-    ren_bool changed;
+    ren_uint32 change;
 };
 
 RenVector*
@@ -66,6 +67,7 @@ ren_vector_new (ren_size length, RenType type)
     vector->ref_count = 1;
 
     vector->bd_list = NULL;
+    vector->change = 1;
 
     vector->data = g_malloc (length * ren_type_sizeof (type));
     vector->length = length;
@@ -103,8 +105,7 @@ ren_vector_begin_edit (RenVector *vector)
 void
 ren_vector_end_edit (RenVector *vector)
 {
-    _REN_RES_BACK_DATA_LIST_ITERATE (Vector, vector,
-        vector, _REN_BACK_DATA_SIMPLE_CHANGED_FUNC);
+    _REN_BACK_DATA_SIMPLE_CHANGED (Vector, vector, vector);
 }
 
 void

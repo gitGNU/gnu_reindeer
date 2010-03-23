@@ -31,6 +31,7 @@ struct _RenColor
     ren_uint32 ref_count;
 
     _RenColorBackDataItem *bd_list;
+    ren_uint32 change;
 
     void *data;
     RenColorFormat format;
@@ -52,7 +53,7 @@ struct _RenColorBackDataKey
 struct _RenColorBackDataItem
 {
     _RenBackDataItem base;
-    ren_bool changed;
+    ren_uint32 change;
 };
 
 RenColor*
@@ -66,6 +67,7 @@ ren_color_new (RenColorFormat format, RenType type)
     color->ref_count = 1;
 
     color->bd_list = NULL;
+    color->change = 1;
 
     color->data = g_malloc (ren_color_format_sizeof (format, type));
     color->format = format;
@@ -103,8 +105,7 @@ ren_color_begin_edit (RenColor *color)
 void
 ren_color_end_edit (RenColor *color)
 {
-    _REN_RES_BACK_DATA_LIST_ITERATE (Color, color,
-        color, _REN_BACK_DATA_SIMPLE_CHANGED_FUNC);
+    _REN_BACK_DATA_SIMPLE_CHANGED (Color, color, color);
 }
 
 void
