@@ -43,6 +43,7 @@ struct _RenMatrix
 struct _RenMatrixBackDataKey
 {
     ren_uint32 ref_count;
+    RenMatrixBackDataKeyDestroyNotifyFunc destroy_notify;
 
     _RenMatrixBackDataItem *bd_list;
 
@@ -140,6 +141,7 @@ ren_matrix_back_data_key_new (ren_size data_size,
     RenMatrixBackDataKey *key = g_new (RenMatrixBackDataKey, 1);
 
     key->ref_count = 1;
+    key->destroy_notify = NULL;
 
     key->bd_list = NULL;
 
@@ -159,6 +161,13 @@ ren_matrix_back_data_key_user_data (RenMatrixBackDataKey *key,
     key->user_data = user_data;
 }
 
+void
+ren_matrix_back_data_key_destroy_notify (RenMatrixBackDataKey *key,
+    RenMatrixBackDataKeyDestroyNotifyFunc destroy_notify)
+{
+    key->destroy_notify = destroy_notify;
+}
+
 RenMatrixBackDataKey*
 ren_matrix_back_data_key_ref (RenMatrixBackDataKey *key)
 {
@@ -174,6 +183,8 @@ ren_matrix_back_data_key_unref (RenMatrixBackDataKey *key)
 
     _REN_KEY_BACK_DATA_LIST_CLEAR (Matrix, matrix,
         key, _REN_BACK_DATA_SIMPLE_FINI_FUNC);
+    if (key->destroy_notify != NULL)
+        key->destroy_notify (key, key->user_data);
 
     g_free (key);
 }

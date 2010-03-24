@@ -41,6 +41,7 @@ struct _RenVector
 struct _RenVectorBackDataKey
 {
     ren_uint32 ref_count;
+    RenVectorBackDataKeyDestroyNotifyFunc destroy_notify;
 
     _RenVectorBackDataItem *bd_list;
 
@@ -130,6 +131,7 @@ ren_vector_back_data_key_new (ren_size data_size,
     RenVectorBackDataKey *key = g_new (RenVectorBackDataKey, 1);
 
     key->ref_count = 1;
+    key->destroy_notify = NULL;
 
     key->bd_list = NULL;
 
@@ -149,6 +151,13 @@ ren_vector_back_data_key_user_data (RenVectorBackDataKey *key,
     key->user_data = user_data;
 }
 
+void
+ren_vector_back_data_key_destroy_notify (RenVectorBackDataKey *key,
+    RenVectorBackDataKeyDestroyNotifyFunc destroy_notify)
+{
+    key->destroy_notify = destroy_notify;
+}
+
 RenVectorBackDataKey*
 ren_vector_back_data_key_ref (RenVectorBackDataKey *key)
 {
@@ -164,6 +173,8 @@ ren_vector_back_data_key_unref (RenVectorBackDataKey *key)
 
     _REN_KEY_BACK_DATA_LIST_CLEAR (Vector, vector,
         key, _REN_BACK_DATA_SIMPLE_FINI_FUNC);
+    if (key->destroy_notify != NULL)
+        key->destroy_notify (key, key->user_data);
 
     g_free (key);
 }

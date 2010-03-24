@@ -41,6 +41,7 @@ struct _RenColor
 struct _RenColorBackDataKey
 {
     ren_uint32 ref_count;
+    RenColorBackDataKeyDestroyNotifyFunc destroy_notify;
 
     _RenColorBackDataItem *bd_list;
 
@@ -130,6 +131,7 @@ ren_color_back_data_key_new (ren_size data_size,
     RenColorBackDataKey *key = g_new (RenColorBackDataKey, 1);
 
     key->ref_count = 1;
+    key->destroy_notify = NULL;
 
     key->bd_list = NULL;
 
@@ -149,6 +151,13 @@ ren_color_back_data_key_user_data (RenColorBackDataKey *key,
     key->user_data = user_data;
 }
 
+void
+ren_color_back_data_key_destroy_notify (RenColorBackDataKey *key,
+    RenColorBackDataKeyDestroyNotifyFunc destroy_notify)
+{
+    key->destroy_notify = destroy_notify;
+}
+
 RenColorBackDataKey*
 ren_color_back_data_key_ref (RenColorBackDataKey *key)
 {
@@ -164,6 +173,8 @@ ren_color_back_data_key_unref (RenColorBackDataKey *key)
 
     _REN_KEY_BACK_DATA_LIST_CLEAR (Color, color,
         key, _REN_BACK_DATA_SIMPLE_FINI_FUNC);
+    if (key->destroy_notify != NULL)
+        key->destroy_notify (key, key->user_data);
 
     g_free (key);
 }
