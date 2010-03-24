@@ -45,6 +45,7 @@ struct _RenVectorBackDataKey
     _RenVectorBackDataItem *bd_list;
 
     ren_size data_size;
+    void *user_data;
     RenVectorBackDataInitFunc init;
     RenVectorBackDataFiniFunc fini;
     RenVectorBackDataUpdateFunc update;
@@ -133,11 +134,19 @@ ren_vector_back_data_key_new (ren_size data_size,
     key->bd_list = NULL;
 
     key->data_size = data_size;
+    key->user_data = NULL;
     key->init = init;
     key->fini = fini;
     key->update = update;
 
     return key;
+}
+
+void
+ren_vector_back_data_key_user_data (RenVectorBackDataKey *key,
+    void *user_data)
+{
+    key->user_data = user_data;
 }
 
 RenVectorBackDataKey*

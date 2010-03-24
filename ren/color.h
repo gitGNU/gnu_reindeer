@@ -48,17 +48,21 @@ ren_color_data (RenColor *color,
 typedef struct _RenColorBackData RenColorBackData;
 typedef struct _RenColorBackDataKey RenColorBackDataKey;
 typedef void (* RenColorBackDataInitFunc) (RenColor *color,
-    RenColorBackData *back_data);
+    RenColorBackData *back_data, void* user_data);
 typedef void (* RenColorBackDataFiniFunc) (RenColor *color,
-    RenColorBackData *back_data);
+    RenColorBackData *back_data, void* user_data);
 typedef void (* RenColorBackDataUpdateFunc) (RenColor *color,
-    RenColorBackData *back_data);
+    RenColorBackData *back_data, void* user_data);
 
 extern RenColorBackDataKey*
 ren_color_back_data_key_new (ren_size data_size,
     RenColorBackDataInitFunc init,
     RenColorBackDataFiniFunc fini,
     RenColorBackDataUpdateFunc update);
+
+extern void
+ren_color_back_data_key_user_data (RenColorBackDataKey *key,
+    void *user_data);
 
 extern RenColorBackDataKey*
 ren_color_back_data_key_ref (RenColorBackDataKey *key);

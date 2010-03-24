@@ -50,17 +50,21 @@ ren_matrix_data (RenMatrix *matrix,
 typedef struct _RenMatrixBackData RenMatrixBackData;
 typedef struct _RenMatrixBackDataKey RenMatrixBackDataKey;
 typedef void (* RenMatrixBackDataInitFunc) (RenMatrix *matrix,
-    RenMatrixBackData *back_data);
+    RenMatrixBackData *back_data, void* user_data);
 typedef void (* RenMatrixBackDataFiniFunc) (RenMatrix *matrix,
-    RenMatrixBackData *back_data);
+    RenMatrixBackData *back_data, void* user_data);
 typedef void (* RenMatrixBackDataUpdateFunc) (RenMatrix *matrix,
-    RenMatrixBackData *back_data);
+    RenMatrixBackData *back_data, void* user_data);
 
 extern RenMatrixBackDataKey*
 ren_matrix_back_data_key_new (ren_size data_size,
     RenMatrixBackDataInitFunc init,
     RenMatrixBackDataFiniFunc fini,
     RenMatrixBackDataUpdateFunc update);
+
+extern void
+ren_matrix_back_data_key_user_data (RenMatrixBackDataKey *key,
+    void *user_data);
 
 extern RenMatrixBackDataKey*
 ren_matrix_back_data_key_ref (RenMatrixBackDataKey *key);

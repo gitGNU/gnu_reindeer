@@ -66,8 +66,9 @@ called "bd_list" which is a pointer to the derived back data item type for the
 resource. The key-struct also needs a field called "data_size" which is of type
 "ren_size" and needs to be set at key construction to the size of the back data
 for that key (this is usually specified in a parameter to the key constructor).
-The derived back data item type needs to have its first field called "base" and
-be of type "_RenBackDataItem" (to inherit all the fields of that struct).
+If data_size is 0, then back data will be NULL. The derived back data item type
+needs to have its first field called "base" and be of type "_RenBackDataItem"
+(to inherit all the fields of that struct).
 */
 
 /*
@@ -82,7 +83,7 @@ just before returning the data and is of the same type as INIT_FUNC.
     Ren##ResName##BackData *data;\
     if (item == NULL)\
     {\
-        data = g_malloc0 (key->data_size);\
+        data = (key->data_size > 0) ? g_malloc0 (key->data_size) : NULL;\
         item = g_new0 (_Ren##ResName##BackDataItem, 1);\
         item->base.resource = res;\
         item->base.key = key;\
@@ -170,10 +171,13 @@ is of the same type as INIT_FUNC in _REN_BACK_DATA_RETURN.
 /*
 The following macros implement common init, fini, update and signal change
 functions for resource types that only keep track of any change at all. They
-require the key struct to have three more fields:
+require the key struct to have four more fields:
+
+void* user_data;
 void (* init) (Ren##ResName *res, Ren##ResName##BackData *data);
 void (* fini) (Ren##ResName *res, Ren##ResName##BackData *data);
 void (* update) (Ren##ResName *res, Ren##ResName##BackData *data);
+
 Additionally, the derived back data item struct and the resource struct needs a
 field called "change" of type "ren_uint32". The field should be initialized to
 1 in the resource instance.
@@ -181,7 +185,7 @@ field called "change" of type "ren_uint32". The field should be initialized to
 #define _REN_BACK_DATA_SIMPLE_INIT_FUNC(res, key, item, data)\
     G_STMT_START {\
         if (key->init != NULL)\
-            key->init (res, data);\
+            key->init (res, data, key->user_data);\
         if (key->update != NULL)\
             item->change = 0;\
         else\
@@ -191,14 +195,14 @@ field called "change" of type "ren_uint32". The field should be initialized to
 #define _REN_BACK_DATA_SIMPLE_FINI_FUNC(res, key, item, data)\
     G_STMT_START {\
         if (key->fini != NULL)\
-            key->fini (res, data);\
+            key->fini (res, data, key->user_data);\
     } G_STMT_END
 
 #define _REN_BACK_DATA_SIMPLE_UPDATE_FUNC(res, key, item, data)\
     G_STMT_START {\
         if (item->change < res->change)\
         {\
-            key->update (res, data);\
+            key->update (res, data, key->user_data);\
             item->change = res->change;\
         }\
     } G_STMT_END

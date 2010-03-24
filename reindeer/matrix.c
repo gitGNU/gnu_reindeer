@@ -47,6 +47,7 @@ struct _RenMatrixBackDataKey
     _RenMatrixBackDataItem *bd_list;
 
     ren_size data_size;
+    void* user_data;
     RenMatrixBackDataInitFunc init;
     RenMatrixBackDataFiniFunc fini;
     RenMatrixBackDataUpdateFunc update;
@@ -143,11 +144,19 @@ ren_matrix_back_data_key_new (ren_size data_size,
     key->bd_list = NULL;
 
     key->data_size = data_size;
+    key->user_data = NULL;
     key->init = init;
     key->fini = fini;
     key->update = update;
 
     return key;
+}
+
+void
+ren_matrix_back_data_key_user_data (RenMatrixBackDataKey *key,
+    void *user_data)
+{
+    key->user_data = user_data;
 }
 
 RenMatrixBackDataKey*
