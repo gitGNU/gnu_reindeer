@@ -54,7 +54,7 @@ reindeer_libreindeer_0_0_la_SOURCES = \
     reindeer/reindeer.c reindeer/reindeer.h \
     reindeer/backdata.c reindeer/backdata.h \
     reindeer/matrix.c reindeer/vector.c reindeer/color.c reindeer/datablock.c \
-    reindeer/coordarray.c reindeer/colorarray.c reindeer/normalarray.c \
+    reindeer/vectorarray.c reindeer/colorarray.c \
     reindeer/indexarray.c \
     reindeer/material.c reindeer/light.c \
     reindeer/template.c reindeer/template.h \
@@ -70,7 +70,7 @@ renincludedir = $(includedir)/reindeer-0.0/ren
 reninclude_HEADERS = \
     ren/ren.h ren/types.h ren/base.h ren/impl.h ren/tmpl.h ren/funcs.h \
         ren/matrix.h ren/vector.h ren/color.h ren/datablock.h \
-        ren/coordarray.h ren/colorarray.h ren/normalarray.h \
+        ren/vectorarray.h ren/colorarray.h \
         ren/indexarray.h \
         ren/material.h ren/light.h \
         ren/template.h ren/object.h

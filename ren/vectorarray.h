@@ -17,34 +17,34 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef REN_NORMALARRAY_H
-#define REN_NORMALARRAY_H
+#ifndef REN_COORDARRAY_H
+#define REN_COORDARRAY_H
 
 #include <ren/types.h>
 
 /* Public */
 
-extern RenNormalArray*
-ren_normal_array_new (RenType type, ren_uint08 num,
+extern RenVectorArray*
+ren_vector_array_new (RenType type, ren_uint08 num,
     RenDataBlock *datablock, ren_size start, ren_size count, ren_size stride);
 
-extern RenNormalArray*
-ren_normal_array_ref (RenNormalArray *vx_array);
+extern RenVectorArray*
+ren_vector_array_ref (RenVectorArray *array);
 
 extern void
-ren_normal_array_unref (RenNormalArray *vx_array);
+ren_vector_array_unref (RenVectorArray *array);
 
 extern void
-ren_normal_array_set_size (RenNormalArray *vxarray, ren_size count);
+ren_vector_array_set_size (RenVectorArray *array, ren_size count);
 
 /* Backend */
 
 extern void
-ren_normal_array_data (RenNormalArray *vx_array, RenDataBlock **data_block_p,
+ren_vector_array_data (RenVectorArray *array, RenDataBlock **data_block_p,
     ren_size *start_p, ren_size *count_p, ren_size *stride_p);
 
 extern void
-ren_normal_array_type (RenNormalArray *vx_array,
+ren_vector_array_type (RenVectorArray *array,
     RenType *type_p, ren_uint08 *num_p);
 
-#endif /* REN_NORMALARRAY_H */
+#endif /* REN_COORDARRAY_H */

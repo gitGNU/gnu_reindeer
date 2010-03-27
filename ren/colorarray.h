@@ -29,22 +29,22 @@ ren_color_array_new (RenType type, RenColorFormat format,
     RenDataBlock *datablock, ren_size start, ren_size count, ren_size stride);
 
 extern RenColorArray*
-ren_color_array_ref (RenColorArray *vx_array);
+ren_color_array_ref (RenColorArray *array);
 
 extern void
-ren_color_array_unref (RenColorArray *vx_array);
+ren_color_array_unref (RenColorArray *array);
 
 extern void
-ren_color_array_set_size (RenColorArray *vxarray, ren_size count);
+ren_color_array_set_size (RenColorArray *array, ren_size count);
 
 /* Backend */
 
 extern void
-ren_color_array_data (RenColorArray *vx_array, RenDataBlock **data_block_p,
+ren_color_array_data (RenColorArray *array, RenDataBlock **data_block_p,
     ren_size *start_p, ren_size *count_p, ren_size *stride_p);
 
 extern void
-ren_color_array_type (RenColorArray *vx_array,
+ren_color_array_type (RenColorArray *array,
     RenType *type_p, RenColorFormat *format_p);
 
 #endif /* REN_COLORARRAY_H */

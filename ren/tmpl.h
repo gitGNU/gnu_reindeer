@@ -118,8 +118,8 @@
 
 #define _REN_FTP_coord_array_bind RenCoordArrayBindFunc
 #define _REN_RET_coord_array_bind ren_bool
-#define _REN_PRM_coord_array_bind (RenReindeer *r, RenCoordArray *vxarray)
-#define _REN_ARG_coord_array_bind (r, vxarray)
+#define _REN_PRM_coord_array_bind (RenReindeer *r, RenVectorArray *array)
+#define _REN_ARG_coord_array_bind (r, array)
 #define _REN_DRT_coord_array_bind TRUE
 
 #define _REN_FTP_coord_array_enable RenCoordArrayEnableFunc
@@ -136,8 +136,8 @@
 
 #define _REN_FTP_color_array_bind RenColorArrayBindFunc
 #define _REN_RET_color_array_bind ren_bool
-#define _REN_PRM_color_array_bind (RenReindeer *r, RenColorArray *vxarray)
-#define _REN_ARG_color_array_bind (r, vxarray)
+#define _REN_PRM_color_array_bind (RenReindeer *r, RenColorArray *array)
+#define _REN_ARG_color_array_bind (r, array)
 #define _REN_DRT_color_array_bind TRUE
 
 #define _REN_FTP_color_array_enable RenColorArrayEnableFunc
@@ -154,8 +154,8 @@
 
 #define _REN_FTP_normal_array_bind RenNormalArrayBindFunc
 #define _REN_RET_normal_array_bind ren_bool
-#define _REN_PRM_normal_array_bind (RenReindeer *r, RenNormalArray *vxarray)
-#define _REN_ARG_normal_array_bind (r, vxarray)
+#define _REN_PRM_normal_array_bind (RenReindeer *r, RenVectorArray *array)
+#define _REN_ARG_normal_array_bind (r, array)
 #define _REN_DRT_normal_array_bind TRUE
 
 #define _REN_FTP_normal_array_enable RenNormalArrayEnableFunc

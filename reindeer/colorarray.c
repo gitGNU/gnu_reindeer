@@ -43,64 +43,64 @@ ren_color_array_new (RenType type, RenColorFormat format,
     if (data_block == NULL)
         return NULL;
 
-    RenColorArray *vx_array = g_new0 (RenColorArray, 1);
+    RenColorArray *array = g_new0 (RenColorArray, 1);
 
-    vx_array->ref_count = 1;
+    array->ref_count = 1;
 
-    vx_array->data_block = ren_data_block_ref (data_block);
-    vx_array->start = start;
-    vx_array->count = count;
-    vx_array->stride = stride;
+    array->data_block = ren_data_block_ref (data_block);
+    array->start = start;
+    array->count = count;
+    array->stride = stride;
 
-    vx_array->type = type;
-    vx_array->format = format;
+    array->type = type;
+    array->format = format;
 
-    return vx_array;
+    return array;
 }
 
 RenColorArray*
-ren_color_array_ref (RenColorArray *vx_array)
+ren_color_array_ref (RenColorArray *array)
 {
-    ++(vx_array->ref_count);
-    return vx_array;
+    ++(array->ref_count);
+    return array;
 }
 
 void
-ren_color_array_unref (RenColorArray *vx_array)
+ren_color_array_unref (RenColorArray *array)
 {
-    if (--(vx_array->ref_count) > 0)
+    if (--(array->ref_count) > 0)
         return;
 
-    ren_data_block_unref (vx_array->data_block);
-    g_free (vx_array);
+    ren_data_block_unref (array->data_block);
+    g_free (array);
 }
 
 void
-ren_color_array_set_size (RenColorArray *vx_array, ren_size count)
+ren_color_array_set_size (RenColorArray *array, ren_size count)
 {
-    vx_array->count = count;
+    array->count = count;
 }
 
 void
-ren_color_array_data (RenColorArray *vx_array, RenDataBlock **data_block_p,
+ren_color_array_data (RenColorArray *array, RenDataBlock **data_block_p,
     ren_size *start_p, ren_size *count_p, ren_size *stride_p)
 {
     if (data_block_p)
-        (*data_block_p) = vx_array->data_block;
+        (*data_block_p) = array->data_block;
     if (start_p)
-        (*start_p) = vx_array->start;
+        (*start_p) = array->start;
     if (count_p)
-        (*count_p) = vx_array->count;
+        (*count_p) = array->count;
     if (stride_p)
-        (*stride_p) = vx_array->stride;
+        (*stride_p) = array->stride;
 }
 
 void
-ren_color_array_type (RenColorArray *vx_array,
+ren_color_array_type (RenColorArray *array,
     RenType *type_p, RenColorFormat *format_p)
 {
     if (type_p)
-        (*type_p) = vx_array->type;
+        (*type_p) = array->type;
     if (format_p)
-        (*format_p) = vx_array->format;
+        (*format_p) = array->format;
 }

@@ -27,9 +27,8 @@
 #include <ren/vector.h>
 #include <ren/color.h>
 #include <ren/datablock.h>
-#include <ren/coordarray.h>
+#include <ren/vectorarray.h>
 #include <ren/colorarray.h>
-#include <ren/normalarray.h>
 #include <ren/indexarray.h>
 #include <ren/material.h>
 #include <ren/light.h>

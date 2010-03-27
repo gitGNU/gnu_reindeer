@@ -17,11 +17,11 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#include <ren/coordarray.h>
+#include <ren/vectorarray.h>
 #include <ren/datablock.h>
 #include <glib.h>
 
-struct _RenCoordArray
+struct _RenVectorArray
 {
     ren_uint32 ref_count;
 
@@ -34,8 +34,8 @@ struct _RenCoordArray
     ren_uint08 num;
 };
 
-RenCoordArray*
-ren_coord_array_new (RenType type, ren_uint08 num,
+RenVectorArray*
+ren_vector_array_new (RenType type, ren_uint08 num,
     RenDataBlock *data_block, ren_size start, ren_size count, ren_size stride)
 {
     if (type == REN_TYPE_BOOL)
@@ -45,64 +45,64 @@ ren_coord_array_new (RenType type, ren_uint08 num,
     if (data_block == NULL)
         return NULL;
 
-    RenCoordArray *vx_array = g_new0 (RenCoordArray, 1);
+    RenVectorArray *array = g_new0 (RenVectorArray, 1);
 
-    vx_array->ref_count = 1;
+    array->ref_count = 1;
 
-    vx_array->data_block = ren_data_block_ref (data_block);
-    vx_array->start = start;
-    vx_array->count = count;
-    vx_array->stride = stride;
+    array->data_block = ren_data_block_ref (data_block);
+    array->start = start;
+    array->count = count;
+    array->stride = stride;
 
-    vx_array->type = type;
-    vx_array->num = num;
+    array->type = type;
+    array->num = num;
 
-    return vx_array;
+    return array;
 }
 
-RenCoordArray*
-ren_coord_array_ref (RenCoordArray *vx_array)
+RenVectorArray*
+ren_vector_array_ref (RenVectorArray *array)
 {
-    ++(vx_array->ref_count);
-    return vx_array;
+    ++(array->ref_count);
+    return array;
 }
 
 void
-ren_coord_array_unref (RenCoordArray *vx_array)
+ren_vector_array_unref (RenVectorArray *array)
 {
-    if (--(vx_array->ref_count) > 0)
+    if (--(array->ref_count) > 0)
         return;
 
-    ren_data_block_unref (vx_array->data_block);
-    g_free (vx_array);
+    ren_data_block_unref (array->data_block);
+    g_free (array);
 }
 
 void
-ren_coord_array_set_size (RenCoordArray *vx_array, ren_size count)
+ren_vector_array_set_size (RenVectorArray *array, ren_size count)
 {
-    vx_array->count = count;
+    array->count = count;
 }
 
 void
-ren_coord_array_data (RenCoordArray *vx_array, RenDataBlock **data_block_p,
+ren_vector_array_data (RenVectorArray *array, RenDataBlock **data_block_p,
     ren_size *start_p, ren_size *count_p, ren_size *stride_p)
 {
     if (data_block_p)
-        (*data_block_p) = vx_array->data_block;
+        (*data_block_p) = array->data_block;
     if (start_p)
-        (*start_p) = vx_array->start;
+        (*start_p) = array->start;
     if (count_p)
-        (*count_p) = vx_array->count;
+        (*count_p) = array->count;
     if (stride_p)
-        (*stride_p) = vx_array->stride;
+        (*stride_p) = array->stride;
 }
 
 void
-ren_coord_array_type (RenCoordArray *vx_array,
+ren_vector_array_type (RenVectorArray *array,
     RenType *type_p, ren_uint08 *num_p)
 {
     if (type_p)
-        (*type_p) = vx_array->type;
+        (*type_p) = array->type;
     if (num_p)
-        (*num_p) = vx_array->num;
+        (*num_p) = array->num;
 }

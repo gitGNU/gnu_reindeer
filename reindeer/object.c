@@ -24,7 +24,7 @@
 #include "object.h"
 
 RenObject*
-ren_object_new (RenTemplate *tmplt, RenCoordArray *coord_array)
+ren_object_new (RenTemplate *tmplt, RenVectorArray *coord_array)
 {
     if (tmplt == NULL || !tmplt->built)
         return NULL;
@@ -43,7 +43,7 @@ ren_object_new (RenTemplate *tmplt, RenCoordArray *coord_array)
 
     object->tmplt = ren_template_ref (tmplt);
 
-    object->coord_array = ren_coord_array_ref (coord_array);
+    object->coord_array = ren_vector_array_ref (coord_array);
     object->color_array = NULL;
     object->normal_array = NULL;
 
@@ -66,21 +66,21 @@ ren_object_unref (RenObject *object)
         return;
 
     ren_template_unref (object->tmplt);
-    ren_coord_array_unref (object->coord_array);
+    ren_vector_array_unref (object->coord_array);
     if (object->color_array != NULL)
         ren_color_array_unref (object->color_array);
     if (object->normal_array != NULL)
-        ren_normal_array_unref (object->normal_array);
+        ren_vector_array_unref (object->normal_array);
     g_free (object);
 }
 
 void
-ren_object_coord_array (RenObject *object, RenCoordArray *coord_array)
+ren_object_coord_array (RenObject *object, RenVectorArray *coord_array)
 {
     if (coord_array == NULL)
         return;
-    ren_coord_array_unref (object->coord_array);
-    object->coord_array = ren_coord_array_ref (coord_array);
+    ren_vector_array_unref (object->coord_array);
+    object->coord_array = ren_vector_array_ref (coord_array);
 }
 
 void
@@ -93,12 +93,12 @@ ren_object_color_array (RenObject *object, RenColorArray *color_array)
 }
 
 void
-ren_object_normal_array (RenObject *object, RenNormalArray *normal_array)
+ren_object_normal_array (RenObject *object, RenVectorArray *normal_array)
 {
     if (object->normal_array != NULL)
-        ren_normal_array_unref (object->normal_array);
+        ren_vector_array_unref (object->normal_array);
     object->normal_array = (normal_array != NULL) ?
-        ren_normal_array_ref (normal_array) : NULL;
+        ren_vector_array_ref (normal_array) : NULL;
 }
 
 void
@@ -115,8 +115,8 @@ ren_object_material (RenObject *object, ren_uint08 id, RenMaterial *material)
 
 void
 ren_object_data (RenObject *object, RenTemplate **tmplt_p,
-    RenCoordArray **coord_array_p, RenColorArray **color_array_p,
-    RenNormalArray **normal_array_p/*, RenEdgeArray **edge_array_p*/)
+    RenVectorArray **coord_array_p, RenColorArray **color_array_p,
+    RenVectorArray **normal_array_p/*, RenEdgeArray **edge_array_p*/)
 {
     if (tmplt_p)
         (*tmplt_p) = object->tmplt;

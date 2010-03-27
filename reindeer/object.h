@@ -28,9 +28,9 @@ struct _RenObject
 
     RenTemplate *tmplt;
 
-    RenCoordArray *coord_array;
+    RenVectorArray *coord_array;
     RenColorArray *color_array;
-    RenNormalArray *normal_array;
+    RenVectorArray *normal_array;
 
     RenMaterial **materials;
 };
