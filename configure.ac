@@ -1,4 +1,5 @@
-AC_PREREQ(2.61)
+AC_PREREQ([2.64])
+LT_PREREQ([2.2.6])
 
 m4_define([ren_major_version], [0])
 m4_define([ren_minor_version], [0])
@@ -7,14 +8,15 @@ m4_define([ren_version],
     [ren_major_version.ren_minor_version.ren_micro_version])
 m4_define([ren_compat_version], [0.0])
 
-AC_INIT([Reindeer], [ren_version], , [reindeer])
+AC_INIT([Reindeer], [ren_version], [http://savannah.nongnu.org/bugs/?group=reindeer], [reindeer], [http://savannah.nongnu.org/projects/reindeer/])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([config.h.in])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_LIBOBJ_DIR([libgnu])
 LT_CONFIG_LTDL_DIR([libltdl])
-AM_INIT_AUTOMAKE([subdir-objects])
+AM_INIT_AUTOMAKE([1.11.1 subdir-objects])
+AM_SILENT_RULES([yes])
 LT_INIT([dlopen])
 LTDL_INIT([nonrecursive installable])
 
@@ -35,8 +37,8 @@ AM_CONDITIONAL([HAVE_DOCBOOK_XSLT], [test x$XSLTPROC != x -a x$HAVE_DOCBOOK_XSLT
 
 # Checks for libraries.
 GLIB_REQUIRED=2.16
-AC_SUBST(GLIB_REQUIRED)
-PKG_CHECK_MODULES(GLIB, glib-2.0 >= $GLIB_REQUIRED)
+AC_SUBST([GLIB_REQUIRED])
+PKG_CHECK_MODULES([GLIB], [glib-2.0 >= $GLIB_REQUIRED])
 
 # Checks for header files.
 

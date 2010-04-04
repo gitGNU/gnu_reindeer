@@ -135,14 +135,18 @@ dist_htmlnode_DATA = doc/html_node/*.html
 endif
 
 doc/reindeer.html: $(reindeer_DOCBOOK) $(srcdir)/doc/html.xsl
-	$(XSLTPROC) -o $@ $(AM_XSLTPROC_FLAGS) $(XSLTPROC_FLAGS) \
+	$(AM_V_GEN)$(XSLTPROC) -o $@ $(AM_XSLTPROC_FLAGS) $(XSLTPROC_FLAGS) \
 		--path /usr/share/xml/docbook/stylesheet/docbook-xsl/html \
 		$(srcdir)/doc/html.xsl $(srcdir)/doc/reindeer.docbook
 
 doc/html_node/*.html: doc/html_node.stamp
 
+V_hn = $(V_hn_$(V))
+V_hn_ = $(V_hn_$(AM_DEFAULT_VERBOSITY))
+V_hn_0 = @echo "  GEN    doc/html_node";
+
 doc/html_node.stamp: $(reindeer_DOCBOOK) $(srcdir)/doc/html-chunk.xsl
-	$(XSLTPROC) -o doc/html_node/ $(AM_XSLTPROC_FLAGS) $(XSLTPROC_FLAGS) \
+	$(V_hn)$(XSLTPROC) -o doc/html_node/ $(AM_XSLTPROC_FLAGS) $(XSLTPROC_FLAGS) \
 		--path /usr/share/xml/docbook/stylesheet/docbook-xsl/html \
 		$(srcdir)/doc/html-chunk.xsl $(srcdir)/doc/reindeer.docbook
-	touch $@
+	$(AM_V_at)touch $@
