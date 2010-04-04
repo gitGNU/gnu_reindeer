@@ -59,6 +59,7 @@ struct _RenBackend
     ren_uint32 ref_count;
     char *name;
     char *version;
+    char *filename;
     lt_dlhandle libhandle;
 
     _RenBackendData *data;

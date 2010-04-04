@@ -15,11 +15,12 @@
 
 
 # Specification in the form of a command-line invocation:
-#   gnulib-tool --import --dir=. --lib=libgnu --source-base=libgnu --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=build-aux --libtool --macro-prefix=GNULIB --no-vc-files gitlog-to-changelog
+#   gnulib-tool --import --dir=. --lib=libgnu --source-base=libgnu --m4-base=m4 --doc-base=doc --tests-base=tests --aux-dir=build-aux --libtool --macro-prefix=GNULIB --no-vc-files filevercmp gitlog-to-changelog
 
 # Specification in the form of a few gnulib-tool.m4 macro invocations:
 gl_LOCAL_DIR([])
 gl_MODULES([
+  filevercmp
   gitlog-to-changelog
 ])
 gl_AVOID([])

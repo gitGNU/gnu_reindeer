@@ -22,6 +22,7 @@
 
 #include <ren/tmpl.h>
 #include <ren/types.h>
+#include <ren/version.h>
 #include <ren/base.h>
 #include <ren/matrix.h>
 #include <ren/vector.h>

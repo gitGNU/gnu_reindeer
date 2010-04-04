@@ -1,5 +1,13 @@
 AC_PREREQ(2.61)
-AC_INIT([Reindeer], [0.0.2], , [reindeer])
+
+m4_define([ren_major_version], [0])
+m4_define([ren_minor_version], [0])
+m4_define([ren_micro_version], [2])
+m4_define([ren_version],
+    [ren_major_version.ren_minor_version.ren_micro_version])
+m4_define([ren_compat_version], [0.0])
+
+AC_INIT([Reindeer], [ren_version], , [reindeer])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_SRCDIR([config.h.in])
@@ -9,6 +17,14 @@ LT_CONFIG_LTDL_DIR([libltdl])
 AM_INIT_AUTOMAKE([subdir-objects])
 LT_INIT([dlopen])
 LTDL_INIT([nonrecursive installable])
+
+AC_SUBST([REN_MAJOR_VERSION], [ren_major_version])
+AC_SUBST([REN_MINOR_VERSION], [ren_minor_version])
+AC_SUBST([REN_MICRO_VERSION], [ren_micro_version])
+AC_SUBST([REN_COMPAT_VERSION], [ren_compat_version])
+
+renlibdir='${libdir}/reindeer-0.0'
+AC_SUBST([renlibdir])
 
 # Checks for programs.
 AC_PROG_CC
@@ -36,5 +52,6 @@ AC_CONFIG_FILES([
     Makefile
     libgnu/Makefile
     reindeer/reindeer-0.0.pc
+    ren/version.h
 ])
 AC_OUTPUT

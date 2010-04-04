@@ -3,8 +3,9 @@ ACLOCAL_AMFLAGS = -I m4
 
 AM_CPPFLAGS = \
     -I$(top_builddir) -I$(top_srcdir) $(LTDLINCL) \
+    -I$(top_srcdir)/libgnu -I$(top_builddir)/libgnu \
     $(GLIB_CFLAGS) \
-    -D AC_libdir=\"$(libdir)\"
+    -DAC_renlibdir=\"$(renlibdir)\"
 AM_LDFLAGS =
 AM_XSLTPROC_FLAGS = \
     --xinclude \
@@ -20,7 +21,6 @@ noinst_LTLIBRARIES =
 lib_LTLIBRARIES =
 EXTRA_LTLIBRARIES =
 
-renlibdir = $(libdir)/reindeer-0.0
 renlib_LTLIBRARIES =
 
 pkgconfigdir = $(libdir)/pkgconfig
@@ -61,19 +61,20 @@ reindeer_libreindeer_0_0_la_SOURCES = \
     reindeer/object.c reindeer/object.h
 
 reindeer_libreindeer_0_0_la_LIBADD = \
-    $(LTLIBOBJS) $(LIBLTDL) $(GLIB_LIBS)
+    $(LTLIBOBJS) $(LIBLTDL) $(GLIB_LIBS) libgnu/libgnu.la
 
 reindeer_libreindeer_0_0_la_LDFLAGS = \
     -export-dynamic -version-info 0:0:0
 
 renincludedir = $(includedir)/reindeer-0.0/ren
 reninclude_HEADERS = \
-    ren/ren.h ren/types.h ren/base.h ren/impl.h ren/tmpl.h ren/funcs.h \
-        ren/matrix.h ren/vector.h ren/color.h ren/datablock.h \
-        ren/vectorarray.h ren/colorarray.h \
-        ren/indexarray.h \
-        ren/material.h ren/light.h \
-        ren/template.h ren/object.h
+    ren/ren.h ren/types.h ren/base.h ren/version.h \
+    ren/impl.h ren/tmpl.h ren/funcs.h \
+    ren/matrix.h ren/vector.h ren/color.h ren/datablock.h \
+    ren/vectorarray.h ren/colorarray.h \
+    ren/indexarray.h \
+    ren/material.h ren/light.h \
+    ren/template.h ren/object.h
 
 pkgconfig_DATA += reindeer/reindeer-0.0.pc
 
@@ -81,16 +82,16 @@ pkgconfig_DATA += reindeer/reindeer-0.0.pc
 # libreindeer-debug
 #
 
-renlib_LTLIBRARIES += debug/libreindeer-debug.la
+renlib_LTLIBRARIES += debug/libreindeer-debug.0.0.2.la
 
-debug_libreindeer_debug_la_SOURCES = \
+debug_libreindeer_debug_0_0_2_la_SOURCES = \
     debug/debug.c
 
-debug_libreindeer_debug_la_LIBADD = \
+debug_libreindeer_debug_0_0_2_la_LIBADD = \
     $(LTLIBOBJS) reindeer/libreindeer-0.0.la
 
-debug_libreindeer_debug_la_LDFLAGS = \
-    -module -version-info 0:0:0
+debug_libreindeer_debug_0_0_2_la_LDFLAGS = \
+    -module -avoid-version
 
 #
 # documentation

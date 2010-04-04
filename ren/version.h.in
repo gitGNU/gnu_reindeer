@@ -17,36 +17,19 @@
     along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
-#ifndef REN_IMPL_NAME
-#define REN_IMPL_NAME debug
-#endif
+#ifndef REN_VERSION_H
+#define REN_VERSION_H
 
 #include <ren/types.h>
-#include <ren/version.h>
-#include <ren/impl.h>
-#include <ren/tmpl.h>
 
-char* REN_IMPL_MANGLE(compat_version) = REN_COMPAT_VERSION;
+#define REN_MAJOR_VERSION @REN_MAJOR_VERSION@
+#define REN_MINOR_VERSION @REN_MINOR_VERSION@
+#define REN_MICRO_VERSION @REN_MICRO_VERSION@
+#define REN_COMPAT_VERSION "@REN_COMPAT_VERSION@"
 
-struct _RenReindeerBackData
-{
-};
+extern const ren_uint32 ren_major_version;
+extern const ren_uint32 ren_minor_version;
+extern const ren_uint32 ren_micro_version;
+extern const char *ren_compat_version;
 
-ren_size REN_IMPL_MANGLE(reindeer_back_data_size) = sizeof (RenReindeerBackData);
-
-void
-REN_IMPL_MANGLE(reindeer_init) (RenReindeer *r, RenReindeerBackData *back_data)
-{
-}
-
-void
-REN_IMPL_MANGLE(reindeer_fini) (RenReindeer *r, RenReindeerBackData *back_data)
-{
-}
-
-#define _REN_FUNC(F)\
-    _REN_RET(F) REN_IMPL_MANGLE(F) _REN_PRM(F) {\
-        return (_REN_RET(F)) _REN_DRT(F);\
-    }
-#include <ren/funcs.h>
-#undef _REN_FUNC
+#endif /* REN_VERSION_H */
