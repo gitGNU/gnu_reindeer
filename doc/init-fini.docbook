@@ -30,11 +30,42 @@
     <funcprototype>
         <funcdef>RenBackend* <function>ren_backend_lookup</function></funcdef>
         <paramdef>const char* <parameter>name</parameter></paramdef>
+        <paramdef>RenError** <parameter>error</parameter></paramdef>
     </funcprototype>
     </funcsynopsis>
     <para>
     Try to find a backend. If the backend is available for use it will be
-    returned, otherwise NULL will be returned.
+    returned and its use count is increased. When you don't need the backend
+    loaded anymore, use <function>ren_backend_unuse</function>. If the backend
+    is not available for use then NULL will be returned (with
+    <parameter>*error</parameter> set to point to a RenError with error
+    information).
+    </para>
+
+    <funcsynopsis>
+    <funcprototype>
+        <funcdef>ren_bool <function>ren_backend_use</function></funcdef>
+        <paramdef>RenBackend* <parameter>backend</parameter></paramdef>
+        <paramdef>RenError** <parameter>error</parameter></paramdef>
+    </funcprototype>
+    </funcsynopsis>
+    <para>
+    Increases the use count of the Reindeer backend. If the backend was
+    previously unloaded (use count was zero), this will also load it. Returns
+    <constant>TRUE</constant> if successful, and <constant>FALSE</constant> if
+    not (with <parameter>*error</parameter> set to point to a RenError with
+    error information).
+    </para>
+
+    <funcsynopsis>
+    <funcprototype>
+        <funcdef>void <function>ren_backend_unuse</function></funcdef>
+        <paramdef>RenBackend* <parameter>backend</parameter></paramdef>
+    </funcprototype>
+    </funcsynopsis>
+    <para>
+    Decreases the use count of the Reindeer backend. When its use
+    count drops to 0, it will be unloaded automatically.
     </para>
 
     <funcsynopsis>

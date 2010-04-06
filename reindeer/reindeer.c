@@ -39,9 +39,9 @@ static GHashTable *backend_table = NULL;
 static RenBackend*
 backend_get (const char* name, RenError **error);
 static ren_bool
-backend_ref (RenBackend *backend, RenError **error);
+backend_use (RenBackend *backend, RenError **error);
 static void
-backend_unref (RenBackend *backend);
+backend_unuse (RenBackend *backend);
 static void
 backend_destroy (RenBackend *backend);
 
@@ -120,8 +120,8 @@ ren_library_is_inited (void)
 RenReindeer*
 ren_reindeer_new (RenBackend *backend, RenError **error)
 {
-    g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
     g_return_val_if_fail (backend != NULL, NULL);
+    g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
     if (exited)
     {
         g_critical ("Reindeer library already exited");
@@ -132,7 +132,7 @@ ren_reindeer_new (RenBackend *backend, RenError **error)
         g_critical ("Reindeer library not initialized");
         return NULL;
     }
-    if (!backend_ref (backend, error))
+    if (!backend_use (backend, error))
     {
         g_prefix_error ((GError **) error,
             "Creating Reindeer context failed: ");
@@ -176,7 +176,7 @@ ren_reindeer_unref (RenReindeer *r)
         reindeer_fini (r, r->back_data);
     g_free (r->back_data);
 
-    backend_unref (r->backend);
+    backend_unuse (r->backend);
     g_free (r);
 }
 
@@ -195,6 +195,7 @@ ren_reindeer_back_data (RenReindeer *r)
 RenBackend*
 ren_backend_lookup (const char *name, RenError **error)
 {
+    g_return_val_if_fail (error == NULL || *error == NULL, NULL);
     if (exited)
     {
         g_critical ("Reindeer library already exited");
@@ -219,6 +220,21 @@ ren_backend_lookup (const char *name, RenError **error)
     }
 
     return backend_get (name, error);
+}
+
+ren_bool
+ren_backend_use (RenBackend *backend, RenError **error)
+{
+    g_return_val_if_fail (backend != NULL, FALSE);
+    g_return_val_if_fail (error == NULL || *error == NULL, FALSE);
+    return backend_use (backend, error);
+}
+
+void
+ren_backend_unuse (RenBackend *backend)
+{
+    g_return_if_fail (backend != NULL);
+    backend_unuse (backend);
 }
 
 void
@@ -434,16 +450,20 @@ backend_get (const char* name, RenError **error)
 {
     RenBackend *backend = g_hash_table_lookup (backend_table, name);
     if (backend != NULL)
-        return backend;
+    {
+        if (backend_use (backend, error))
+            return backend;
+        else
+            return NULL;
+    }
 
     backend = g_new0 (RenBackend, 1);
     backend->name = g_strdup (name);
-    if (!backend_load (backend, FALSE, error))
+
+    if (!backend_use (backend, error))
         goto FAIL;
 
     g_hash_table_insert (backend_table, backend->name, backend);
-
-    lt_dlclose (backend->libhandle);
 
     return backend;
 
@@ -457,14 +477,14 @@ backend_get (const char* name, RenError **error)
 }
 
 static ren_bool
-backend_ref (RenBackend *backend, RenError **error)
+backend_use (RenBackend *backend, RenError **error)
 {
-    if (++(backend->ref_count) != 1)
+    if (++(backend->use_count) != 1)
         return TRUE;
 
     if (!backend_load (backend, TRUE, error))
     {
-        --(backend->ref_count);
+        --(backend->use_count);
         return FALSE;
     }
 
@@ -472,9 +492,9 @@ backend_ref (RenBackend *backend, RenError **error)
 }
 
 static void
-backend_unref (RenBackend *backend)
+backend_unuse (RenBackend *backend)
 {
-    if (--(backend->ref_count) > 0)
+    if (--(backend->use_count) > 0)
         return;
 
     RenBackendFiniFunc backend_fini =
@@ -492,10 +512,10 @@ backend_unref (RenBackend *backend)
 static void
 backend_destroy (RenBackend *backend)
 {
-    if (backend->ref_count > 0)
+    if (backend->use_count > 0)
     {
-        backend->ref_count = 1;
-        backend_unref (backend);
+        backend->use_count = 1;
+        backend_unuse (backend);
     }
     g_free (backend->name);
     g_free (backend);

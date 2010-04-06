@@ -46,6 +46,12 @@ ren_reindeer_backend (RenReindeer *r);
 extern RenBackend*
 ren_backend_lookup (const char *name, RenError **error);
 
+extern ren_bool
+ren_backend_use (RenBackend *backend, RenError **error);
+
+extern void
+ren_backend_unuse (RenBackend *backend);
+
 static inline ren_size
 ren_type_sizeof (RenType type)
 {

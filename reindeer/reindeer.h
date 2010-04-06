@@ -56,7 +56,7 @@ struct _RenReindeer
 
 struct _RenBackend
 {
-    ren_uint32 ref_count;
+    ren_uint32 use_count;
     char *name;
     char *version;
     char *filename;
