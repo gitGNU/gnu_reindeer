@@ -122,35 +122,11 @@
 #define _REN_ARG_coord_array_bind (r, array)
 #define _REN_DRT_coord_array_bind TRUE
 
-#define _REN_FTP_coord_array_enable RenCoordArrayEnableFunc
-#define _REN_RET_coord_array_enable void
-#define _REN_PRM_coord_array_enable (RenReindeer *r)
-#define _REN_ARG_coord_array_enable (r)
-#define _REN_DRT_coord_array_enable NULL
-
-#define _REN_FTP_coord_array_disable RenCoordArrayDisableFunc
-#define _REN_RET_coord_array_disable void
-#define _REN_PRM_coord_array_disable (RenReindeer *r)
-#define _REN_ARG_coord_array_disable (r)
-#define _REN_DRT_coord_array_disable NULL
-
 #define _REN_FTP_color_array_bind RenColorArrayBindFunc
 #define _REN_RET_color_array_bind ren_bool
 #define _REN_PRM_color_array_bind (RenReindeer *r, RenColorArray *array)
 #define _REN_ARG_color_array_bind (r, array)
 #define _REN_DRT_color_array_bind TRUE
-
-#define _REN_FTP_color_array_enable RenColorArrayEnableFunc
-#define _REN_RET_color_array_enable void
-#define _REN_PRM_color_array_enable (RenReindeer *r)
-#define _REN_ARG_color_array_enable (r)
-#define _REN_DRT_color_array_enable NULL
-
-#define _REN_FTP_color_array_disable RenColorArrayDisableFunc
-#define _REN_RET_color_array_disable void
-#define _REN_PRM_color_array_disable (RenReindeer *r)
-#define _REN_ARG_color_array_disable (r)
-#define _REN_DRT_color_array_disable NULL
 
 #define _REN_FTP_normal_array_bind RenNormalArrayBindFunc
 #define _REN_RET_normal_array_bind ren_bool
@@ -158,23 +134,17 @@
 #define _REN_ARG_normal_array_bind (r, array)
 #define _REN_DRT_normal_array_bind TRUE
 
-#define _REN_FTP_normal_array_enable RenNormalArrayEnableFunc
-#define _REN_RET_normal_array_enable void
-#define _REN_PRM_normal_array_enable (RenReindeer *r)
-#define _REN_ARG_normal_array_enable (r)
-#define _REN_DRT_normal_array_enable NULL
-
-#define _REN_FTP_normal_array_disable RenNormalArrayDisableFunc
-#define _REN_RET_normal_array_disable void
-#define _REN_PRM_normal_array_disable (RenReindeer *r)
-#define _REN_ARG_normal_array_disable (r)
-#define _REN_DRT_normal_array_disable NULL
-
 #define _REN_FTP_index_array_bind RenIndexArrayBindFunc
 #define _REN_RET_index_array_bind ren_bool
 #define _REN_PRM_index_array_bind (RenReindeer *r, RenIndexArray *ixarray)
 #define _REN_ARG_index_array_bind (r, ixarray)
 #define _REN_DRT_index_array_bind TRUE
+
+#define _REN_FTP_state_keep RenStateKeepFunc
+#define _REN_RET_state_keep void
+#define _REN_PRM_state_keep (RenReindeer *r, RenState state)
+#define _REN_ARG_state_keep (r, state)
+#define _REN_DRT_state_keep NULL
 
 #define _REN_FTP_primitive RenPrimitiveFunc
 #define _REN_RET_primitive void
@@ -208,22 +178,40 @@
 #define _REN_DRT_lighting_ambient NULL
 
 #define _REN_FTP_light_bind RenLightBindFunc
-#define _REN_RET_light_bind void
-#define _REN_PRM_light_bind\
-    (RenReindeer *r, RenLight *light, ren_uint32 index)
-#define _REN_ARG_light_bind     (r, light, index)
-#define _REN_DRT_light_bind NULL
+#define _REN_RET_light_bind ren_size
+#define _REN_PRM_light_bind (RenReindeer *r, ren_size n, RenLight **lights)
+#define _REN_ARG_light_bind (r, n, lights)
+#define _REN_DRT_light_bind n
 
 #define _REN_FTP_light_enable RenLightEnableFunc
-#define _REN_RET_light_enable void
-#define _REN_PRM_light_enable (RenReindeer *r, ren_uint32 index)
-#define _REN_ARG_light_enable (r, index)
-#define _REN_DRT_light_enable NULL
+#define _REN_RET_light_enable ren_bool
+#define _REN_PRM_light_enable (RenReindeer *r, RenLight *light)
+#define _REN_ARG_light_enable (r, light)
+#define _REN_DRT_light_enable TRUE
 
 #define _REN_FTP_light_disable RenLightDisableFunc
 #define _REN_RET_light_disable void
-#define _REN_PRM_light_disable (RenReindeer *r, ren_uint32 index)
-#define _REN_ARG_light_disable (r, index)
+#define _REN_PRM_light_disable (RenReindeer *r, RenLight *light)
+#define _REN_ARG_light_disable (r, light)
 #define _REN_DRT_light_disable NULL
+
+#define _REN_FTP_material_bind RenMaterialBindFunc
+#define _REN_RET_material_bind void
+#define _REN_PRM_material_bind (RenReindeer *r,\
+    RenMaterial *front, RenMaterial *back)
+#define _REN_ARG_material_bind (r, front, back)
+#define _REN_DRT_material_bind NULL
+
+#define _REN_FTP_material_front RenMaterialFrontFunc
+#define _REN_RET_material_front void
+#define _REN_PRM_material_front (RenReindeer *r, RenMaterial *material)
+#define _REN_ARG_material_front (r, material)
+#define _REN_DRT_material_front NULL
+
+#define _REN_FTP_material_back RenMaterialBackFunc
+#define _REN_RET_material_back void
+#define _REN_PRM_material_back (RenReindeer *r, RenMaterial *material)
+#define _REN_ARG_material_back (r, material)
+#define _REN_DRT_material_back NULL
 
 #endif /* _REN_TMPL_H */
