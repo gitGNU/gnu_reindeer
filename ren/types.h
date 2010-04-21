@@ -123,11 +123,12 @@ typedef enum
 
 typedef enum
 {
-    REN_STATE_COORD_ARRAY,
-    REN_STATE_COLOR_ARRAY,
-    REN_STATE_NORMAL_ARRAY,
-    REN_STATE_LIGHTS,
-    REN_STATE_MATERIAL,
+    REN_STATE_INDEX_ARRAY   = (1 << 0),
+    REN_STATE_COORD_ARRAY   = (1 << 1),
+    REN_STATE_COLOR_ARRAY   = (1 << 2),
+    REN_STATE_NORMAL_ARRAY  = (1 << 3),
+    REN_STATE_LIGHTS        = (1 << 4),
+    REN_STATE_MATERIALS     = (1 << 5),
 } RenState;
 
 typedef enum
