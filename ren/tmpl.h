@@ -1,20 +1,20 @@
 /*
-    This file is part of Reindeer.
+	This file is part of Reindeer.
 
-    Copyright (C) 2008, 2009, 2010 - Patrik Olsson
+	Copyright (C) 2008, 2009, 2010 - Patrik Olsson
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef _REN_TMPL_H
@@ -111,8 +111,8 @@
 #define _REN_FTP_viewport RenViewportFunc
 #define _REN_RET_viewport void
 #define _REN_PRM_viewport (RenReindeer *r,\
-    ren_uint32 x,     ren_uint32 y,\
-    ren_uint32 width, ren_uint32 height)
+	ren_uint32 x, ren_uint32 y,\
+	ren_uint32 width, ren_uint32 height)
 #define _REN_ARG_viewport (r, x, y, width, height)
 #define _REN_DRT_viewport NULL
 
@@ -149,7 +149,7 @@
 #define _REN_FTP_primitive RenPrimitiveFunc
 #define _REN_RET_primitive void
 #define _REN_PRM_primitive (RenReindeer *r,\
-    RenPrimitive prim, ren_size offset, ren_size count)
+	RenPrimitive prim, ren_size offset, ren_size count)
 #define _REN_ARG_primitive (r, prim, offset, count)
 #define _REN_DRT_primitive NULL
 
@@ -198,7 +198,7 @@
 #define _REN_FTP_material_bind RenMaterialBindFunc
 #define _REN_RET_material_bind void
 #define _REN_PRM_material_bind (RenReindeer *r,\
-    RenMaterial *front, RenMaterial *back)
+	RenMaterial *front, RenMaterial *back)
 #define _REN_ARG_material_bind (r, front, back)
 #define _REN_DRT_material_bind NULL
 

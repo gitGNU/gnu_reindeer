@@ -1,95 +1,97 @@
 <?xml version="1.0"?>
 <section id="colors">
-    <title>Colors</title>
+	<title>Colors</title>
 
-    <variablelist>
-    <title>RenColorFormat</title>
-    <varlistentry>
-        <term><constant>REN_COLOR_FORMAT_RGB</constant></term>
-    </varlistentry>
-    <varlistentry>
-        <term><constant>REN_COLOR_FORMAT_RGBA</constant></term>
-    </varlistentry>
-    <varlistentry>
-        <term><constant>REN_COLOR_FORMAT_DEPTH</constant></term>
-    </varlistentry>
-    </variablelist>
-    <para>
-        Represents a color format, with components in a specific order.
-        "R" means red, "G" means green, "B" means blue and "A" means alpha.
-    </para>
+	<variablelist>
+	<title>RenColorFormat</title>
+	<varlistentry>
+		<term><constant>REN_COLOR_FORMAT_RGB</constant></term>
+	</varlistentry>
+	<varlistentry>
+		<term><constant>REN_COLOR_FORMAT_RGBA</constant></term>
+	</varlistentry>
+	<varlistentry>
+		<term><constant>REN_COLOR_FORMAT_DEPTH</constant></term>
+	</varlistentry>
+	</variablelist>
+	<para>
+		Represents a color format, with components in a specific order.
+		"R" means red, "G" means green, "B" means blue and "A" means
+		alpha.
+	</para>
 
-    <funcsynopsis>
-    <funcprototype>
-        <funcdef>RenColor* <function>ren_color_new</function></funcdef>
-        <paramdef>RenColorFormat <parameter>format</parameter></paramdef>
-        <paramdef>RenType <parameter>type</parameter></paramdef>
-    </funcprototype>
-    </funcsynopsis>
-    <para>
-    Define a new color. Color data will be internally allocated, in the format
-    specified by <parameter>format</parameter> and <parameter>type</parameter>.
-    Any value for <parameter>format</parameter> is valid. Valid values for
-    <parameter>type</parameter> are unsigned integers up to 32 bit and floating
-    point types.
-    </para>
+	<funcsynopsis>
+	<funcprototype>
+		<funcdef>RenColor* <function>ren_color_new</function></funcdef>
+		<paramdef>RenColorFormat <parameter>format</parameter></paramdef>
+		<paramdef>RenType <parameter>type</parameter></paramdef>
+	</funcprototype>
+	</funcsynopsis>
+	<para>
+	Define a new color. Color data will be internally allocated, in the
+	format specified by <parameter>format</parameter> and
+	<parameter>type</parameter>. Any value for <parameter>format</parameter>
+	is valid. Valid values for <parameter>type</parameter> are unsigned
+	integers up to 32 bit and floating point types.
+	</para>
 
-    <funcsynopsis>
-    <funcprototype>
-        <funcdef>RenColor* <function>ren_color_ref</function></funcdef>
-        <paramdef>RenColor* <parameter>color</parameter></paramdef>
-    </funcprototype>
-    </funcsynopsis>
-    <para>
-    Increases the reference count of the Color instance and then returns it.
-    </para>
+	<funcsynopsis>
+	<funcprototype>
+		<funcdef>RenColor* <function>ren_color_ref</function></funcdef>
+		<paramdef>RenColor* <parameter>color</parameter></paramdef>
+	</funcprototype>
+	</funcsynopsis>
+	<para>
+	Increases the reference count of the Color instance and then returns it.
+	</para>
 
-    <funcsynopsis>
-    <funcprototype>
-        <funcdef>void <function>ren_color_unref</function></funcdef>
-        <paramdef>RenColor* <parameter>color</parameter></paramdef>
-    </funcprototype>
-    </funcsynopsis>
-    <para>
-    Decreases the reference count of the Color instance. When its reference
-    count drops to 0, it will be destroyed automatically.
-    </para>
+	<funcsynopsis>
+	<funcprototype>
+		<funcdef>void <function>ren_color_unref</function></funcdef>
+		<paramdef>RenColor* <parameter>color</parameter></paramdef>
+	</funcprototype>
+	</funcsynopsis>
+	<para>
+	Decreases the reference count of the Color instance. When its reference
+	count drops to 0, it will be destroyed automatically.
+	</para>
 
-    <funcsynopsis>
-    <funcprototype>
-        <funcdef>void* <function>ren_color_begin_edit</function></funcdef>
-        <paramdef>RenColor* <parameter>color</parameter></paramdef>
-    </funcprototype>
-    </funcsynopsis>
-    <para>
-    Get the internal data of the color with the intention of modifying it. This
-    function may lock while some other thread is already using the data.
-    </para>
+	<funcsynopsis>
+	<funcprototype>
+		<funcdef>void* <function>ren_color_begin_edit</function></funcdef>
+		<paramdef>RenColor* <parameter>color</parameter></paramdef>
+	</funcprototype>
+	</funcsynopsis>
+	<para>
+	Get the internal data of the color with the intention of modifying it.
+	This function may lock while some other thread is already using the
+	data.
+	</para>
 
-    <funcsynopsis>
-    <funcprototype>
-        <funcdef>void <function>ren_color_end_edit</function></funcdef>
-        <paramdef>RenColor* <parameter>color</parameter></paramdef>
-    </funcprototype>
-    </funcsynopsis>
-    <para>
-    Mark an end of modifying the internal data. The pointer received with
-    <function>ren_color_begin_edit</function> must not be used anymore.
-    </para>
+	<funcsynopsis>
+	<funcprototype>
+		<funcdef>void <function>ren_color_end_edit</function></funcdef>
+		<paramdef>RenColor* <parameter>color</parameter></paramdef>
+	</funcprototype>
+	</funcsynopsis>
+	<para>
+	Mark an end of modifying the internal data. The pointer received with
+	<function>ren_color_begin_edit</function> must not be used anymore.
+	</para>
 
-    <funcsynopsis>
-    <funcprototype>
-        <funcdef>ren_size <function>ren_color_format_sizeof</function></funcdef>
-        <paramdef>RenColorFormat <parameter>format</parameter></paramdef>
-        <paramdef>RenType <parameter>type</parameter></paramdef>
-    </funcprototype>
-    </funcsynopsis>
-    <para>
-    Returns in bytes the size of the color format used together with
-    <parameter>type</parameter>. A Color instance created with this format
-    will have internal data (as returned with
-    <function>ren_color_begin_edit</function>) of this size. The valid values
-    for <parameter>format</parameter> and <parameter>type</parameter> are the
-    same as in <function>ren_color_new</function>.
-    </para>
+	<funcsynopsis>
+	<funcprototype>
+		<funcdef>ren_size <function>ren_color_format_sizeof</function></funcdef>
+		<paramdef>RenColorFormat <parameter>format</parameter></paramdef>
+		<paramdef>RenType <parameter>type</parameter></paramdef>
+	</funcprototype>
+	</funcsynopsis>
+	<para>
+	Returns in bytes the size of the color format used together with
+	<parameter>type</parameter>. A Color instance created with this format
+	will have internal data (as returned with
+	<function>ren_color_begin_edit</function>) of this size. The valid
+	values for <parameter>format</parameter> and <parameter>type</parameter>
+	are the same as in <function>ren_color_new</function>.
+	</para>
 </section>

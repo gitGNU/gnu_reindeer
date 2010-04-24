@@ -5,7 +5,7 @@ m4_define([ren_major_version], [0])
 m4_define([ren_minor_version], [0])
 m4_define([ren_micro_version], [2])
 m4_define([ren_version],
-    [ren_major_version.ren_minor_version.ren_micro_version])
+	[ren_major_version.ren_minor_version.ren_micro_version])
 m4_define([ren_compat_version], [0.0])
 
 AC_INIT([Reindeer], [ren_version], [http://savannah.nongnu.org/bugs/?group=reindeer], [reindeer], [http://savannah.nongnu.org/projects/reindeer/])
@@ -51,9 +51,9 @@ GNULIB_INIT
 
 # Output
 AC_CONFIG_FILES([
-    Makefile
-    libgnu/Makefile
-    reindeer/reindeer-0.0.pc
-    ren/version.h
+	Makefile
+	libgnu/Makefile
+	reindeer/reindeer-0.0.pc
+	ren/version.h
 ])
 AC_OUTPUT

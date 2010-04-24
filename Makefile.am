@@ -2,14 +2,14 @@ SUBDIRS = libgnu
 ACLOCAL_AMFLAGS = -I m4
 
 AM_CPPFLAGS = \
-    -I$(top_builddir) -I$(top_srcdir) $(LTDLINCL) \
-    -I$(top_srcdir)/libgnu -I$(top_builddir)/libgnu \
-    $(GLIB_CFLAGS) \
-    -DAC_renlibdir=\"$(renlibdir)\"
+	-I$(top_builddir) -I$(top_srcdir) $(LTDLINCL) \
+	-I$(top_srcdir)/libgnu -I$(top_builddir)/libgnu \
+	$(GLIB_CFLAGS) \
+	-DAC_renlibdir=\"$(renlibdir)\"
 AM_LDFLAGS =
 AM_XSLTPROC_FLAGS = \
-    --xinclude \
-    --path /usr/share/xml/docbook/stylesheet/docbook-xsl
+	--xinclude \
+	--path /usr/share/xml/docbook/stylesheet/docbook-xsl
 
 BUILT_SOURCES =
 EXTRA_DIST =
@@ -51,30 +51,30 @@ include libltdl/Makefile.inc
 lib_LTLIBRARIES += reindeer/libreindeer-0.0.la
 
 reindeer_libreindeer_0_0_la_SOURCES = \
-    reindeer/reindeer.c reindeer/reindeer.h \
-    reindeer/backdata.c reindeer/backdata.h \
-    reindeer/matrix.c reindeer/vector.c reindeer/color.c reindeer/datablock.c \
-    reindeer/vectorarray.c reindeer/colorarray.c \
-    reindeer/indexarray.c \
-    reindeer/material.c reindeer/light.c \
-    reindeer/template.c reindeer/template.h \
-    reindeer/object.c reindeer/object.h
+	reindeer/reindeer.c reindeer/reindeer.h \
+	reindeer/backdata.c reindeer/backdata.h \
+	reindeer/matrix.c reindeer/vector.c reindeer/color.c reindeer/datablock.c \
+	reindeer/vectorarray.c reindeer/colorarray.c \
+	reindeer/indexarray.c \
+	reindeer/material.c reindeer/light.c \
+	reindeer/template.c reindeer/template.h \
+	reindeer/object.c reindeer/object.h
 
 reindeer_libreindeer_0_0_la_LIBADD = \
-    $(LTLIBOBJS) $(LIBLTDL) $(GLIB_LIBS) libgnu/libgnu.la
+	$(LTLIBOBJS) $(LIBLTDL) $(GLIB_LIBS) libgnu/libgnu.la
 
 reindeer_libreindeer_0_0_la_LDFLAGS = \
-    -export-dynamic -version-info 0:0:0
+	-export-dynamic -version-info 0:0:0
 
 renincludedir = $(includedir)/reindeer-0.0/ren
 reninclude_HEADERS = \
-    ren/ren.h ren/types.h ren/base.h ren/version.h \
-    ren/impl.h ren/tmpl.h ren/funcs.h \
-    ren/matrix.h ren/vector.h ren/color.h ren/datablock.h \
-    ren/vectorarray.h ren/colorarray.h \
-    ren/indexarray.h \
-    ren/material.h ren/light.h \
-    ren/template.h ren/object.h
+	ren/ren.h ren/types.h ren/base.h ren/version.h \
+	ren/impl.h ren/tmpl.h ren/funcs.h \
+	ren/matrix.h ren/vector.h ren/color.h ren/datablock.h \
+	ren/vectorarray.h ren/colorarray.h \
+	ren/indexarray.h \
+	ren/material.h ren/light.h \
+	ren/template.h ren/object.h
 
 pkgconfig_DATA += reindeer/reindeer-0.0.pc
 
@@ -85,47 +85,47 @@ pkgconfig_DATA += reindeer/reindeer-0.0.pc
 renlib_LTLIBRARIES += debug/libreindeer-debug.0.0.2.la
 
 debug_libreindeer_debug_0_0_2_la_SOURCES = \
-    debug/debug.c
+	debug/debug.c
 
 debug_libreindeer_debug_0_0_2_la_LIBADD = \
-    $(LTLIBOBJS) reindeer/libreindeer-0.0.la
+	$(LTLIBOBJS) reindeer/libreindeer-0.0.la
 
 debug_libreindeer_debug_0_0_2_la_LDFLAGS = \
-    -module -avoid-version
+	-module -avoid-version
 
 #
 # documentation
 #
 
 reindeer_DOCBOOK = \
-    doc/reindeer.docbook \
-    doc/about.docbook \
-    doc/obtaining.docbook \
-    doc/compiling.docbook \
-    doc/basic-example.docbook \
-    doc/thread-safety.docbook \
-    doc/types.docbook \
-    doc/init-fini.docbook \
-    doc/colors.docbook \
-    doc/data-blocks.docbook \
-    doc/matrices.docbook \
-    doc/vectors.docbook \
-    doc/buffers.docbook \
-    doc/transformation.docbook \
-    doc/coord-arrays.docbook \
-    doc/color-arrays.docbook \
-    doc/normal-arrays.docbook \
-    doc/lights.docbook \
-    doc/materials.docbook \
-    doc/templates.docbook \
-    doc/objects.docbook \
-    doc/fdl-1.3.docbook
+	doc/reindeer.docbook \
+	doc/about.docbook \
+	doc/obtaining.docbook \
+	doc/compiling.docbook \
+	doc/basic-example.docbook \
+	doc/thread-safety.docbook \
+	doc/types.docbook \
+	doc/init-fini.docbook \
+	doc/colors.docbook \
+	doc/data-blocks.docbook \
+	doc/matrices.docbook \
+	doc/vectors.docbook \
+	doc/buffers.docbook \
+	doc/transformation.docbook \
+	doc/coord-arrays.docbook \
+	doc/color-arrays.docbook \
+	doc/normal-arrays.docbook \
+	doc/lights.docbook \
+	doc/materials.docbook \
+	doc/templates.docbook \
+	doc/objects.docbook \
+	doc/fdl-1.3.docbook
 
 CLEANFILES += \
-    doc/reindeer.html doc/html_node.stamp doc/html_node/*.html
+	doc/reindeer.html doc/html_node.stamp doc/html_node/*.html
 EXTRA_DIST += \
-    $(reindeer_DOCBOOK) \
-    doc/common.xsl doc/html.xsl doc/html-chunk.xsl
+	$(reindeer_DOCBOOK) \
+	doc/common.xsl doc/html.xsl doc/html-chunk.xsl
 
 if HAVE_DOCBOOK_XSLT
 dist_html_DATA = doc/reindeer.html

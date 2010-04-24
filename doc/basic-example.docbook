@@ -1,10 +1,10 @@
 <?xml version="1.0"?>
 <section id="basic-example">
-    <title>Basic Example</title>
+	<title>Basic Example</title>
 
-    <example>
-        <title>A simple Reindeer application</title>
-        <programlisting language="c"><![CDATA[
+	<example>
+		<title>A simple Reindeer application</title>
+		<programlisting language="c"><![CDATA[
 #include <ren/ren.h>
 ...
 
@@ -13,96 +13,100 @@ static void draw (RenReindeer *r);
 
 int main (int argc, char **argv)
 {
-    ren_library_init ();
+	ren_library_init ();
 
-    /* Set up native OpenGL context. */
-    ...
+	/* Set up native OpenGL context. */
+	...
 
-    /* Set up Reindeer context. */
-    RenBackend *backend = ren_backend_lookup ("opengl");
-    RenReindeer *r = ren_reindeer_new (backend);
+	/* Set up Reindeer context. */
+	RenBackend *backend = ren_backend_lookup ("opengl");
+	RenReindeer *r = ren_reindeer_new (backend);
 
-    for (;;)
-    {
-        Event *event = ...;
-        switch (event->code)
-        {
-            case ...CONFIGURE:
-                configure (r, ((ConfigureEvent*) event)->rect);
-                break;
-            case ...REDRAW:
-                draw (r);
-                break;
-            case ...QUIT;
-                goto EXIT;
-        }
-    }
+	for (;;)
+	{
+		Event *event = ...;
+		switch (event->code)
+		{
+			case ...CONFIGURE:
+				configure (r, ((ConfigureEvent*) event)->rect);
+				break;
+			case ...REDRAW:
+				draw (r);
+				break;
+			case ...QUIT;
+				goto EXIT;
+		}
+	}
 
-    EXIT:
-    /* Destroy Reindeer context. */
-    ren_reindeer_unref (r);
+	EXIT:
+	/* Destroy Reindeer context. */
+	ren_reindeer_unref (r);
 
-    /* Clean up native context. */
-    ...
+	/* Clean up native context. */
+	...
 
-    /* Exit Reindeer library. */
-    ren_library_exit ();
+	/* Exit Reindeer library. */
+	ren_library_exit ();
 }
 
 static void configure (RenReindeer *r, ...Rect rect)
 {
-    static ren_bool inited = FALSE;
+	static ren_bool inited = FALSE;
 
-    /* Make native OpenGL context current */
-    ...
+	/* Make native OpenGL context current */
+	...
 
-    if (inited == FALSE)
-    {
-        /* Initialize the Reindeer context. */
-        ren_init (r);
-        inited = TRUE;
-    }
+	if (inited == FALSE)
+	{
+		/* Initialize the Reindeer context. */
+		ren_init (r);
+		inited = TRUE;
+	}
 
-    ren_viewport (rect.x, rect.y, rect.width, rect.height);
+	ren_viewport (rect.x, rect.y, rect.width, rect.height);
 
-    /* Make no native OpenGL context current */
-    ...
+	/* Make no native OpenGL context current */
+	...
 }
 
 static void draw (RenReindeer *r)
 {
-    /* Make native OpenGL context current */
-    ...
+	/* Make native OpenGL context current */
+	...
 
-    ren_clear (r, REN_BUFFER_COLOR);
+	ren_clear (r, REN_BUFFER_COLOR);
 
-    /* Make no native OpenGL context current */
-    ...
+	/* Make no native OpenGL context current */
+	...
 }]]>
-        </programlisting>
-    </example>
-    <para>
-    This example shows how to set up a simple Reindeer application with OpenGL.
-    Similar code would be used for other backends as well. The function
-    <function>configure</function> is assumed to be called once when the
-    graphical window is put on the screen and then each time it is modified
-    (e.g. resized). The function <function>draw</function> is assumed to be
-    called each time the window needs to be redrawn. It will clear the window in
-    the default color (black).
-    </para>
-    <para>
-    One could add a timer that calls another function, e.g.
-    <function>update</function>, that will modify Reindeer resources (vertex
-    arrays, textures, colors, matrices). In this example however, no Reindeer
-    resource is used at all.
-    </para>
-    <para>
-    Some parts are left out in this example because they are different on
-    different platforms. For example, if the program is to be run on the X
-    Window System then X and GLX commands would be used in place of the missing
-    code. There are libraries that will do this for you too. As far as OpenGL
-    goes there is for example GtkGLExt for GTK+ which is however also
-    Reindeer-unaware. For something that works with more backends there is
-    GTK-Reindeer, and it also integrates nicely with the Reindeer library.
-    </para>
+		</programlisting>
+	</example>
+
+	<para>
+	This example shows how to set up a simple Reindeer application with
+	OpenGL. Similar code would be used for other backends as well. The
+	function <function>configure</function> is assumed to be called once
+	when the graphical window is put on the screen and then each time it is
+	modified (e.g. resized). The function <function>draw</function> is
+	assumed to be called each time the window needs to be redrawn. It will
+	clear the window in the default color (black).
+	</para>
+
+	<para>
+	One could add a timer that calls another function, e.g.
+	<function>update</function>, that will modify Reindeer resources (vertex
+	arrays, textures, colors, matrices). In this example however, no
+	Reindeer resource is used at all.
+	</para>
+
+	<para>
+	Some parts are left out in this example because they are different on
+	different platforms. For example, if the program is to be run on the X
+	Window System then X and GLX commands would be used in place of the
+	missing code. There are libraries that will do this for you too. As far
+	as OpenGL goes there is for example GtkGLExt for GTK+ which is however
+	also Reindeer-unaware. For something that works with more backends there
+	is GTK-Reindeer, and it also integrates nicely with the Reindeer
+	library.
+	</para>
 </section>

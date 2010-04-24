@@ -1,104 +1,106 @@
 <?xml version="1.0"?>
 <chapter id="transformation">
-    <title>Transformation</title>
-    <para>
-    The transformation system in Reindeer is similar to the one used in OpenGL.
-    There is one mode for each thing that can be transformed. The possible modes
-    are model-view and projection. Each mode has an associated current matrix,
-    and a stack of previous matrices saved for later use. The current matrix is
-    the one used in transformation calculations.
-    </para>
+	<title>Transformation</title>
+	<para>
+	The transformation system in Reindeer is similar to the one used in
+	OpenGL. There is one mode for each thing that can be transformed. The
+	possible modes are model-view and projection. Each mode has an
+	associated current matrix, and a stack of previous matrices saved for
+	later use. The current matrix is the one used in transformation
+	calculations.
+	</para>
 
-    <para>
-    The current model-view matrix is used to transform vertex positions and
-    normals. The projection matrix is used together with the viewport
-    coordinates (specified with <function>ren_viewport</function>) to transform
-    3D coordinates to window coordinates.
-    </para>
+	<para>
+	The current model-view matrix is used to transform vertex positions and
+	normals. The projection matrix is used together with the viewport
+	coordinates (specified with <function>ren_viewport</function>) to
+	transform 3D coordinates to window coordinates.
+	</para>
 
-    <variablelist>
-    <title>RenTransformMode</title>
-    <varlistentry>
-        <term><constant>REN_TRANSFORM_MODE_MODELVIEW</constant></term>
-    </varlistentry>
-    <varlistentry>
-        <term><constant>REN_TRANSFORM_MODE_PROJECTION</constant></term>
-    </varlistentry>
-    <!--<varlistentry>
-        <term><constant>REN_TRANSFORM_MODE_COLOR</constant></term>
-    </varlistentry>
-    <varlistentry>
-        <term><constant>REN_TRANSFORM_MODE_TEXTURE</constant></term>
-    </varlistentry>-->
-    </variablelist>
-    <para>
-        Represents a transform mode.
-    </para>
+	<variablelist>
+	<title>RenTransformMode</title>
+	<varlistentry>
+		<term><constant>REN_TRANSFORM_MODE_MODELVIEW</constant></term>
+	</varlistentry>
+	<varlistentry>
+		<term><constant>REN_TRANSFORM_MODE_PROJECTION</constant></term>
+	</varlistentry>
+	<!--<varlistentry>
+		<term><constant>REN_TRANSFORM_MODE_COLOR</constant></term>
+	</varlistentry>
+	<varlistentry>
+		<term><constant>REN_TRANSFORM_MODE_TEXTURE</constant></term>
+	</varlistentry>-->
+	</variablelist>
+	<para>
+		Represents a transform mode.
+	</para>
 
-    <funcsynopsis>
-    <funcprototype>
-        <funcdef>void <function>ren_transform_mode</function></funcdef>
-        <paramdef>RenReindeer <parameter>r</parameter></paramdef>
-        <paramdef>RenTransformMode <parameter>mode</parameter></paramdef>
-    </funcprototype>
-    </funcsynopsis>
-    <para>
-    Set the current transform mode to <parameter>mode</parameter>. This makes
-    the following functions manipulate the current matrix and matrix stack
-    associated with this mode.
-    </para>
+	<funcsynopsis>
+	<funcprototype>
+		<funcdef>void <function>ren_transform_mode</function></funcdef>
+		<paramdef>RenReindeer <parameter>r</parameter></paramdef>
+		<paramdef>RenTransformMode <parameter>mode</parameter></paramdef>
+	</funcprototype>
+	</funcsynopsis>
+	<para>
+	Set the current transform mode to <parameter>mode</parameter>. This
+	makes the following functions manipulate the current matrix and matrix
+	stack associated with this mode.
+	</para>
 
-    <funcsynopsis>
-    <funcprototype>
-        <funcdef>void <function>ren_transform_push</function></funcdef>
-        <paramdef>RenReindeer* <parameter>r</parameter></paramdef>
-    </funcprototype>
-    </funcsynopsis>
-    <para>
-    Push the current matrix to the matrix stack. The current matrix is not
-    affected.
-    </para>
+	<funcsynopsis>
+	<funcprototype>
+		<funcdef>void <function>ren_transform_push</function></funcdef>
+		<paramdef>RenReindeer* <parameter>r</parameter></paramdef>
+	</funcprototype>
+	</funcsynopsis>
+	<para>
+	Push the current matrix to the matrix stack. The current matrix is not
+	affected.
+	</para>
 
-    <funcsynopsis>
-    <funcprototype>
-        <funcdef>void <function>ren_transform_pop</function></funcdef>
-        <paramdef>RenReindeer* <parameter>r</parameter></paramdef>
-    </funcprototype>
-    </funcsynopsis>
-    <para>
-    Pop the matrix stack and sets the current matrix to the retrieved matrix.
-    </para>
+	<funcsynopsis>
+	<funcprototype>
+		<funcdef>void <function>ren_transform_pop</function></funcdef>
+		<paramdef>RenReindeer* <parameter>r</parameter></paramdef>
+	</funcprototype>
+	</funcsynopsis>
+	<para>
+	Pop the matrix stack and sets the current matrix to the retrieved
+	matrix.
+	</para>
 
-    <funcsynopsis>
-    <funcprototype>
-        <funcdef>void <function>ren_transform_set</function></funcdef>
-        <paramdef>RenReindeer <parameter>r</parameter></paramdef>
-        <paramdef>RenMatrix* <parameter>matrix</parameter></paramdef>
-    </funcprototype>
-    </funcsynopsis>
-    <para>
-    Set the current matrix to the value of <parameter>matrix</parameter>.
-    </para>
+	<funcsynopsis>
+	<funcprototype>
+		<funcdef>void <function>ren_transform_set</function></funcdef>
+		<paramdef>RenReindeer <parameter>r</parameter></paramdef>
+		<paramdef>RenMatrix* <parameter>matrix</parameter></paramdef>
+	</funcprototype>
+	</funcsynopsis>
+	<para>
+	Set the current matrix to the value of <parameter>matrix</parameter>.
+	</para>
 
-    <funcsynopsis>
-    <funcprototype>
-        <funcdef>void <function>ren_transform_mul</function></funcdef>
-        <paramdef>RenReindeer* <parameter>r</parameter></paramdef>
-        <paramdef>RenMatrix* <parameter>matrix</parameter></paramdef>
-    </funcprototype>
-    </funcsynopsis>
-    <para>
-    Multiply the current matrix with the value of <parameter>matrix</parameter>
-    and set the current matrix to the result.
-    </para>
+	<funcsynopsis>
+	<funcprototype>
+		<funcdef>void <function>ren_transform_mul</function></funcdef>
+		<paramdef>RenReindeer* <parameter>r</parameter></paramdef>
+		<paramdef>RenMatrix* <parameter>matrix</parameter></paramdef>
+	</funcprototype>
+	</funcsynopsis>
+	<para>
+	Multiply the current matrix with the value of
+	<parameter>matrix</parameter> and set the current matrix to the result.
+	</para>
 
-    <funcsynopsis>
-    <funcprototype>
-        <funcdef>void <function>ren_transform_identity</function></funcdef>
-        <paramdef>RenReindeer* <parameter>r</parameter></paramdef>
-    </funcprototype>
-    </funcsynopsis>
-    <para>
-    Set the current matrix to be the identity matrix.
-    </para>
+	<funcsynopsis>
+	<funcprototype>
+		<funcdef>void <function>ren_transform_identity</function></funcdef>
+		<paramdef>RenReindeer* <parameter>r</parameter></paramdef>
+	</funcprototype>
+	</funcsynopsis>
+	<para>
+	Set the current matrix to be the identity matrix.
+	</para>
 </chapter>

@@ -1,120 +1,123 @@
 <?xml version="1.0"?>
 <section id="data-blocks">
-    <title>Data blocks</title>
+	<title>Data blocks</title>
 
-    <para>
-    Data blocks represents a large block of data. Some resources use a data
-    block as a source of data. The same data block may be used together with
-    many resources.
-    </para>
+	<para>
+	Data blocks represents a large block of data. Some resources use a data
+	block as a source of data. The same data block may be used together with
+	many resources.
+	</para>
 
-    <funcsynopsis>
-    <funcprototype>
-        <funcdef>RenDataBlock* <function>ren_data_block_new</function></funcdef>
-        <paramdef>ren_size <parameter>size</parameter></paramdef>
-        <paramdef>RenUsage <parameter>usage</parameter></paramdef>
-    </funcprototype>
-    </funcsynopsis>
-    <para>
-    Define a new data block. The data will be internally allocated, with the
-    size as specified. The parameter <parameter>usage</parameter> specifies
-    how often the data block is intended to be used and modified, which may
-    allow the implementation to be more efficient.
-    </para>
+	<funcsynopsis>
+	<funcprototype>
+		<funcdef>RenDataBlock* <function>ren_data_block_new</function></funcdef>
+		<paramdef>ren_size <parameter>size</parameter></paramdef>
+		<paramdef>RenUsage <parameter>usage</parameter></paramdef>
+	</funcprototype>
+	</funcsynopsis>
+	<para>
+	Define a new data block. The data will be internally allocated, with the
+	size as specified. The parameter <parameter>usage</parameter> specifies
+	how often the data block is intended to be used and modified, which may
+	allow the implementation to be more efficient.
+	</para>
 
-    <variablelist>
-    <title>RenUsage</title>
-    <varlistentry>
-        <term><constant>REN_USAGE_DONT_CARE</constant></term>
-        <listitem><para>
-        Let backend choose a generally good solution. Not recommended.
-        </para></listitem>
-    </varlistentry>
-    <varlistentry>
-        <term><constant>REN_USAGE_IMMUTABLE</constant></term>
-        <listitem><para>
-        Data cannot be changed and thus never is changed.
-        </para></listitem>
-    </varlistentry>
-    <varlistentry>
-        <term><constant>REN_USAGE_STATIC</constant></term>
-        <listitem><para>
-        Data is modified very seldom or never, and used many times.
-        </para></listitem>
-    </varlistentry>
-    <varlistentry>
-        <term><constant>REN_USAGE_DYNAMIC</constant></term>
-        <listitem><para>
-        Data is modified often, but also used many times between modifications.
-        </para></listitem>
-    </varlistentry>
-    <varlistentry>
-        <term><constant>REN_USAGE_STREAM</constant></term>
-        <listitem><para>
-        Data is modified almost as often as it is used.
-        </para></listitem>
-    </varlistentry>
-    </variablelist>
+	<variablelist>
+	<title>RenUsage</title>
+	<varlistentry>
+		<term><constant>REN_USAGE_DONT_CARE</constant></term>
+		<listitem><para>
+		Let backend choose a generally good solution. Not recommended.
+		</para></listitem>
+	</varlistentry>
+	<varlistentry>
+		<term><constant>REN_USAGE_IMMUTABLE</constant></term>
+		<listitem><para>
+		Data cannot be changed and thus never is changed.
+		</para></listitem>
+	</varlistentry>
+	<varlistentry>
+		<term><constant>REN_USAGE_STATIC</constant></term>
+		<listitem><para>
+		Data is modified very seldom or never, and used many times.
+		</para></listitem>
+	</varlistentry>
+	<varlistentry>
+		<term><constant>REN_USAGE_DYNAMIC</constant></term>
+		<listitem><para>
+		Data is modified often, but also used many times between
+		modifications.
+		</para></listitem>
+	</varlistentry>
+	<varlistentry>
+		<term><constant>REN_USAGE_STREAM</constant></term>
+		<listitem><para>
+		Data is modified almost as often as it is used.
+		</para></listitem>
+	</varlistentry>
+	</variablelist>
 
-    <para>
+	<para>
 
-    </para>
+	</para>
 
-    <funcsynopsis>
-    <funcprototype>
-        <funcdef>RenDataBlock* <function>ren_data_block_ref</function></funcdef>
-        <paramdef>RenDataBlock* <parameter>data_block</parameter></paramdef>
-    </funcprototype>
-    </funcsynopsis>
-    <para>
-    Increases the reference count of the DataBlock instance and then returns it.
-    </para>
+	<funcsynopsis>
+	<funcprototype>
+		<funcdef>RenDataBlock* <function>ren_data_block_ref</function></funcdef>
+		<paramdef>RenDataBlock* <parameter>data_block</parameter></paramdef>
+	</funcprototype>
+	</funcsynopsis>
+	<para>
+	Increases the reference count of the DataBlock instance and then returns
+	it.
+	</para>
 
-    <funcsynopsis>
-    <funcprototype>
-        <funcdef>void <function>ren_data_block_unref</function></funcdef>
-        <paramdef>RenDataBlock* <parameter>data_block</parameter></paramdef>
-    </funcprototype>
-    </funcsynopsis>
-    <para>
-    Decreases the reference count of the DataBlock instance. When its reference
-    count drops to 0, it will be destroyed automatically.
-    </para>
+	<funcsynopsis>
+	<funcprototype>
+		<funcdef>void <function>ren_data_block_unref</function></funcdef>
+		<paramdef>RenDataBlock* <parameter>data_block</parameter></paramdef>
+	</funcprototype>
+	</funcsynopsis>
+	<para>
+	Decreases the reference count of the DataBlock instance. When its
+	reference count drops to 0, it will be destroyed automatically.
+	</para>
 
-    <funcsynopsis>
-    <funcprototype>
-        <funcdef>void* <function>ren_data_block_begin_edit</function></funcdef>
-        <paramdef>RenDataBlock* <parameter>data_block</parameter></paramdef>
-    </funcprototype>
-    </funcsynopsis>
-    <para>
-    Get the internal data of the data block with the intention of modifying it.
-    This function may lock while some other thread is already using the data.
-    </para>
+	<funcsynopsis>
+	<funcprototype>
+		<funcdef>void* <function>ren_data_block_begin_edit</function></funcdef>
+		<paramdef>RenDataBlock* <parameter>data_block</parameter></paramdef>
+	</funcprototype>
+	</funcsynopsis>
+	<para>
+	Get the internal data of the data block with the intention of modifying
+	it. This function may lock while some other thread is already using the
+	data.
+	</para>
 
-    <funcsynopsis>
-    <funcprototype>
-        <funcdef>void <function>ren_data_block_end_edit</function></funcdef>
-        <paramdef>RenDataBlock* <parameter>data_block</parameter></paramdef>
-    </funcprototype>
-    </funcsynopsis>
-    <para>
-    Mark an end of modifying the internal data. The pointer received with
-    <function>ren_data block_begin_edit</function> must not be used anymore.
-    </para>
+	<funcsynopsis>
+	<funcprototype>
+		<funcdef>void <function>ren_data_block_end_edit</function></funcdef>
+		<paramdef>RenDataBlock* <parameter>data_block</parameter></paramdef>
+	</funcprototype>
+	</funcsynopsis>
+	<para>
+	Mark an end of modifying the internal data. The pointer received with
+	<function>ren_data block_begin_edit</function> must not be used anymore.
+	</para>
 
-    <funcsynopsis>
-    <funcprototype>
-        <funcdef>void <function>ren_data_block_changed</function></funcdef>
-        <paramdef>RenDataBlock* <parameter>data_block</parameter></paramdef>
-        <paramdef>ren_size <parameter>from</parameter></paramdef>
-        <paramdef>ren_size <parameter>count</parameter></paramdef>
-    </funcprototype>
-    </funcsynopsis>
-    <para>
-    Notify that a part of the data has been changed. This is done between
-    <function>ren_data_block_begin_edit</function> and
-    <function>ren_data_block_end_edit</function>. The parameter
-    <parameter>count</parameter> may be 0 to denote everything to the end.
-    </para>
+	<funcsynopsis>
+	<funcprototype>
+		<funcdef>void <function>ren_data_block_changed</function></funcdef>
+		<paramdef>RenDataBlock* <parameter>data_block</parameter></paramdef>
+		<paramdef>ren_size <parameter>from</parameter></paramdef>
+		<paramdef>ren_size <parameter>count</parameter></paramdef>
+	</funcprototype>
+	</funcsynopsis>
+	<para>
+	Notify that a part of the data has been changed. This is done between
+	<function>ren_data_block_begin_edit</function> and
+	<function>ren_data_block_end_edit</function>. The parameter
+	<parameter>count</parameter> may be 0 to denote everything to the end.
+	</para>
 </section>

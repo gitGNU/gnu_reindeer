@@ -1,20 +1,20 @@
 /*
-    This file is part of Reindeer.
+	This file is part of Reindeer.
 
-    Copyright (C) 2009, 2010 - Patrik Olsson
+	Copyright (C) 2009, 2010 - Patrik Olsson
 
-    This program is free software: you can redistribute it and/or modify
-    it under the terms of the GNU General Public License as published by
-    the Free Software Foundation, either version 3 of the License, or
-    (at your option) any later version.
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-    This program is distributed in the hope that it will be useful,
-    but WITHOUT ANY WARRANTY; without even the implied warranty of
-    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-    GNU General Public License for more details.
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-    You should have received a copy of the GNU General Public License
-    along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
 */
 
 #ifndef _REN_REINDEER_BACKDATA_H
@@ -23,15 +23,15 @@
 typedef struct _RenBackDataItem _RenBackDataItem;
 struct _RenBackDataItem
 {
-    void *resource;
-    void *key;
-    void *data;
-    _RenBackDataItem *prev_by_res;
-    _RenBackDataItem *next_by_res;
-    _RenBackDataItem *prev_by_key;
-    _RenBackDataItem *next_by_key;
-    _RenBackDataItem *prev_by_hash;
-    _RenBackDataItem *next_by_hash;
+	void *resource;
+	void *key;
+	void *data;
+	_RenBackDataItem *prev_by_res;
+	_RenBackDataItem *next_by_res;
+	_RenBackDataItem *prev_by_key;
+	_RenBackDataItem *next_by_key;
+	_RenBackDataItem *prev_by_hash;
+	_RenBackDataItem *next_by_hash;
 };
 
 void
@@ -78,32 +78,32 @@ and is of type "void INIT_FUNC (res, key, item, data)". UPDATE_FUNC is called
 just before returning the data and is of the same type as INIT_FUNC.
 */
 #define _REN_BACK_DATA_RETURN(ResName,res_name,res,key,INIT_FUNC,UPDATE_FUNC)\
-    G_STMT_START {\
-    _Ren##ResName##BackDataItem *item = (void *) _ren_back_data_table_get (res, key);\
-    Ren##ResName##BackData *data;\
-    if (item == NULL)\
-    {\
-        data = (key->data_size > 0) ? g_malloc0 (key->data_size) : NULL;\
-        item = g_new0 (_Ren##ResName##BackDataItem, 1);\
-        item->base.resource = res;\
-        item->base.key = key;\
-        item->base.data = data;\
-        INIT_FUNC (res, key, item, data);\
-        _ren_back_data_table_ins ((_RenBackDataItem *) item);\
-        if (res->bd_list != NULL)\
-            res->bd_list->base.prev_by_res = (_RenBackDataItem *) item;\
-        res->bd_list = item;\
-        if (key->bd_list != NULL)\
-            key->bd_list->base.prev_by_key = (_RenBackDataItem *) item;\
-        key->bd_list = item;\
-    }\
-    else\
-    {\
-        data = item->base.data;\
-    }\
-    UPDATE_FUNC (res, key, item, data);\
-    return data;\
-    } G_STMT_END
+	G_STMT_START {\
+	_Ren##ResName##BackDataItem *item = (void *) _ren_back_data_table_get (res, key);\
+	Ren##ResName##BackData *data;\
+	if (item == NULL)\
+	{\
+		data = (key->data_size > 0) ? g_malloc0 (key->data_size) : NULL;\
+		item = g_new0 (_Ren##ResName##BackDataItem, 1);\
+		item->base.resource = res;\
+		item->base.key = key;\
+		item->base.data = data;\
+		INIT_FUNC (res, key, item, data);\
+		_ren_back_data_table_ins ((_RenBackDataItem *) item);\
+		if (res->bd_list != NULL)\
+			res->bd_list->base.prev_by_res = (_RenBackDataItem *) item;\
+		res->bd_list = item;\
+		if (key->bd_list != NULL)\
+			key->bd_list->base.prev_by_key = (_RenBackDataItem *) item;\
+		key->bd_list = item;\
+	}\
+	else\
+	{\
+		data = item->base.data;\
+	}\
+	UPDATE_FUNC (res, key, item, data);\
+	return data;\
+	} G_STMT_END
 
 /*
 Iterate through the back data associated with a resource and for each item call
@@ -112,15 +112,15 @@ used in functions that signal changes in the application owned part of a
 resource.
 */
 #define _REN_RES_BACK_DATA_LIST_ITERATE(ResName,res_name,res,ITER_FUNC)\
-    G_STMT_START {\
-    _Ren##ResName##BackDataItem *item = res->bd_list;\
-    while (item != NULL)\
-    {\
-        Ren##ResName##BackDataKey *key = item->base.key;\
-        ITER_FUNC (res, key, item);\
-        item = (_Ren##ResName##BackDataItem *) item->base.next_by_res;\
-    }\
-    } G_STMT_END
+	G_STMT_START {\
+	_Ren##ResName##BackDataItem *item = res->bd_list;\
+	while (item != NULL)\
+	{\
+		Ren##ResName##BackDataKey *key = item->base.key;\
+		ITER_FUNC (res, key, item);\
+		item = (_Ren##ResName##BackDataItem *) item->base.next_by_res;\
+	}\
+	} G_STMT_END
 
 /*
 Remove all back data associated with a resource. This macro is typically used
@@ -128,22 +128,22 @@ when a resource has been unrefed to 0. FINI_FUNC is called for each back data
 item, and is of the same type as INIT_FUNC in _REN_BACK_DATA_RETURN.
 */
 #define _REN_RES_BACK_DATA_LIST_CLEAR(ResName,res_name,res,FINI_FUNC)\
-    G_STMT_START {\
-    _Ren##ResName##BackDataItem *item = res->bd_list, *next;\
-    while (item != NULL)\
-    {\
-        Ren##ResName##BackDataKey *key = item->base.key;\
-        Ren##ResName##BackData *data = item->base.data;\
-        _ren_back_data_table_del ((_RenBackDataItem *) item);\
-        _ren_back_data_item_unlink_by_key (\
-            (_RenBackDataItem **) &(key->bd_list), (_RenBackDataItem *) item);\
-        FINI_FUNC (res, key, item, data);\
-        g_free (data);\
-        next = (_Ren##ResName##BackDataItem *) item->base.next_by_res;\
-        g_free (item);\
-        item = next;\
-    }\
-    } G_STMT_END
+	G_STMT_START {\
+	_Ren##ResName##BackDataItem *item = res->bd_list, *next;\
+	while (item != NULL)\
+	{\
+		Ren##ResName##BackDataKey *key = item->base.key;\
+		Ren##ResName##BackData *data = item->base.data;\
+		_ren_back_data_table_del ((_RenBackDataItem *) item);\
+		_ren_back_data_item_unlink_by_key (\
+			(_RenBackDataItem **) &(key->bd_list), (_RenBackDataItem *) item);\
+		FINI_FUNC (res, key, item, data);\
+		g_free (data);\
+		next = (_Ren##ResName##BackDataItem *) item->base.next_by_res;\
+		g_free (item);\
+		item = next;\
+	}\
+	} G_STMT_END
 
 /*
 Remove all back data associated with a key. This macro is typically used when a
@@ -151,22 +151,22 @@ key has been unrefed to 0. FINI_FUNC is called for each back data item, and
 is of the same type as INIT_FUNC in _REN_BACK_DATA_RETURN.
 */
 #define _REN_KEY_BACK_DATA_LIST_CLEAR(ResName,res_name,key,FINI_FUNC)\
-    G_STMT_START {\
-    _Ren##ResName##BackDataItem *item = key->bd_list, *next;\
-    while (item != NULL)\
-    {\
-        Ren##ResName *res = item->base.resource;\
-        Ren##ResName##BackData *data = item->base.data;\
-        _ren_back_data_table_del ((_RenBackDataItem *) item);\
-        _ren_back_data_item_unlink_by_res (\
-            (_RenBackDataItem **) &(res->bd_list), (_RenBackDataItem *) item);\
-        FINI_FUNC (res, key, item, data);\
-        g_free (data);\
-        next = (_Ren##ResName##BackDataItem *) item->base.next_by_key;\
-        g_free (item);\
-        item = next;\
-    }\
-    } G_STMT_END
+	G_STMT_START {\
+	_Ren##ResName##BackDataItem *item = key->bd_list, *next;\
+	while (item != NULL)\
+	{\
+		Ren##ResName *res = item->base.resource;\
+		Ren##ResName##BackData *data = item->base.data;\
+		_ren_back_data_table_del ((_RenBackDataItem *) item);\
+		_ren_back_data_item_unlink_by_res (\
+			(_RenBackDataItem **) &(res->bd_list), (_RenBackDataItem *) item);\
+		FINI_FUNC (res, key, item, data);\
+		g_free (data);\
+		next = (_Ren##ResName##BackDataItem *) item->base.next_by_key;\
+		g_free (item);\
+		item = next;\
+	}\
+	} G_STMT_END
 
 /*
 The following macros implement common init, fini, update and signal change
@@ -183,46 +183,46 @@ field called "change" of type "ren_uint32". The field should be initialized to
 1 in the resource instance.
 */
 #define _REN_BACK_DATA_SIMPLE_INIT_FUNC(res, key, item, data)\
-    G_STMT_START {\
-        if (key->init != NULL)\
-            key->init (res, data, key->user_data);\
-        if (key->update != NULL)\
-            item->change = 0;\
-        else\
-            item->change = G_MAXUINT32;\
-    } G_STMT_END
+	G_STMT_START {\
+		if (key->init != NULL)\
+			key->init (res, data, key->user_data);\
+		if (key->update != NULL)\
+			item->change = 0;\
+		else\
+			item->change = G_MAXUINT32;\
+	} G_STMT_END
 
 #define _REN_BACK_DATA_SIMPLE_FINI_FUNC(res, key, item, data)\
-    G_STMT_START {\
-        if (key->fini != NULL)\
-            key->fini (res, data, key->user_data);\
-    } G_STMT_END
+	G_STMT_START {\
+		if (key->fini != NULL)\
+			key->fini (res, data, key->user_data);\
+	} G_STMT_END
 
 #define _REN_BACK_DATA_SIMPLE_UPDATE_FUNC(res, key, item, data)\
-    G_STMT_START {\
-        if (item->change < res->change)\
-        {\
-            key->update (res, data, key->user_data);\
-            item->change = res->change;\
-        }\
-    } G_STMT_END
+	G_STMT_START {\
+		if (item->change < res->change)\
+		{\
+			key->update (res, data, key->user_data);\
+			item->change = res->change;\
+		}\
+	} G_STMT_END
 
 #define _REN_BACK_DATA_SIMPLE_CHANGED_FUNC(res, key, item)\
-    G_STMT_START {\
-        if (key->update != NULL)\
-            item->change = 0;\
-    } G_STMT_END
+	G_STMT_START {\
+		if (key->update != NULL)\
+			item->change = 0;\
+	} G_STMT_END
 
 #define _REN_BACK_DATA_SIMPLE_CHANGED(ResName,res_name,res)\
-    G_STMT_START {\
-        if (res->change == G_MAXUINT32)\
-        {\
-            _REN_RES_BACK_DATA_LIST_ITERATE (ResName, res_name,\
-                res, _REN_BACK_DATA_SIMPLE_CHANGED_FUNC);\
-            res->change = 1;\
-        }\
-        else\
-            ++(res->change);\
-    } G_STMT_END
+	G_STMT_START {\
+		if (res->change == G_MAXUINT32)\
+		{\
+			_REN_RES_BACK_DATA_LIST_ITERATE (ResName, res_name,\
+				res, _REN_BACK_DATA_SIMPLE_CHANGED_FUNC);\
+			res->change = 1;\
+		}\
+		else\
+			++(res->change);\
+	} G_STMT_END
 
 #endif /* _REN_REINDEER_BACKDATA_H */

@@ -1,73 +1,73 @@
 <?xml version="1.0"?>
 <chapter id="buffers">
-    <title>Buffers</title>
+	<title>Buffers</title>
 
-    <variablelist>
-    <title>RenBuffer</title>
-    <varlistentry>
-        <term><constant>REN_BUFFER_COLOR</constant></term>
-    </varlistentry>
-    <varlistentry>
-        <term><constant>REN_BUFFER_DEPTH</constant></term>
-    </varlistentry>
-    <!--<varlistentry>
-        <term><constant>REN_BUFFER_STENCIL</constant></term>
-    </varlistentry>
-    <varlistentry>
-        <term><constant>REN_BUFFER_ACCUM</constant></term>
-    </varlistentry>-->
-    </variablelist>
-    <para>
-    A bit field type. Represents a set of buffers.
-    </para>
+	<variablelist>
+	<title>RenBuffer</title>
+	<varlistentry>
+		<term><constant>REN_BUFFER_COLOR</constant></term>
+	</varlistentry>
+	<varlistentry>
+		<term><constant>REN_BUFFER_DEPTH</constant></term>
+	</varlistentry>
+	<!--<varlistentry>
+		<term><constant>REN_BUFFER_STENCIL</constant></term>
+	</varlistentry>
+	<varlistentry>
+		<term><constant>REN_BUFFER_ACCUM</constant></term>
+	</varlistentry>-->
+	</variablelist>
+	<para>
+	A bit field type. Represents a set of buffers.
+	</para>
 
-    <funcsynopsis>
-    <funcprototype>
-        <funcdef>void <function>ren_clear_color</function></funcdef>
-        <paramdef>RenReindeer* <parameter>r</parameter></paramdef>
-        <paramdef>RenColor* <parameter>color</parameter></paramdef>
-    </funcprototype>
-    </funcsynopsis>
-    <para>
-    Set color to use when clearing color buffer from the value of
-    <parameter>color</parameter>.
-    </para>
+	<funcsynopsis>
+	<funcprototype>
+		<funcdef>void <function>ren_clear_color</function></funcdef>
+		<paramdef>RenReindeer* <parameter>r</parameter></paramdef>
+		<paramdef>RenColor* <parameter>color</parameter></paramdef>
+	</funcprototype>
+	</funcsynopsis>
+	<para>
+	Set color to use when clearing color buffer from the value of
+	<parameter>color</parameter>.
+	</para>
 
-    <funcsynopsis>
-    <funcprototype>
-        <funcdef>void <function>ren_clear_depth</function></funcdef>
-        <paramdef>RenReindeer* <parameter>r</parameter></paramdef>
-        <paramdef>ren_dfloat <parameter>depth</parameter></paramdef>
-    </funcprototype>
-    </funcsynopsis>
-    <para>
-    Set depth value to use when clearing depth buffer.
-    </para>
+	<funcsynopsis>
+	<funcprototype>
+		<funcdef>void <function>ren_clear_depth</function></funcdef>
+		<paramdef>RenReindeer* <parameter>r</parameter></paramdef>
+		<paramdef>ren_dfloat <parameter>depth</parameter></paramdef>
+	</funcprototype>
+	</funcsynopsis>
+	<para>
+	Set depth value to use when clearing depth buffer.
+	</para>
 
-    <funcsynopsis>
-    <funcprototype>
-        <funcdef>void <function>ren_clear</function></funcdef>
-        <paramdef>RenReindeer* <parameter>r</parameter></paramdef>
-        <paramdef>RenBuffer <parameter>buffers</parameter></paramdef>
-    </funcprototype>
-    </funcsynopsis>
-    <para>
-    Clear the specified buffers with the values specified with the
-    functions <function>ren_clear_color</function> and
-    <function>ren_clear_depth</function>.
-    </para>
+	<funcsynopsis>
+	<funcprototype>
+		<funcdef>void <function>ren_clear</function></funcdef>
+		<paramdef>RenReindeer* <parameter>r</parameter></paramdef>
+		<paramdef>RenBuffer <parameter>buffers</parameter></paramdef>
+	</funcprototype>
+	</funcsynopsis>
+	<para>
+	Clear the specified buffers with the values specified with the
+	functions <function>ren_clear_color</function> and
+	<function>ren_clear_depth</function>.
+	</para>
 
-    <funcsynopsis>
-    <funcprototype>
-        <funcdef>void <function>ren_viewport</function></funcdef>
-        <paramdef>RenReindeer* <parameter>r</parameter></paramdef>
-        <paramdef>ren_uint32 <parameter>x</parameter></paramdef>
-        <paramdef>ren_uint32 <parameter>y</parameter></paramdef>
-        <paramdef>ren_uint32 <parameter>width</parameter></paramdef>
-        <paramdef>ren_uint32 <parameter>height</parameter></paramdef>
-    </funcprototype>
-    </funcsynopsis>
-    <para>
-    Scale rendering to a subset of the buffer.
-    </para>
+	<funcsynopsis>
+	<funcprototype>
+		<funcdef>void <function>ren_viewport</function></funcdef>
+		<paramdef>RenReindeer* <parameter>r</parameter></paramdef>
+		<paramdef>ren_uint32 <parameter>x</parameter></paramdef>
+		<paramdef>ren_uint32 <parameter>y</parameter></paramdef>
+		<paramdef>ren_uint32 <parameter>width</parameter></paramdef>
+		<paramdef>ren_uint32 <parameter>height</parameter></paramdef>
+	</funcprototype>
+	</funcsynopsis>
+	<para>
+	Scale rendering to a subset of the buffer.
+	</para>
 </chapter>
