@@ -30,12 +30,12 @@ struct _RenColorArray
     ren_size count;
     ren_size stride;
 
-    RenType type;
     RenColorFormat format;
+    RenType type;
 };
 
 RenColorArray*
-ren_color_array_new (RenType type, RenColorFormat format,
+ren_color_array_new (RenColorFormat format, RenType type,
     RenDataBlock *data_block, ren_size start, ren_size count, ren_size stride)
 {
     if (type == REN_TYPE_BOOL)
@@ -52,8 +52,8 @@ ren_color_array_new (RenType type, RenColorFormat format,
     array->count = count;
     array->stride = stride;
 
-    array->type = type;
     array->format = format;
+    array->type = type;
 
     return array;
 }
@@ -97,10 +97,10 @@ ren_color_array_data (RenColorArray *array, RenDataBlock **data_block_p,
 
 void
 ren_color_array_type (RenColorArray *array,
-    RenType *type_p, RenColorFormat *format_p)
+    RenColorFormat *format_p, RenType *type_p)
 {
-    if (type_p)
-        (*type_p) = array->type;
     if (format_p)
         (*format_p) = array->format;
+    if (type_p)
+        (*type_p) = array->type;
 }

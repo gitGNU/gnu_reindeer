@@ -25,7 +25,7 @@
 /* Public */
 
 extern RenColorArray*
-ren_color_array_new (RenType type, RenColorFormat format,
+ren_color_array_new (RenColorFormat format, RenType type,
     RenDataBlock *datablock, ren_size start, ren_size count, ren_size stride);
 
 extern RenColorArray*
@@ -45,6 +45,6 @@ ren_color_array_data (RenColorArray *array, RenDataBlock **data_block_p,
 
 extern void
 ren_color_array_type (RenColorArray *array,
-    RenType *type_p, RenColorFormat *format_p);
+    RenColorFormat *format_p, RenType *type_p);
 
 #endif /* REN_COLORARRAY_H */
