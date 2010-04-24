@@ -7,9 +7,8 @@
 	may be used to describe individual positions or directions, but more
 	generally they may represent anything that can be described with a list
 	of numbers. They are never used for large arrays of positions or
-	directions, because then <link
-	linkend="coord-arrays">RenCoordArray</link> or <link
-	linkend="normal-arrays">RenNormalArrays</link> are used. Also, they are
+	directions, because then a <link
+	linkend="vector-arrays">RenVectorArray</link> is used. Also, they are
 	never used to represent colors because then <link
 	linkend="colors">RenColor</link> is preferred.
 	</para>

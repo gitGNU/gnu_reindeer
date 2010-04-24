@@ -5,7 +5,7 @@
 	<funcsynopsis>
 	<funcprototype>
 		<funcdef>ren_bool <function>ren_library_init</function></funcdef>
-		<void/>
+		<paramdef>RenError** <parameter>error</parameter></paramdef>
 	</funcprototype>
 	</funcsynopsis>
 	<para>

@@ -112,9 +112,8 @@ reindeer_DOCBOOK = \
 	doc/vectors.docbook \
 	doc/buffers.docbook \
 	doc/transformation.docbook \
-	doc/coord-arrays.docbook \
+	doc/vector-arrays.docbook \
 	doc/color-arrays.docbook \
-	doc/normal-arrays.docbook \
 	doc/lights.docbook \
 	doc/materials.docbook \
 	doc/templates.docbook \
