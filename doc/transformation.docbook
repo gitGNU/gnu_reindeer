@@ -8,7 +8,7 @@
     and a stack of previous matrices saved for later use. The current matrix is
     the one used in transformation calculations.
     </para>
-    
+
     <para>
     The current model-view matrix is used to transform vertex positions and
     normals. The projection matrix is used together with the viewport

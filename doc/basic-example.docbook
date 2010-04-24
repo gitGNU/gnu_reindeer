@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <section id="basic-example">
     <title>Basic Example</title>
-    
+
     <example>
         <title>A simple Reindeer application</title>
         <programlisting language="c"><![CDATA[
