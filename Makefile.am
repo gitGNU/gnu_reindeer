@@ -23,6 +23,9 @@ EXTRA_LTLIBRARIES =
 
 renlib_LTLIBRARIES =
 
+vapidir = $(datadir)/vala/vapi
+dist_vapi_DATA =
+
 pkgconfigdir = $(libdir)/pkgconfig
 pkgconfig_DATA =
 
@@ -75,6 +78,10 @@ reninclude_HEADERS = \
 	ren/indexarray.h \
 	ren/material.h ren/light.h \
 	ren/template.h ren/object.h
+
+dist_vapi_DATA += \
+	ren/reindeer-0.0.vapi \
+	ren/reindeer-0.0.deps
 
 pkgconfig_DATA += reindeer/reindeer-0.0.pc
 
