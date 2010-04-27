@@ -5,8 +5,8 @@ renlibdir=@libdir@/reindeer
 includedir=@includedir@
 
 Name: Reindeer
-Description: Render abstraction library
+Description: Rendering abstraction library
 Version: @VERSION@
 Requires: glib-2.0 >= @GLIB_REQUIRED@
-Libs: -L${libdir} -lreindeer-0.0 -lltdl
-Cflags: -I${includedir}/reindeer-0.0
+Libs: -L${libdir} -lreindeer-0.1 -lltdl
+Cflags: -I${includedir}/reindeer-0.1

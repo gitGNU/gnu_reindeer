@@ -2,11 +2,11 @@ AC_PREREQ([2.64])
 LT_PREREQ([2.2.6])
 
 m4_define([ren_major_version], [0])
-m4_define([ren_minor_version], [0])
-m4_define([ren_micro_version], [2])
+m4_define([ren_minor_version], [1])
+m4_define([ren_micro_version], [0])
 m4_define([ren_version],
 	[ren_major_version.ren_minor_version.ren_micro_version])
-m4_define([ren_compat_version], [0.0])
+m4_define([ren_compat_version], [0.1])
 
 AC_INIT([Reindeer], [ren_version], [http://savannah.nongnu.org/bugs/?group=reindeer], [reindeer], [http://savannah.nongnu.org/projects/reindeer/])
 AC_CONFIG_AUX_DIR([build-aux])
@@ -25,7 +25,7 @@ AC_SUBST([REN_MINOR_VERSION], [ren_minor_version])
 AC_SUBST([REN_MICRO_VERSION], [ren_micro_version])
 AC_SUBST([REN_COMPAT_VERSION], [ren_compat_version])
 
-renlibdir='${libdir}/reindeer-0.0'
+renlibdir='${libdir}/reindeer-0.1'
 AC_SUBST([renlibdir])
 
 # Checks for programs.
@@ -53,7 +53,7 @@ GNULIB_INIT
 AC_CONFIG_FILES([
 	Makefile
 	libgnu/Makefile
-	reindeer/reindeer-0.0.pc
+	reindeer/reindeer-0.1.pc
 	ren/version.h
 ])
 AC_OUTPUT
