@@ -58,7 +58,6 @@ struct _RenBackend
 {
 	ren_uint32 use_count;
 	char *name;
-	char *version;
 	char *filename;
 	lt_dlhandle libhandle;
 

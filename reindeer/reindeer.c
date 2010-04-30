@@ -519,5 +519,6 @@ backend_destroy (RenBackend *backend)
 		backend_unuse (backend);
 	}
 	g_free (backend->name);
+	g_free (backend->filename);
 	g_free (backend);
 }
