@@ -51,9 +51,9 @@ include libltdl/Makefile.inc
 # libreindeer
 #
 
-lib_LTLIBRARIES += reindeer/libreindeer-0.1.la
+lib_LTLIBRARIES += reindeer/libreindeer-0.2.la
 
-reindeer_libreindeer_0_1_la_SOURCES = \
+reindeer_libreindeer_0_2_la_SOURCES = \
 	reindeer/reindeer.c reindeer/reindeer.h \
 	reindeer/backdata.c reindeer/backdata.h \
 	reindeer/matrix.c reindeer/vector.c reindeer/color.c reindeer/datablock.c \
@@ -63,13 +63,13 @@ reindeer_libreindeer_0_1_la_SOURCES = \
 	reindeer/template.c reindeer/template.h \
 	reindeer/object.c reindeer/object.h
 
-reindeer_libreindeer_0_1_la_LIBADD = \
+reindeer_libreindeer_0_2_la_LIBADD = \
 	$(LTLIBOBJS) $(LIBLTDL) $(GLIB_LIBS) libgnu/libgnu.la
 
-reindeer_libreindeer_0_1_la_LDFLAGS = \
-	-export-dynamic -version-info 1:0:0
+reindeer_libreindeer_0_2_la_LDFLAGS = \
+	-export-dynamic -version-info 2:0:0
 
-renincludedir = $(includedir)/reindeer-0.1/ren
+renincludedir = $(includedir)/reindeer-0.2/ren
 reninclude_HEADERS = \
 	ren/ren.h ren/types.h ren/base.h ren/version.h \
 	ren/impl.h ren/tmpl.h ren/funcs.h \
@@ -80,24 +80,24 @@ reninclude_HEADERS = \
 	ren/template.h ren/object.h
 
 dist_vapi_DATA += \
-	ren/reindeer-0.1.vapi \
-	ren/reindeer-0.1.deps
+	ren/reindeer-0.2.vapi \
+	ren/reindeer-0.2.deps
 
-pkgconfig_DATA += reindeer/reindeer-0.1.pc
+pkgconfig_DATA += reindeer/reindeer-0.2.pc
 
 #
 # libreindeer-debug
 #
 
-renlib_LTLIBRARIES += debug/libreindeer-debug.0.1.0.la
+renlib_LTLIBRARIES += debug/libreindeer-debug.0.2.0.la
 
-debug_libreindeer_debug_0_1_0_la_SOURCES = \
+debug_libreindeer_debug_0_2_0_la_SOURCES = \
 	debug/debug.c
 
-debug_libreindeer_debug_0_1_0_la_LIBADD = \
-	$(LTLIBOBJS) reindeer/libreindeer-0.1.la
+debug_libreindeer_debug_0_2_0_la_LIBADD = \
+	$(LTLIBOBJS) reindeer/libreindeer-0.2.la
 
-debug_libreindeer_debug_0_1_0_la_LDFLAGS = \
+debug_libreindeer_debug_0_2_0_la_LDFLAGS = \
 	-module -avoid-version
 
 #
