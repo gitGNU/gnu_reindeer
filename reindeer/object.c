@@ -159,6 +159,7 @@ ren_object_change_mode_common (RenReindeer *r, RenObject *object,
 				case REN_MODE_CMD_MATERIAL:
 					r->backend_data.object.change_material (r, NULL, NULL, user_data);
 					break;
+				default: break;
 			}
 			prev += prev[0];
 		}
@@ -171,7 +172,8 @@ ren_object_change_mode_common (RenReindeer *r, RenObject *object,
 					RenMaterial *front = (next[2] > 0) ? object->materials[next[2] - 1] : NULL;
 					RenMaterial *back = (next[3] > 0) ? object->materials[next[3] - 1] : NULL;
 					r->backend_data.object.change_material (r, front, back, user_data);
-				}   break;
+				} break;
+				default: break;
 			}
 			next += next[0];
 			if (pcmd == ncmd)

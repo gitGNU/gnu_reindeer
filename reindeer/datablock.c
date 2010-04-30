@@ -85,7 +85,7 @@ new_change (ChangeInterval *next, ren_size from, ren_size length);
 static inline ChangeInterval**
 insert_change (ChangeInterval **previntv_next, ren_size from, ren_size length);
 
-static inline ren_size
+static inline void
 try_merge_changes (ChangeInterval *intv);
 
 static inline ChangeSet*
@@ -363,13 +363,13 @@ insert_change (ChangeInterval **previntv_next, ren_size from, ren_size length)
 		{
 			intv->from = from;
 			intv->length = MAX (length, intv->length + (intv->from - from));
-			intv->length = try_merge_changes (intv);
+			try_merge_changes (intv);
 			return previntv_next;
 		}
 		else if (from <= intv->from + intv->length)
 		{
 			intv->length = MAX (intv->length, length + (from - intv->from));
-			intv->length = try_merge_changes (intv);
+			try_merge_changes (intv);
 			return previntv_next;
 		}
 		previntv_next = &(intv->next);
@@ -379,7 +379,7 @@ insert_change (ChangeInterval **previntv_next, ren_size from, ren_size length)
 	return previntv_next;
 }
 
-static inline ren_size
+static inline void
 try_merge_changes (ChangeInterval *intv)
 {
 	ChangeInterval *ointv;

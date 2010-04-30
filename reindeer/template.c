@@ -245,7 +245,7 @@ void
 ren_template_material (RenTemplate *tmplt, RenFace face, ren_uint08 material)
 {
 	GET_LAST_MODE_AND_OFFSET
-	guint8 *mode_data = tmplt->b.mode_data->data;
+	guint8 *mode_data = (guint8 *) tmplt->b.mode_data->data;
 	while (TRUE)
 	{
 		if (offset > tmplt->b.mode_data->len)

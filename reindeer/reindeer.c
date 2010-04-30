@@ -21,6 +21,7 @@
 #include "config.h"
 #endif
 #include "reindeer.h"
+#include "backdata.h"
 
 #include <ren/ren.h>
 #include <glib.h>
