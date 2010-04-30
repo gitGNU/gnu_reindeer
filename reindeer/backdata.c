@@ -65,6 +65,7 @@ _ren_back_data_table_ins (_RenBackDataItem *item)
 		g_hash_table_insert (bd_table, hash, tmp);
 		tmp->next_by_hash = item;
 		item->prev_by_hash = tmp;
+		item->next_by_hash = NULL;
 	}
 	else
 	{

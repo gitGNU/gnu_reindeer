@@ -84,7 +84,7 @@ just before returning the data and is of the same type as INIT_FUNC.
 	if (item == NULL)\
 	{\
 		data = (key->data_size > 0) ? g_malloc0 (key->data_size) : NULL;\
-		item = g_new0 (_Ren##ResName##BackDataItem, 1);\
+		item = g_new (_Ren##ResName##BackDataItem, 1);\
 		item->base.resource = res;\
 		item->base.key = key;\
 		item->base.data = data;\
@@ -92,9 +92,13 @@ just before returning the data and is of the same type as INIT_FUNC.
 		_ren_back_data_table_ins ((_RenBackDataItem *) item);\
 		if (res->bd_list != NULL)\
 			res->bd_list->base.prev_by_res = (_RenBackDataItem *) item;\
+		item->base.prev_by_res = NULL;\
+		item->base.next_by_res = (_RenBackDataItem *) res->bd_list;\
 		res->bd_list = item;\
 		if (key->bd_list != NULL)\
 			key->bd_list->base.prev_by_key = (_RenBackDataItem *) item;\
+		item->base.prev_by_key = NULL;\
+		item->base.next_by_key = (_RenBackDataItem *) key->bd_list;\
 		key->bd_list = item;\
 	}\
 	else\
