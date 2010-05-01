@@ -1,6 +1,7 @@
 AC_PREREQ([2.64])
 LT_PREREQ([2.2.6])
 
+# Version information.
 m4_define([ren_major_version], [0])
 m4_define([ren_minor_version], [2])
 m4_define([ren_micro_version], [0])
@@ -8,6 +9,7 @@ m4_define([ren_version],
 	[ren_major_version.ren_minor_version.ren_micro_version])
 m4_define([ren_compat_version], [0.2])
 
+# Initialization.
 AC_INIT([Reindeer], [ren_version], [http://savannah.nongnu.org/bugs/?group=reindeer], [reindeer], [http://savannah.nongnu.org/projects/reindeer/])
 AC_CONFIG_AUX_DIR([build-aux])
 AC_CONFIG_MACRO_DIR([m4])
@@ -17,9 +19,8 @@ AC_CONFIG_LIBOBJ_DIR([libgnu])
 LT_CONFIG_LTDL_DIR([libltdl])
 AM_INIT_AUTOMAKE([1.11.1 subdir-objects])
 AM_SILENT_RULES([yes])
-LT_INIT([dlopen])
-LTDL_INIT([nonrecursive installable])
 
+# Definitions.
 AC_SUBST([REN_MAJOR_VERSION], [ren_major_version])
 AC_SUBST([REN_MINOR_VERSION], [ren_minor_version])
 AC_SUBST([REN_MICRO_VERSION], [ren_micro_version])
@@ -30,7 +31,9 @@ AC_SUBST([renlibdir])
 
 # Checks for programs.
 AC_PROG_CC
+AM_PROG_CC_C_O
 GNULIB_EARLY
+
 AX_PROG_XSLTPROC([--nonet])
 AC_CHECK_DOCBOOK_XSLT
 AM_CONDITIONAL([HAVE_DOCBOOK_XSLT], [test x$XSLTPROC != x -a x$HAVE_DOCBOOK_XSLT = xyes])
@@ -46,7 +49,9 @@ PKG_CHECK_MODULES([GLIB], [glib-2.0 >= $GLIB_REQUIRED])
 AC_C_CONST
 AC_C_INLINE
 
-# Checks for library functions.
+# Late initializations.
+LT_INIT([dlopen])
+LTDL_INIT([nonrecursive installable])
 GNULIB_INIT
 
 # Output
