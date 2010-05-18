@@ -21,23 +21,56 @@
 #include <ren/color.h>
 #include <glib.h>
 
+#include "reindeer.h"
+#include "backdata.h"
+
+typedef struct _RenMaterialBackDataItem _RenMaterialBackDataItem;
+
 struct _RenMaterial
 {
 	ren_uint32 ref_count;
 
-	RenColor *ambient;
-	RenColor *diffuse;
-	RenColor *specular;
-	RenColor *emission;
-	ren_dfloat shininess;
+	_RenMaterialBackDataItem *bd_list;
+	ren_uint32 change;
+
+	RenMaterialInfo info;
+};
+
+struct _RenMaterialBackDataKey
+{
+	ren_uint32 ref_count;
+	RenMaterialBackDataKeyDestroyNotifyFunc destroy_notify;
+
+	_RenMaterialBackDataItem *bd_list;
+
+	ren_size data_size;
+	void *user_data;
+	RenMaterialBackDataInitFunc init;
+	RenMaterialBackDataFiniFunc fini;
+	RenMaterialBackDataUpdateFunc update;
+};
+
+struct _RenMaterialBackDataItem
+{
+	_RenBackDataItem base;
+	ren_uint32 change;
 };
 
 RenMaterial*
 ren_material_new ()
 {
-	RenMaterial *material = g_new0 (RenMaterial, 1);
+	RenMaterial *material = g_new (RenMaterial, 1);
 
 	material->ref_count = 1;
+
+	material->bd_list = NULL;
+	material->change = 1;
+
+	material->info.ambient = NULL;
+	material->info.diffuse = NULL;
+	material->info.specular = NULL;
+	material->info.emission = NULL;
+	material->info.shininess = 0.0;
 
 	return material;
 }
@@ -55,68 +88,138 @@ ren_material_unref (RenMaterial *material)
 	if (--(material->ref_count) > 0)
 		return;
 
-	if (material->ambient != NULL)
-		ren_color_unref (material->ambient);
-	if (material->diffuse != NULL)
-		ren_color_unref (material->diffuse);
-	if (material->specular != NULL)
-		ren_color_unref (material->specular);
-	if (material->emission != NULL)
-		ren_color_unref (material->emission);
+	_REN_RES_BACK_DATA_LIST_CLEAR (Material, material,
+		material, _REN_BACK_DATA_SIMPLE_FINI_FUNC);
+
+	if (material->info.ambient != NULL)
+		ren_color_unref (material->info.ambient);
+	if (material->info.diffuse != NULL)
+		ren_color_unref (material->info.diffuse);
+	if (material->info.specular != NULL)
+		ren_color_unref (material->info.specular);
+	if (material->info.emission != NULL)
+		ren_color_unref (material->info.emission);
 	g_free (material);
+}
+
+void
+ren_material_begin_edit (RenMaterial *material)
+{
+
+}
+
+void
+ren_material_end_edit (RenMaterial *material)
+{
+	_REN_BACK_DATA_SIMPLE_CHANGED (Material, material, material);
 }
 
 void
 ren_material_ambient (RenMaterial *material, RenColor *color)
 {
-	if (material->ambient != NULL)
-		ren_color_unref (material->ambient);
-	material->ambient = (color != NULL) ? ren_color_ref (color) : NULL;
+	if (material->info.ambient != NULL)
+		ren_color_unref (material->info.ambient);
+	material->info.ambient = (color != NULL) ? ren_color_ref (color) : NULL;
 }
 
 void
 ren_material_diffuse (RenMaterial *material, RenColor *color)
 {
-	if (material->diffuse != NULL)
-		ren_color_unref (material->diffuse);
-	material->diffuse = (color != NULL) ? ren_color_ref (color) : NULL;
+	if (material->info.diffuse != NULL)
+		ren_color_unref (material->info.diffuse);
+	material->info.diffuse = (color != NULL) ? ren_color_ref (color) : NULL;
 }
 
 void
 ren_material_specular (RenMaterial *material, RenColor *color)
 {
-	if (material->specular != NULL)
-		ren_color_unref (material->specular);
-	material->specular = (color != NULL) ? ren_color_ref (color) : NULL;
+	if (material->info.specular != NULL)
+		ren_color_unref (material->info.specular);
+	material->info.specular = (color != NULL) ? ren_color_ref (color) : NULL;
 }
 
 void
 ren_material_emission (RenMaterial *material, RenColor *color)
 {
-	if (material->emission != NULL)
-		ren_color_unref (material->emission);
-	material->emission = (color != NULL) ? ren_color_ref (color) : NULL;
+	if (material->info.emission != NULL)
+		ren_color_unref (material->info.emission);
+	material->info.emission = (color != NULL) ? ren_color_ref (color) : NULL;
 }
 
 void
 ren_material_shininess (RenMaterial *material, ren_dfloat shininess)
 {
-	material->shininess = shininess;
+	material->info.shininess = shininess;
+}
+
+const RenMaterialInfo*
+ren_material_info (RenMaterial *material)
+{
+	return &(material->info);
+}
+
+RenMaterialBackDataKey*
+ren_material_back_data_key_new (ren_size data_size,
+	RenMaterialBackDataInitFunc init,
+	RenMaterialBackDataFiniFunc fini,
+	RenMaterialBackDataUpdateFunc update)
+{
+	RenMaterialBackDataKey *key = g_new (RenMaterialBackDataKey, 1);
+
+	key->ref_count = 1;
+	key->destroy_notify = NULL;
+
+	key->bd_list = NULL;
+
+	key->data_size = data_size;
+	key->user_data = NULL;
+	key->init = init;
+	key->fini = fini;
+	key->update = update;
+
+	return key;
 }
 
 void
-ren_material_data_light (RenMaterial *material,
-	RenColor **ambient_p, RenColor **diffuse_p, RenColor **specular_p,
-	RenColor **emission_p, ren_dfloat *shininess_p)
+ren_material_back_data_key_user_data (RenMaterialBackDataKey *key,
+	void *user_data)
 {
-	if (ambient_p)
-		(*ambient_p) = material->ambient;
-	if (diffuse_p)
-		(*diffuse_p) = material->diffuse;
-	if (specular_p)
-		(*specular_p) = material->specular;
-	if (emission_p)
-		(*emission_p) = material->emission;
-	if (shininess_p)
-		(*shininess_p) = material->shininess;
+	key->user_data = user_data;
+}
+
+void
+ren_material_back_data_key_destroy_notify (RenMaterialBackDataKey *key,
+	RenMaterialBackDataKeyDestroyNotifyFunc destroy_notify)
+{
+	key->destroy_notify = destroy_notify;
+}
+
+RenMaterialBackDataKey*
+ren_material_back_data_key_ref (RenMaterialBackDataKey *key)
+{
+	++(key->ref_count);
+	return key;
+}
+
+void
+ren_material_back_data_key_unref (RenMaterialBackDataKey *key)
+{
+	if (--(key->ref_count) > 0)
+		return;
+
+	_REN_KEY_BACK_DATA_LIST_CLEAR (Material, material,
+		key, _REN_BACK_DATA_SIMPLE_FINI_FUNC);
+	if (key->destroy_notify != NULL)
+		key->destroy_notify (key, key->user_data);
+
+	g_free (key);
+}
+
+RenMaterialBackData*
+ren_material_back_data (RenMaterial *material, RenMaterialBackDataKey *key)
+{
+	_REN_BACK_DATA_RETURN (Material, material,
+		material, key,
+		_REN_BACK_DATA_SIMPLE_INIT_FUNC,
+		_REN_BACK_DATA_SIMPLE_UPDATE_FUNC);
 }

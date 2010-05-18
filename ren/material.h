@@ -34,6 +34,12 @@ extern void
 ren_material_unref (RenMaterial *material);
 
 extern void
+ren_material_begin_edit (RenMaterial *material);
+
+extern void
+ren_material_end_edit (RenMaterial *material);
+
+extern void
 ren_material_ambient (RenMaterial *material, RenColor *color);
 
 extern void
@@ -50,9 +56,55 @@ ren_material_shininess (RenMaterial *material, ren_dfloat shininess);
 
 /* Backend */
 
+typedef struct RenMaterialInfo RenMaterialInfo;
+struct RenMaterialInfo
+{
+	RenColor *ambient;
+	RenColor *diffuse;
+	RenColor *specular;
+	RenColor *emission;
+	ren_dfloat shininess;
+};
+
+extern const RenMaterialInfo*
+ren_material_info (RenMaterial *material);
+
+typedef struct _RenMaterialBackData RenMaterialBackData;
+typedef struct _RenMaterialBackDataKey RenMaterialBackDataKey;
+
+typedef void (* RenMaterialBackDataKeyDestroyNotifyFunc) (
+	RenMaterialBackDataKey* key, void *user_data);
+
+typedef void (* RenMaterialBackDataInitFunc) (RenMaterial *material,
+	RenMaterialBackData *back_data, void *user_data,
+	const RenMaterialInfo *info);
+typedef void (* RenMaterialBackDataFiniFunc) (RenMaterial *material,
+	RenMaterialBackData *back_data, void *user_data);
+typedef void (* RenMaterialBackDataUpdateFunc) (RenMaterial *material,
+	RenMaterialBackData *back_data, void *user_data,
+	const RenMaterialInfo *info);
+
+extern RenMaterialBackDataKey*
+ren_material_back_data_key_new (ren_size data_size,
+	RenMaterialBackDataInitFunc init,
+	RenMaterialBackDataFiniFunc fini,
+	RenMaterialBackDataUpdateFunc update);
+
 extern void
-ren_material_data_light (RenMaterial *material,
-	RenColor **ambient_p, RenColor **diffuse_p, RenColor **specular_p,
-	RenColor **emission_p, ren_dfloat *shininess_p);
+ren_material_back_data_key_user_data (RenMaterialBackDataKey *key,
+	void *user_data);
+
+extern void
+ren_material_back_data_key_destroy_notify (RenMaterialBackDataKey *key,
+	RenMaterialBackDataKeyDestroyNotifyFunc destroy_notify);
+
+extern RenMaterialBackDataKey*
+ren_material_back_data_key_ref (RenMaterialBackDataKey *key);
+
+extern void
+ren_material_back_data_key_unref (RenMaterialBackDataKey *key);
+
+extern RenMaterialBackData*
+ren_material_back_data (RenMaterial *material, RenMaterialBackDataKey *key);
 
 #endif /* REN_MATERIAL_H */
