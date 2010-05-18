@@ -25,7 +25,7 @@
 /* Public */
 
 extern RenLight*
-ren_light_new (RenLightType type);
+ren_light_new (RenLightType light_type);
 
 extern RenLight*
 ren_light_ref (RenLight *light);
@@ -47,21 +47,60 @@ ren_light_attenuation (RenLight *light, RenVector *k);
 
 /* Backend */
 
-extern void
-ren_light_data (RenLight *light,
-	RenLightType *type_p,
-	RenColor **ambient_p,
-	RenColor **diffuse_p,
-	RenColor **specular_p);
+typedef struct RenLightInfo RenLightInfo;
+struct RenLightInfo
+{
+	RenLightType light_type;
+
+	RenColor *ambient;
+	RenColor *diffuse;
+	RenColor *specular;
+
+	RenVector *attenuation;
+	ren_dfloat cutoff;
+	ren_dfloat exponent;
+};
+
+extern const RenLightInfo*
+ren_light_info (RenLight *light);
+
+typedef struct _RenLightBackData RenLightBackData;
+typedef struct _RenLightBackDataKey RenLightBackDataKey;
+
+typedef void (* RenLightBackDataKeyDestroyNotifyFunc) (
+	RenLightBackDataKey* key, void *user_data);
+
+typedef void (* RenLightBackDataInitFunc) (RenLight *light,
+	RenLightBackData *back_data, void *user_data,
+	const RenLightInfo *info);
+typedef void (* RenLightBackDataFiniFunc) (RenLight *light,
+	RenLightBackData *back_data, void *user_data);
+typedef void (* RenLightBackDataUpdateFunc) (RenLight *light,
+	RenLightBackData *back_data, void *user_data,
+	const RenLightInfo *info);
+
+extern RenLightBackDataKey*
+ren_light_back_data_key_new (ren_size data_size,
+	RenLightBackDataInitFunc init,
+	RenLightBackDataFiniFunc fini,
+	RenLightBackDataUpdateFunc update);
 
 extern void
-ren_light_data_point_light (RenLight *light,
-	RenVector **attenuation_p);
+ren_light_back_data_key_user_data (RenLightBackDataKey *key,
+	void *user_data);
 
 extern void
-ren_light_data_spot_light (RenLight *light,
-	RenVector **attenuation_p,
-	ren_dfloat *cutoff_p,
-	ren_dfloat *exponent_p);
+ren_light_back_data_key_destroy_notify (RenLightBackDataKey *key,
+	RenLightBackDataKeyDestroyNotifyFunc destroy_notify);
+
+extern RenLightBackDataKey*
+ren_light_back_data_key_ref (RenLightBackDataKey *key);
+
+extern void
+ren_light_back_data_key_unref (RenLightBackDataKey *key);
+
+extern RenLightBackData*
+ren_light_back_data (RenLight *light, RenLightBackDataKey *key);
+
 
 #endif /* REN_LIGHT_H */

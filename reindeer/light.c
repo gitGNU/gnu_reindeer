@@ -22,29 +22,58 @@
 #include <ren/vector.h>
 #include <glib.h>
 
+#include "reindeer.h"
+#include "backdata.h"
+
+typedef struct _RenLightBackDataItem _RenLightBackDataItem;
+
 struct _RenLight
 {
 	ren_uint32 ref_count;
 
-	RenLightType type;
+	_RenLightBackDataItem *bd_list;
+	ren_uint32 change;
 
-	RenColor *ambient;
-	RenColor *diffuse;
-	RenColor *specular;
+	RenLightInfo info;
+};
 
-	RenVector *attenuation;
-	ren_dfloat cutoff;
-	ren_dfloat exponent;
+struct _RenLightBackDataKey
+{
+	ren_uint32 ref_count;
+	RenLightBackDataKeyDestroyNotifyFunc destroy_notify;
+
+	_RenLightBackDataItem *bd_list;
+
+	ren_size data_size;
+	void *user_data;
+	RenLightBackDataInitFunc init;
+	RenLightBackDataFiniFunc fini;
+	RenLightBackDataUpdateFunc update;
+};
+
+struct _RenLightBackDataItem
+{
+	_RenBackDataItem base;
+	ren_uint32 change;
 };
 
 RenLight*
-ren_light_new (RenLightType type)
+ren_light_new (RenLightType light_type)
 {
-	RenLight *light = g_new0 (RenLight, 1);
+	RenLight *light = g_new (RenLight, 1);
 
 	light->ref_count = 1;
 
-	light->type = type;
+	light->bd_list = NULL;
+	light->change = 1;
+
+	light->info.light_type = light_type;
+	light->info.ambient = NULL;
+	light->info.diffuse = NULL;
+	light->info.specular = NULL;
+	light->info.attenuation = NULL;
+	light->info.cutoff = 45.0;
+	light->info.exponent = 0.0;
 
 	return light;
 }
@@ -62,88 +91,132 @@ ren_light_unref (RenLight *light)
 	if (--(light->ref_count) > 0)
 		return;
 
-	if (light->ambient != NULL)
-		ren_color_unref (light->ambient);
-	if (light->diffuse != NULL)
-		ren_color_unref (light->diffuse);
-	if (light->specular != NULL)
-		ren_color_unref (light->specular);
-	if (light->attenuation != NULL)
-		ren_vector_unref (light->attenuation);
+	_REN_RES_BACK_DATA_LIST_CLEAR (Light, light,
+		light, _REN_BACK_DATA_SIMPLE_FINI_FUNC);
+
+	if (light->info.ambient != NULL)
+		ren_color_unref (light->info.ambient);
+	if (light->info.diffuse != NULL)
+		ren_color_unref (light->info.diffuse);
+	if (light->info.specular != NULL)
+		ren_color_unref (light->info.specular);
+	if (light->info.attenuation != NULL)
+		ren_vector_unref (light->info.attenuation);
 	g_free (light);
+}
+
+void
+ren_light_begin_edit (RenLight *light)
+{
+
+}
+
+void
+ren_light_end_edit (RenLight *light)
+{
+	_REN_BACK_DATA_SIMPLE_CHANGED (Light, light, light);
 }
 
 void
 ren_light_ambient (RenLight *light, RenColor *color)
 {
-	if (light->ambient != NULL)
-		ren_color_unref (light->ambient);
-	light->ambient = (color != NULL) ? ren_color_ref (color) : NULL;
+	if (light->info.ambient != NULL)
+		ren_color_unref (light->info.ambient);
+	light->info.ambient = (color != NULL) ? ren_color_ref (color) : NULL;
 }
 
 void
 ren_light_diffuse (RenLight *light, RenColor *color)
 {
-	if (light->diffuse != NULL)
-		ren_color_unref (light->diffuse);
-	light->diffuse = (color != NULL) ? ren_color_ref (color) : NULL;
+	if (light->info.diffuse != NULL)
+		ren_color_unref (light->info.diffuse);
+	light->info.diffuse = (color != NULL) ? ren_color_ref (color) : NULL;
 }
 
 void
 ren_light_specular (RenLight *light, RenColor *color)
 {
-	if (light->specular != NULL)
-		ren_color_unref (light->specular);
-	light->specular = (color != NULL) ? ren_color_ref (color) : NULL;
+	if (light->info.specular != NULL)
+		ren_color_unref (light->info.specular);
+	light->info.specular = (color != NULL) ? ren_color_ref (color) : NULL;
 }
 
 void
 ren_light_attenuation (RenLight *light, RenVector *k)
 {
-	if (light->attenuation != NULL)
-		ren_vector_unref (light->attenuation);
-	light->attenuation = (k != NULL) ? ren_vector_ref (k) : NULL;
+	if (light->info.attenuation != NULL)
+		ren_vector_unref (light->info.attenuation);
+	light->info.attenuation = (k != NULL) ? ren_vector_ref (k) : NULL;
+}
+
+extern const RenLightInfo*
+ren_light_info (RenLight *light)
+{
+	return &(light->info);
+}
+
+RenLightBackDataKey*
+ren_light_back_data_key_new (ren_size data_size,
+	RenLightBackDataInitFunc init,
+	RenLightBackDataFiniFunc fini,
+	RenLightBackDataUpdateFunc update)
+{
+	RenLightBackDataKey *key = g_new (RenLightBackDataKey, 1);
+
+	key->ref_count = 1;
+	key->destroy_notify = NULL;
+
+	key->bd_list = NULL;
+
+	key->data_size = data_size;
+	key->user_data = NULL;
+	key->init = init;
+	key->fini = fini;
+	key->update = update;
+
+	return key;
 }
 
 void
-ren_light_data (RenLight *light,
-	RenLightType *type_p,
-	RenColor **ambient_p,
-	RenColor **diffuse_p,
-	RenColor **specular_p)
+ren_light_back_data_key_user_data (RenLightBackDataKey *key,
+	void *user_data)
 {
-	if (type_p)
-		(*type_p) = light->type;
-	if (ambient_p)
-		(*ambient_p) = light->ambient;
-	if (diffuse_p)
-		(*diffuse_p) = light->diffuse;
-	if (specular_p)
-		(*specular_p) = light->specular;
+	key->user_data = user_data;
 }
 
 void
-ren_light_data_point_light (RenLight *light,
-	RenVector **attenuation_p)
+ren_light_back_data_key_destroy_notify (RenLightBackDataKey *key,
+	RenLightBackDataKeyDestroyNotifyFunc destroy_notify)
 {
-	if (light->type != REN_LIGHT_TYPE_POINT_LIGHT)
+	key->destroy_notify = destroy_notify;
+}
+
+RenLightBackDataKey*
+ren_light_back_data_key_ref (RenLightBackDataKey *key)
+{
+	++(key->ref_count);
+	return key;
+}
+
+void
+ren_light_back_data_key_unref (RenLightBackDataKey *key)
+{
+	if (--(key->ref_count) > 0)
 		return;
-	if (attenuation_p)
-		(*attenuation_p) = light->attenuation;
+
+	_REN_KEY_BACK_DATA_LIST_CLEAR (Light, light,
+		key, _REN_BACK_DATA_SIMPLE_FINI_FUNC);
+	if (key->destroy_notify != NULL)
+		key->destroy_notify (key, key->user_data);
+
+	g_free (key);
 }
 
-void
-ren_light_data_spot_light (RenLight *light,
-	RenVector **attenuation_p,
-	ren_dfloat *cutoff_p,
-	ren_dfloat *exponent_p)
+RenLightBackData*
+ren_light_back_data (RenLight *light, RenLightBackDataKey *key)
 {
-	if (light->type != REN_LIGHT_TYPE_SPOT_LIGHT)
-		return;
-	if (attenuation_p)
-		(*attenuation_p) = light->attenuation;
-	if (cutoff_p)
-		(*cutoff_p) = light->cutoff;
-	if (exponent_p)
-		(*exponent_p) = light->exponent;
+	_REN_BACK_DATA_RETURN (Light, light,
+		light, key,
+		_REN_BACK_DATA_SIMPLE_INIT_FUNC,
+		_REN_BACK_DATA_SIMPLE_UPDATE_FUNC);
 }
