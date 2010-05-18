@@ -33,9 +33,7 @@ struct _RenColor
 	_RenColorBackDataItem *bd_list;
 	ren_uint32 change;
 
-	void *data;
-	RenColorFormat format;
-	RenType type;
+	RenColorInfo info;
 };
 
 struct _RenColorBackDataKey
@@ -71,9 +69,9 @@ ren_color_new (RenColorFormat format, RenType type)
 	color->bd_list = NULL;
 	color->change = 1;
 
-	color->data = g_malloc (ren_color_format_sizeof (format, type));
-	color->format = format;
-	color->type = type;
+	color->info.format = format;
+	color->info.type = type;
+	color->info.data = g_malloc (ren_color_format_sizeof (format, type));
 
 	return color;
 }
@@ -94,14 +92,14 @@ ren_color_unref (RenColor *color)
 	_REN_RES_BACK_DATA_LIST_CLEAR (Color, color,
 		color, _REN_BACK_DATA_SIMPLE_FINI_FUNC);
 
-	g_free (color->data);
+	g_free ((gpointer) color->info.data);
 	g_free (color);
 }
 
 void*
 ren_color_begin_edit (RenColor *color)
 {
-	return color->data;
+	return (void *) color->info.data;
 }
 
 void
@@ -110,16 +108,10 @@ ren_color_end_edit (RenColor *color)
 	_REN_BACK_DATA_SIMPLE_CHANGED (Color, color, color);
 }
 
-void
-ren_color_data (RenColor *color,
-	const void **data_p, RenColorFormat *format_p, RenType *type_p)
+const RenColorInfo*
+ren_color_info (RenColor *color)
 {
-	if (data_p)
-		(*data_p) = color->data;
-	if (format_p)
-		(*format_p) = color->format;
-	if (type_p)
-		(*type_p) = color->type;
+	return &(color->info);
 }
 
 RenColorBackDataKey*

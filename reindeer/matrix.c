@@ -33,11 +33,7 @@ struct _RenMatrix
 	_RenMatrixBackDataItem *bd_list;
 	ren_uint32 change;
 
-	void *data;
-	ren_size width;
-	ren_size height;
-	RenType type;
-	ren_bool transposed;
+	RenMatrixInfo info;
 };
 
 struct _RenMatrixBackDataKey
@@ -48,7 +44,7 @@ struct _RenMatrixBackDataKey
 	_RenMatrixBackDataItem *bd_list;
 
 	ren_size data_size;
-	void* user_data;
+	void *user_data;
 	RenMatrixBackDataInitFunc init;
 	RenMatrixBackDataFiniFunc fini;
 	RenMatrixBackDataUpdateFunc update;
@@ -74,11 +70,11 @@ ren_matrix_new (ren_size width, ren_size height,
 	matrix->bd_list = NULL;
 	matrix->change = 1;
 
-	matrix->data = g_malloc (ren_type_sizeof (type) * width * height);
-	matrix->width = width;
-	matrix->height = height;
-	matrix->type = type;
-	matrix->transposed = transposed;
+	matrix->info.width = width;
+	matrix->info.height = height;
+	matrix->info.type = type;
+	matrix->info.transposed = transposed;
+	matrix->info.data = g_malloc (ren_type_sizeof (type) * width * height);
 
 	return matrix;
 }
@@ -99,14 +95,14 @@ ren_matrix_unref (RenMatrix *matrix)
 	_REN_RES_BACK_DATA_LIST_CLEAR (Matrix, matrix,
 		matrix, _REN_BACK_DATA_SIMPLE_FINI_FUNC);
 
-	g_free (matrix->data);
+	g_free ((gpointer) matrix->info.data);
 	g_free (matrix);
 }
 
 void*
 ren_matrix_begin_edit (RenMatrix *matrix)
 {
-	return matrix->data;
+	return (void *) matrix->info.data;
 }
 
 void
@@ -115,21 +111,10 @@ ren_matrix_end_edit (RenMatrix *matrix)
 	_REN_BACK_DATA_SIMPLE_CHANGED (Matrix, matrix, matrix);
 }
 
-void
-ren_matrix_data (RenMatrix *matrix,
-	const void **data_p, ren_size *width_p, ren_size *height_p,
-	RenType *type_p, ren_bool *transposed_p)
+const RenMatrixInfo*
+ren_matrix_info (RenMatrix *matrix)
 {
-	if (data_p)
-		(*data_p) = matrix->data;
-	if (width_p)
-		(*width_p) = matrix->width;
-	if (height_p)
-		(*height_p) = matrix->height;
-	if (type_p)
-		(*type_p) = matrix->type;
-	if (transposed_p)
-		(*transposed_p) = matrix->transposed;
+	return &(matrix->info);
 }
 
 RenMatrixBackDataKey*

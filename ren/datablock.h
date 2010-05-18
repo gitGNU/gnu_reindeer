@@ -48,9 +48,16 @@ ren_data_block_changed (RenDataBlock *data_block,
 
 /* Backend */
 
-extern void
-ren_data_block_data (RenDataBlock *data_block, const void **data_p,
-	ren_size *size_p, RenUsage *usage_p);
+typedef struct RenDataBlockInfo RenDataBlockInfo;
+struct RenDataBlockInfo
+{
+	ren_size size;
+	RenUsage usage;
+	const void *data;
+};
+
+extern const RenDataBlockInfo*
+ren_data_block_info (RenDataBlock *data_block);
 
 typedef struct _RenDataBlockBackData RenDataBlockBackData;
 typedef struct _RenDataBlockBackDataKey RenDataBlockBackDataKey;
@@ -59,16 +66,17 @@ typedef void (* RenDataBlockBackDataKeyDestroyNotifyFunc) (
 	RenDataBlockBackDataKey* key, void *user_data);
 
 typedef void (* RenDataBlockBackDataInitFunc) (RenDataBlock *data_block,
-	RenDataBlockBackData *back_data, void* user_data);
+	RenDataBlockBackData *back_data, void *user_data,
+	const RenDataBlockInfo *info);
 typedef void (* RenDataBlockBackDataFiniFunc) (RenDataBlock *data_block,
-	RenDataBlockBackData *back_data, void* user_data);
+	RenDataBlockBackData *back_data, void *user_data);
 typedef void (* RenDataBlockBackDataUpdateFunc) (RenDataBlock *data_block,
-	RenDataBlockBackData *back_data, void* user_data,
-	ren_size from, ren_size length);
+	RenDataBlockBackData *back_data, void *user_data,
+	const RenDataBlockInfo *info, ren_size from, ren_size length);
 typedef void (* RenDataBlockBackDataRelocateFunc) (RenDataBlock *data_block,
-	RenDataBlockBackData *back_data, void* user_data, void *new_data);
+	RenDataBlockBackData *back_data, void *user_data, const void *new_data);
 typedef void (* RenDataBlockBackDataResizeFunc) (RenDataBlock *data_block,
-	RenDataBlockBackData *back_data, void* user_data, ren_size new_size);
+	RenDataBlockBackData *back_data, void *user_data, ren_size new_size);
 
 extern RenDataBlockBackDataKey*
 ren_data_block_back_data_key_new (ren_size data_size,

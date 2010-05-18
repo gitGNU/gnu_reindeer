@@ -42,10 +42,18 @@ ren_matrix_end_edit (RenMatrix *matrix);
 
 /* Backend */
 
-extern void
-ren_matrix_data (RenMatrix *matrix,
-	const void **data_p, ren_size *width_p, ren_size *height_p,
-	RenType *type_p, ren_bool *transposed_p);
+typedef struct RenMatrixInfo RenMatrixInfo;
+struct RenMatrixInfo
+{
+	ren_size width;
+	ren_size height;
+	RenType type;
+	ren_bool transposed;
+	const void *data;
+};
+
+extern const RenMatrixInfo*
+ren_matrix_info (RenMatrix *matrix);
 
 typedef struct _RenMatrixBackData RenMatrixBackData;
 typedef struct _RenMatrixBackDataKey RenMatrixBackDataKey;
@@ -54,11 +62,13 @@ typedef void (* RenMatrixBackDataKeyDestroyNotifyFunc) (
 	RenMatrixBackDataKey* key, void *user_data);
 
 typedef void (* RenMatrixBackDataInitFunc) (RenMatrix *matrix,
-	RenMatrixBackData *back_data, void* user_data);
+	RenMatrixBackData *back_data, void *user_data,
+	const RenMatrixInfo *info);
 typedef void (* RenMatrixBackDataFiniFunc) (RenMatrix *matrix,
-	RenMatrixBackData *back_data, void* user_data);
+	RenMatrixBackData *back_data, void *user_data);
 typedef void (* RenMatrixBackDataUpdateFunc) (RenMatrix *matrix,
-	RenMatrixBackData *back_data, void* user_data);
+	RenMatrixBackData *back_data, void *user_data,
+	const RenMatrixInfo *info);
 
 extern RenMatrixBackDataKey*
 ren_matrix_back_data_key_new (ren_size data_size,

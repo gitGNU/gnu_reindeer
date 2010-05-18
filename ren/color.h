@@ -41,9 +41,16 @@ ren_color_end_edit (RenColor *color);
 
 /* Backend */
 
-extern void
-ren_color_data (RenColor *color,
-	const void **data_p, RenColorFormat *format_p, RenType *type_p);
+typedef struct RenColorInfo RenColorInfo;
+struct RenColorInfo
+{
+	RenColorFormat format;
+	RenType type;
+	const void *data;
+};
+
+extern const RenColorInfo*
+ren_color_info (RenColor *color);
 
 typedef struct _RenColorBackData RenColorBackData;
 typedef struct _RenColorBackDataKey RenColorBackDataKey;
@@ -52,11 +59,13 @@ typedef void (* RenColorBackDataKeyDestroyNotifyFunc) (
 	RenColorBackDataKey* key, void *user_data);
 
 typedef void (* RenColorBackDataInitFunc) (RenColor *color,
-	RenColorBackData *back_data, void* user_data);
+	RenColorBackData *back_data, void *user_data,
+	const RenColorInfo *info);
 typedef void (* RenColorBackDataFiniFunc) (RenColor *color,
-	RenColorBackData *back_data, void* user_data);
+	RenColorBackData *back_data, void *user_data);
 typedef void (* RenColorBackDataUpdateFunc) (RenColor *color,
-	RenColorBackData *back_data, void* user_data);
+	RenColorBackData *back_data, void *user_data,
+	const RenColorInfo *info);
 
 extern RenColorBackDataKey*
 ren_color_back_data_key_new (ren_size data_size,

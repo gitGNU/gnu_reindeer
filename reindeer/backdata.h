@@ -189,7 +189,7 @@ field called "change" of type "ren_uint32". The field should be initialized to
 #define _REN_BACK_DATA_SIMPLE_INIT_FUNC(res, key, item, data)\
 	G_STMT_START {\
 		if (key->init != NULL)\
-			key->init (res, data, key->user_data);\
+			key->init (res, data, key->user_data, &(res->info));\
 		if (key->update != NULL)\
 			item->change = 0;\
 		else\
@@ -206,7 +206,7 @@ field called "change" of type "ren_uint32". The field should be initialized to
 	G_STMT_START {\
 		if (item->change < res->change)\
 		{\
-			key->update (res, data, key->user_data);\
+			key->update (res, data, key->user_data, &(res->info));\
 			item->change = res->change;\
 		}\
 	} G_STMT_END

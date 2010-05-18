@@ -35,9 +35,7 @@ struct _RenDataBlock
 	ChangeSet *changes;
 	ChangeInterval *recent_changes;
 
-	void *data;
-	ren_size size;
-	RenUsage usage;
+	RenDataBlockInfo info;
 };
 
 struct _RenDataBlockBackDataKey
@@ -60,7 +58,7 @@ struct _RenDataBlockBackDataItem
 {
 	_RenBackDataItem base;
 	ChangeSet *change_set;
-	void* last_data;
+	const void *last_data;
 	ren_size last_size;
 };
 
@@ -99,14 +97,14 @@ unref_change_set (RenDataBlock *data_block, ChangeSet *set);
 
 #define BACK_DATA_INIT_FUNC(res, key, item, data)\
 	G_STMT_START {\
-		item->last_data = res->data;\
-		item->last_size = res->size;\
+		item->last_data = res->info.data;\
+		item->last_size = res->info.size;\
 		if (key->init != NULL)\
-			key->init (res, data, key->user_data);\
+			key->init (res, data, key->user_data, &(res->info));\
 		if (key->update != NULL)\
 		{\
 			item->change_set = push_change_set (res);\
-			key->update (res, data, key->user_data, 0, res->size);\
+			key->update (res, data, key->user_data, &(res->info), 0, res->info.size);\
 		}\
 		else\
 			item->change_set = NULL;\
@@ -121,12 +119,12 @@ unref_change_set (RenDataBlock *data_block, ChangeSet *set);
 
 #define BACK_DATA_UPDATE_FUNC(res, key, item, data)\
 	G_STMT_START {\
-		if (key->relocate != NULL && item->last_data != res->data)\
+		if (key->relocate != NULL && item->last_data != res->info.data)\
 		{\
-			key->relocate (res, data, key->user_data, res->data);\
-			item->last_data = res->data;\
+			key->relocate (res, data, key->user_data, res->info.data);\
+			item->last_data = res->info.data;\
 		}\
-		ren_size db_size = res->size;\
+		ren_size db_size = res->info.size;\
 		if (key->resize != NULL && item->last_size != db_size)\
 		{\
 			key->resize (res, data, key->user_data, db_size);\
@@ -147,13 +145,13 @@ unref_change_set (RenDataBlock *data_block, ChangeSet *set);
 					if (length < end_length)\
 					{\
 						key->update (res, data, key->user_data,\
-							from, length);\
+							&(res->info), from, length);\
 						intv = intv->next;\
 					}\
 					else\
 					{\
 						key->update (res, data, key->user_data,\
-							from, end_length);\
+							&(res->info), from, end_length);\
 						break;\
 					}\
 				} while (intv != NULL);\
@@ -174,9 +172,9 @@ ren_data_block_new (ren_size size, RenUsage usage)
 	data_block->changes = new_change_set (NULL);
 	data_block->recent_changes = NULL;
 
-	data_block->data = g_malloc (size);
-	data_block->size = size;
-	data_block->usage = usage;
+	data_block->info.size = size;
+	data_block->info.usage = usage;
+	data_block->info.data = g_malloc (size);
 
 	return data_block;
 }
@@ -197,21 +195,21 @@ ren_data_block_unref (RenDataBlock *data_block)
 	_REN_RES_BACK_DATA_LIST_CLEAR (DataBlock, data_block,
 		data_block, BACK_DATA_FINI_FUNC);
 
-	g_free (data_block->data);
+	g_free ((gpointer) data_block->info.data);
 	g_free (data_block);
 }
 
 void
 ren_data_block_resize (RenDataBlock *data_block, ren_size size)
 {
-	data_block->data = g_realloc (data_block->data, size);
-	data_block->size = size;
+	data_block->info.size = size;
+	data_block->info.data = g_realloc ((gpointer) data_block->info.data, size);
 }
 
 void*
 ren_data_block_begin_edit (RenDataBlock *data_block)
 {
-	return data_block->data;
+	return (void *) data_block->info.data;
 }
 
 void
@@ -222,7 +220,7 @@ ren_data_block_end_edit (RenDataBlock *data_block)
 	ChangeInterval *intv;
 	if (data_block->recent_changes == NULL)
 	{
-		data_block->recent_changes = new_change (NULL, 0, data_block->size);
+		data_block->recent_changes = new_change (NULL, 0, data_block->info.size);
 	}
 	for (set = data_block->changes; set != NULL; set = set->next)
 	{
@@ -248,7 +246,7 @@ void
 ren_data_block_changed (RenDataBlock *data_block,
 	ren_size from, ren_size length)
 {
-	ren_size db_size = data_block->size;
+	ren_size db_size = data_block->info.size;
 	if (from >= db_size)
 		return;
 	ren_size end_length = db_size - from;
@@ -257,16 +255,10 @@ ren_data_block_changed (RenDataBlock *data_block,
 	insert_change (&(data_block->recent_changes), from, length);
 }
 
-void
-ren_data_block_data (RenDataBlock *data_block, const void **data_p,
-	ren_size *size_p, RenUsage *usage_p)
+const RenDataBlockInfo*
+ren_data_block_info (RenDataBlock *data_block)
 {
-	if (data_p)
-		(*data_p) = data_block->data;
-	if (size_p)
-		(*size_p) = data_block->size;
-	if (usage_p)
-		(*usage_p) = data_block->usage;
+	return &(data_block->info);
 }
 
 RenDataBlockBackDataKey*

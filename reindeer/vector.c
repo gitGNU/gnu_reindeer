@@ -33,9 +33,7 @@ struct _RenVector
 	_RenVectorBackDataItem *bd_list;
 	ren_uint32 change;
 
-	void *data;
-	ren_size length;
-	RenType type;
+	RenVectorInfo info;
 };
 
 struct _RenVectorBackDataKey
@@ -71,9 +69,9 @@ ren_vector_new (ren_size length, RenType type)
 	vector->bd_list = NULL;
 	vector->change = 1;
 
-	vector->data = g_malloc (length * ren_type_sizeof (type));
-	vector->length = length;
-	vector->type = type;
+	vector->info.length = length;
+	vector->info.type = type;
+	vector->info.data = g_malloc (length * ren_type_sizeof (type));
 
 	return vector;
 }
@@ -94,14 +92,14 @@ ren_vector_unref (RenVector *vector)
 	_REN_RES_BACK_DATA_LIST_CLEAR (Vector, vector,
 		vector, _REN_BACK_DATA_SIMPLE_FINI_FUNC);
 
-	g_free (vector->data);
+	g_free ((gpointer) vector->info.data);
 	g_free (vector);
 }
 
 void*
 ren_vector_begin_edit (RenVector *vector)
 {
-	return vector->data;
+	return (void *) vector->info.data;
 }
 
 void
@@ -110,16 +108,10 @@ ren_vector_end_edit (RenVector *vector)
 	_REN_BACK_DATA_SIMPLE_CHANGED (Vector, vector, vector);
 }
 
-void
-ren_vector_data (RenVector *vector,
-	const void **data_p, ren_size *length_p, RenType *type_p)
+const RenVectorInfo*
+ren_vector_info (RenVector *vector)
 {
-	if (data_p)
-		(*data_p) = vector->data;
-	if (length_p)
-		(*length_p) = vector->length;
-	if (type_p)
-		(*type_p) = vector->type;
+	return &(vector->info);
 }
 
 RenVectorBackDataKey*

@@ -41,9 +41,16 @@ ren_vector_end_edit (RenVector *vector);
 
 /* Backend */
 
-extern void
-ren_vector_data (RenVector *vector,
-	const void **data_p, ren_size *length_p, RenType *type_p);
+typedef struct RenVectorInfo RenVectorInfo;
+struct RenVectorInfo
+{
+	ren_size length;
+	RenType type;
+	const void *data;
+};
+
+extern const RenVectorInfo*
+ren_vector_info (RenVector *vector);
 
 typedef struct _RenVectorBackData RenVectorBackData;
 typedef struct _RenVectorBackDataKey RenVectorBackDataKey;
@@ -52,11 +59,13 @@ typedef void (* RenVectorBackDataKeyDestroyNotifyFunc) (
 	RenVectorBackDataKey* key, void *user_data);
 
 typedef void (* RenVectorBackDataInitFunc) (RenVector *vector,
-	RenVectorBackData *back_data, void* user_data);
+	RenVectorBackData *back_data, void *user_data,
+	const RenVectorInfo *info);
 typedef void (* RenVectorBackDataFiniFunc) (RenVector *vector,
-	RenVectorBackData *back_data, void* user_data);
+	RenVectorBackData *back_data, void *user_data);
 typedef void (* RenVectorBackDataUpdateFunc) (RenVector *vector,
-	RenVectorBackData *back_data, void* user_data);
+	RenVectorBackData *back_data, void *user_data,
+	const RenVectorInfo *info);
 
 extern RenVectorBackDataKey*
 ren_vector_back_data_key_new (ren_size data_size,
