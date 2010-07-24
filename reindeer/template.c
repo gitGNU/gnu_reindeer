@@ -353,16 +353,16 @@ ren_template_info (RenTemplate *tmplt)
 }
 
 void
-ren_template_mode_switch (void **next_p, void **prev_p,
+ren_template_mode_switch (const void **next_p, const void **prev_p,
 	RenTemplateModeCmd *mc, const RenTemplateModeData **md)
 {
 	g_return_if_fail (next_p != NULL);
 	g_return_if_fail (prev_p != NULL);
 	g_return_if_fail (mc != NULL);
 	g_return_if_fail (md != NULL);
-	ModeRecord *next = *next_p;
+	const ModeRecord *next = *next_p;
 	g_return_if_fail (next != NULL);
-	ModeRecord *prev = *prev_p;
+	const ModeRecord *prev = *prev_p;
 	RenTemplateModeCmd ncmd = next->meta.cmd;
 	RenTemplateModeCmd pcmd = (prev != NULL) ?
 		prev->meta.cmd : REN_TEMPLATE_MODE_CMD_END;

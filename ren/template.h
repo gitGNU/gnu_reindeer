@@ -103,7 +103,7 @@ union RenTemplateModeData
 };
 
 extern void
-ren_template_mode_switch (void **next_p, void **prev_p,
+ren_template_mode_switch (const void **next_p, const void **prev_p,
 	RenTemplateModeCmd *mc, const RenTemplateModeData **md);
 
 typedef struct _RenTemplateBackData RenTemplateBackData;
