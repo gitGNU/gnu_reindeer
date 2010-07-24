@@ -34,6 +34,12 @@ extern void
 ren_light_unref (RenLight *light);
 
 extern void
+ren_light_begin_edit (RenLight *light);
+
+extern void
+ren_light_end_edit (RenLight *light);
+
+extern void
 ren_light_ambient (RenLight *light, RenColor *color);
 
 extern void

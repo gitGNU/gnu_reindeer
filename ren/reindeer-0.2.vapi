@@ -305,6 +305,8 @@ namespace Ren
 	public class Material
 	{
 		public Material ();
+		public void begin_edit ();
+		public void end_edit ();
 		public void ambient (Ren.Color color);
 		public void diffuse (Ren.Color color);
 		public void specular (Ren.Color color);
@@ -318,6 +320,8 @@ namespace Ren
 	public class Light
 	{
 		public Light (Ren.LightType type);
+		public void begin_edit ();
+		public void end_edit ();
 		public void ambient (Ren.Color color);
 		public void diffuse (Ren.Color color);
 		public void specular (Ren.Color color);

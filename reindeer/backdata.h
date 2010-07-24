@@ -178,9 +178,12 @@ functions for resource types that only keep track of any change at all. They
 require the key struct to have four more fields:
 
 void* user_data;
-void (* init) (Ren##ResName *res, Ren##ResName##BackData *data);
-void (* fini) (Ren##ResName *res, Ren##ResName##BackData *data);
-void (* update) (Ren##ResName *res, Ren##ResName##BackData *data);
+void (* init) (Ren##ResName *res, Ren##ResName##BackData *data
+	void *user_data, const Ren##ResName##Info *info);
+void (* fini) (Ren##ResName *res, Ren##ResName##BackData *data,
+	void *user_data);
+void (* update) (Ren##ResName *res, Ren##ResName##BackData *data
+	void *user_data, const Ren##ResName##Info *info);
 
 Additionally, the derived back data item struct and the resource struct needs a
 field called "change" of type "ren_uint32". The field should be initialized to
@@ -237,7 +240,8 @@ require the key struct to have three more fields:
 void* user_data;
 void (* init) (Ren##ResName *res, Ren##ResName##BackData *data,
 	void *user_data, const Ren##ResName##Info *info);
-void (* fini) (Ren##ResName *res, Ren##ResName##BackData *data);
+void (* fini) (Ren##ResName *res, Ren##ResName##BackData *data,
+	void *user_data);
 */
 
 #define _REN_BACK_DATA_STATIC_INIT_FUNC(res, key, item, data)\
