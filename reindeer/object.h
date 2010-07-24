@@ -21,18 +21,38 @@
 #define _REN_REINDEER_OBJECT_H
 
 #include "template.h"
+#include "backdata.h"
+
+typedef struct _RenObjectBackDataItem _RenObjectBackDataItem;
 
 struct _RenObject
 {
 	ren_uint32 ref_count;
 
-	RenTemplate *tmplt;
+	_RenObjectBackDataItem *bd_list;
+	ren_uint32 change;
 
-	RenVectorArray *coord_array;
-	RenColorArray *color_array;
-	RenVectorArray *normal_array;
+	RenObjectInfo info;
+};
 
-	RenMaterial **materials;
+struct _RenObjectBackDataKey
+{
+	ren_uint32 ref_count;
+	RenObjectBackDataKeyDestroyNotifyFunc destroy_notify;
+
+	_RenObjectBackDataItem *bd_list;
+
+	ren_size data_size;
+	void *user_data;
+	RenObjectBackDataInitFunc init;
+	RenObjectBackDataFiniFunc fini;
+	RenObjectBackDataUpdateFunc update;
+};
+
+struct _RenObjectBackDataItem
+{
+	_RenBackDataItem base;
+	ren_uint32 change;
 };
 
 #endif /* _REN_REINDEER_OBJECT_H */

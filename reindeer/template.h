@@ -20,40 +20,74 @@
 #ifndef _REN_REINDEER_TEMPLATE_H
 #define _REN_REINDEER_TEMPLATE_H
 
+#include "backdata.h"
+
+typedef struct _RenTemplateBackDataItem _RenTemplateBackDataItem;
+
 struct _RenTemplate
 {
 	ren_uint32 ref_count;
 
 	gboolean built;
-	RenIndexArray *ix_array; /* If ix_array == NULL use direct index */
 	ren_uint08 num_materials;
 
 	union
 	{
-		struct /* When built */
+		 /* When built */
+		struct
 		{
-			ren_size num_primitives;
-			union
-			{
-				struct _RenTemplatePrimitive *primitives;
-				gpointer data;
-			};
-			ren_size num_modes;
-			ren_uint08 **modes;
+			gpointer data; /* Memory block used for info arrays */
+			_RenTemplateBackDataItem *bd_list;
 		};
-		struct /* When !built */
+		/* When !built */
+		struct
 		{
 			GArray *primitives;
-			GArray *modes;
+			GArray *modes; /* Offsets into mode_data */
 			GArray *mode_data;
 		} b;
 	};
+
+	RenTemplateInfo info;
 };
 
-typedef enum
+struct _RenTemplateBackDataKey
 {
-	REN_MODE_CMD_END = 0x0,
-	REN_MODE_CMD_MATERIAL = 0x1,
-} _RenModeCmd;
+	ren_uint32 ref_count;
+	RenTemplateBackDataKeyDestroyNotifyFunc destroy_notify;
+
+	_RenTemplateBackDataItem *bd_list;
+
+	ren_size data_size;
+	void *user_data;
+	RenTemplateBackDataInitFunc init;
+	RenTemplateBackDataFiniFunc fini;
+};
+
+struct _RenTemplateBackDataItem
+{
+	_RenBackDataItem base;
+};
+
+typedef struct ModeRecordMeta ModeRecordMeta;
+struct ModeRecordMeta
+{
+	ren_uint08 size;
+	RenTemplateModeCmd cmd;
+};
+
+typedef struct ModeRecord ModeRecord;
+struct ModeRecord
+{
+	ModeRecordMeta meta;
+	RenTemplateModeData data;
+};
+
+typedef struct ModeRecordMaterial ModeRecordMaterial;
+struct ModeRecordMaterial
+{
+	ModeRecordMeta meta;
+	RenTemplateModeDataMaterial data;
+};
 
 #endif /* _REN_REINDEER_TEMPLATE_H */

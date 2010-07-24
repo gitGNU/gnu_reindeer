@@ -335,7 +335,7 @@ namespace Ren
 		public void primitive (Ren.Primitive prim,
 			Ren.size offset, Ren.size count);
 		public Ren.uint32 new_mode ();
-		public void material (Ren.Face face, Ren.uint08 material);
+		public void material (Ren.Face face, Ren.sint08 material);
 	}
 
 	[Compact]
@@ -344,9 +344,11 @@ namespace Ren
 	public class Object
 	{
 		public Object (Ren.Template template, Ren.VectorArray coord_array);
+		public void begin_edit ();
+		public void end_edit ();
 		public void coord_array (Ren.VectorArray coord_array);
 		public void color_array (Ren.ColorArray color_array);
 		public void normal_array (Ren.VectorArray normal_array);
-		public void material (Ren.uint08 id, Ren.Material material);
+		public void material (Ren.sint08 id, Ren.Material material);
 	}
 }

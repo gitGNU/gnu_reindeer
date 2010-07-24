@@ -229,4 +229,31 @@ field called "change" of type "ren_uint32". The field should be initialized to
 			++(res->change);\
 	} G_STMT_END
 
+/*
+The following macros implement common init and fini functions for resource types
+that do not keep track of any change at all (the resource is static). They
+require the key struct to have three more fields:
+
+void* user_data;
+void (* init) (Ren##ResName *res, Ren##ResName##BackData *data,
+	void *user_data, const Ren##ResName##Info *info);
+void (* fini) (Ren##ResName *res, Ren##ResName##BackData *data);
+*/
+
+#define _REN_BACK_DATA_STATIC_INIT_FUNC(res, key, item, data)\
+	G_STMT_START {\
+		if (key->init != NULL)\
+			key->init (res, data, key->user_data, &(res->info));\
+	} G_STMT_END
+
+#define _REN_BACK_DATA_STATIC_FINI_FUNC(res, key, item, data)\
+	G_STMT_START {\
+		if (key->fini != NULL)\
+			key->fini (res, data, key->user_data);\
+	} G_STMT_END
+
+#define _REN_BACK_DATA_STATIC_UPDATE_FUNC(res, key, item, data)\
+	G_STMT_START {\
+	} G_STMT_END
+
 #endif /* _REN_REINDEER_BACKDATA_H */

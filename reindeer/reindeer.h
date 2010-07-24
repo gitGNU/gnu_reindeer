@@ -35,12 +35,6 @@ struct _RenBackendData
 		#undef _REN_FUNC
 	} ren;
 
-	struct
-	{
-		void (* change_material) (RenReindeer *r,
-			RenMaterial *front, RenMaterial *back, void *user_data);
-	} object;
-
 	RenReindeerInitFunc reindeer_init;
 	RenReindeerFiniFunc reindeer_fini;
 	ren_size reindeer_back_data_size;

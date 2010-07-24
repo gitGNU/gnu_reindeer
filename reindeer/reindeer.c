@@ -309,11 +309,6 @@ backend_link (RenBackend *backend,
 	#undef XSTR
 
 	#define LOAD_SYMBOL(sym)\
-		data->object.sym = backend_symbol (libhandle, name, "object_" #sym);
-	LOAD_SYMBOL(change_material)
-	#undef LOAD_SYMBOL
-
-	#define LOAD_SYMBOL(sym)\
 		data->sym = backend_symbol (libhandle, name, #sym);\
 		if (data->sym == NULL)\
 		{\
